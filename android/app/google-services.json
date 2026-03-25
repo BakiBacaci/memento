@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "906107187459",
+    "project_id": "memento-60cce",
+    "storage_bucket": "memento-60cce.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:906107187459:android:998279fe07ea3e79c23936",
+        "android_client_info": {
+          "package_name": "com.example.memento"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "906107187459-t4j99pvoah71i0jkfrgn6p2fihdq3cfi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.memento",
+            "certificate_hash": "0a111f3308c28209fe6028e9be9243869284aabe"
+          }
+        },
+        {
+          "client_id": "906107187459-nssrc5ua04sdjp5m17k4la6gakopg3q1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1EFILuQ2ZrcpJgiNIDTet52EZFWdiTr0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "906107187459-nssrc5ua04sdjp5m17k4la6gakopg3q1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

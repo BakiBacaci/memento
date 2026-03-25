@@ -1,0 +1,46 @@
+// BU KISMI EN TEPEYE EKLE
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        // Firebase motoru burada
+        classpath("com.google.gms:google-services:4.4.0")
+    }
+}
+
+// --- Senin kodların buradan devam etsin ---
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+// ... (kalan kodlar aynı)
+
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+val newBuildDir: Directory =
+    rootProject.layout.buildDirectory
+        .dir("../../build")
+        .get()
+rootProject.layout.buildDirectory.value(newBuildDir)
+
+subprojects {
+    val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
+    project.layout.buildDirectory.value(newSubprojectBuildDir)
+}
+subprojects {
+    project.evaluationDependsOn(":app")
+}
+
+tasks.register<Delete>("clean") {
+    delete(rootProject.layout.buildDirectory)
+}

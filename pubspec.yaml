@@ -1,0 +1,47 @@
+name: Memento
+description: "A new Flutter project."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.3 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # --- İkonlar ---
+  cupertino_icons: ^1.0.8
+
+  # --- Görsel & Animasyon ---
+  flutter_card_swiper: ^7.2.0
+  lottie: ^3.1.0
+
+  # --- Sensör & Donanım ---
+  sensors_plus: ^6.1.0
+  audioplayers: ^6.0.0
+
+  # --- Veri Saklama ---
+  shared_preferences: ^2.5.4  # Teke düşürdük ve güncelledik
+
+  # --- Firebase & Giriş (Kararlı Sürümler) ---
+  firebase_core: ^3.15.2
+  firebase_auth: ^5.7.0
+  google_sign_in: ^6.2.1
+  cloud_firestore: ^5.6.12
+  image_picker: ^1.2.1
+  firebase_storage: ^12.4.10
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+
+  # Resim ve Ses Klasörleri
+  assets:
+    - assets/images/
+    - assets/sounds/
+    - assets/quotes.json
