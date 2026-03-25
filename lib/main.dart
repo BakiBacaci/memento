@@ -1,3 +1,4 @@
+import 'firebase_options.dart';
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
@@ -11,15 +12,23 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
   runApp(const PhiloDailyApp());
+  
 }
 
 class PhiloDailyApp extends StatelessWidget {
   const PhiloDailyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp(builder: (context, child) {
+        return Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 450), 
+            child: child,
+          ),
+        );
+      },
       debugShowCheckedModeBanner: false,
       title: 'Memento',
       theme: ThemeData.dark().copyWith(
@@ -29,6 +38,7 @@ class PhiloDailyApp extends StatelessWidget {
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(backgroundColor: Colors.black, selectedItemColor: Color(0xFFD4AF37), unselectedItemColor: Colors.grey),
         colorScheme: const ColorScheme.dark(primary: Color(0xFFD4AF37), secondary: Colors.white),
         // TabBar hatası için burayı temizledik, sayfa içinde tanımlayacağız.
+        
       ),
       home: const LoginPage(),
     );
@@ -173,11 +183,53 @@ class _SwipePageState extends State<SwipePage> {
   List<Quote> _quotes = []; List<String> _savedIds = []; bool _isLoading = true; Set<String> _likedSessionIds = {};
   @override void initState() { super.initState(); _init(); }
   void _init() async { await _loadQuotes(); await _loadSaved(); }
-  Future<void> _loadQuotes() async {
-    List<Quote> loaded = [];
-    try { final r = await rootBundle.loadString('assets/quotes.json'); for(var i in jsonDecode(r)) loaded.add(Quote.fromJson(i)); } catch (_) {}
-    try { var sn = await FirebaseFirestore.instance.collection('quotes').where('privacy', isEqualTo: 'Herkese Açık').orderBy('created_at', descending: true).limit(30).get(); for (var d in sn.docs) loaded.add(Quote.fromJson(d.data(), docId: d.id)); } catch (_) {}
-    if (mounted) setState(() { _quotes = loaded..shuffle(); _isLoading = false; });
+  Future<void> _loadQuotes() async {Future<void> _loadQuotes() async {
+    // 1. Yerel JSON dosyasını yükle (Hali hazırda var olanları kaybetme)
+    List<Quote> localLoaded = [];
+    try { 
+      final r = await rootBundle.loadString('assets/quotes.json'); 
+      for(var i in jsonDecode(r)) localLoaded.add(Quote.fromJson(i)); 
+    } catch (_) {}
+    
+    // 2. Firebase Canlı Yayınını Başlat
+    // Bu yapı uygulamanın diğer sayfalarıyla ASLA çakışmaz.
+    FirebaseFirestore.instance.collection('quotes')
+        .where('privacy', isEqualTo: 'Herkese Açık')
+        .orderBy('created_at', descending: true)
+        .limit(30)
+        .snapshots() // Canlı bağlantı kurar
+        .listen((snapshot) {
+      
+      if (_isLoading) {
+        // Uygulama ilk açıldığında listeyi doldurur
+        List<Quote> firebaseLoaded = [];
+        for (var d in snapshot.docs) {
+          firebaseLoaded.add(Quote.fromJson(d.data(), docId: d.id));
+        }
+        if (mounted) {
+          setState(() { 
+            _quotes = [...localLoaded, ...firebaseLoaded]..shuffle(); 
+            _isLoading = false; 
+          });
+        }
+      } else {
+        // Paylaşım yapıldığında listeye sessizce yeni dökümanı ekler
+        bool isChanged = false;
+        for (var change in snapshot.docChanges) {
+          if (change.type == DocumentChangeType.added) {
+           var newQuote = Quote.fromJson(change.doc.data()!, docId: change.doc.id);
+            // Zaten listede yoksa ekle (Çift kayıt olmasın diye)
+            if (!_quotes.any((q) => q.docId == newQuote.docId)) {
+              _quotes.insert(0, newQuote); // En başa ekle
+              isChanged = true;
+            }
+          }
+        }
+        if (isChanged && mounted) setState(() {}); 
+      }
+    });
+  }
+   
   }
   Future<void> _loadSaved() async { final p = await SharedPreferences.getInstance(); setState(() => _savedIds = p.getStringList('saved_quotes_v2') ?? []); }
   
