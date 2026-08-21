@@ -1,4 +1,3 @@
-import 'firebase_options.dart';
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
@@ -12,23 +11,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
+  await Firebase.initializeApp();
   runApp(const PhiloDailyApp());
-  
 }
 
 class PhiloDailyApp extends StatelessWidget {
   const PhiloDailyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(builder: (context, child) {
-        return Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 450), 
-            child: child,
-          ),
-        );
-      },
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Memento',
       theme: ThemeData.dark().copyWith(
@@ -37,8 +28,6 @@ class PhiloDailyApp extends StatelessWidget {
         appBarTheme: const AppBarTheme(backgroundColor: Colors.black, elevation: 0, iconTheme: IconThemeData(color: Color(0xFFD4AF37))),
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(backgroundColor: Colors.black, selectedItemColor: Color(0xFFD4AF37), unselectedItemColor: Colors.grey),
         colorScheme: const ColorScheme.dark(primary: Color(0xFFD4AF37), secondary: Colors.white),
-        // TabBar hatası için burayı temizledik, sayfa içinde tanımlayacağız.
-        
       ),
       home: const LoginPage(),
     );
@@ -70,14 +59,96 @@ class Quote {
 }
 
 // --- GİRİŞ EKRANI ---
-class LoginPage extends StatefulWidget { const LoginPage({super.key}); @override State<LoginPage> createState() => _LoginPageState(); }
+class LoginPage extends StatefulWidget { 
+  const LoginPage({super.key}); 
+  @override 
+  State<LoginPage> createState() => _LoginPageState(); 
+}
+
 class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixin {
-  late AnimationController _controller; late Animation<double> _fadeAnimation; bool _isLoading = false;
-  final _emailController = TextEditingController(); final _passwordController = TextEditingController();
-  @override void initState() { super.initState(); _controller = AnimationController(vsync: this, duration: const Duration(seconds: 2)); _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_controller); _controller.forward(); checkUser(); }
-  void checkUser() { if (FirebaseAuth.instance.currentUser != null) { WidgetsBinding.instance.addPostFrameCallback((_) => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const MainScreen()))); } }
-  void _signIn() async { if (_emailController.text.isEmpty || _passwordController.text.isEmpty) return; setState(() => _isLoading = true); try { await FirebaseAuth.instance.signInWithEmailAndPassword(email: _emailController.text.trim(), password: _passwordController.text.trim()); if(mounted) Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const MainScreen())); } catch (e) { if(mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Hata: $e"), backgroundColor: Colors.red)); } finally { if(mounted) setState(() => _isLoading = false); } }
-  @override Widget build(BuildContext context) { return Scaffold(backgroundColor: Colors.black, body: Container(decoration: const BoxDecoration(gradient: RadialGradient(center: Alignment.center, radius: 1.3, colors: [Color(0xFF1F1F1F), Colors.black])), child: Padding(padding: const EdgeInsets.symmetric(horizontal: 30.0), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [const Spacer(flex: 2), FadeTransition(opacity: _fadeAnimation, child: Column(children: [Container(padding: const EdgeInsets.all(20), decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: const Color(0xFFD4AF37), width: 1.5), boxShadow: [BoxShadow(color: const Color(0xFFD4AF37).withOpacity(0.2), blurRadius: 40, spreadRadius: 1)]), child: const Icon(Icons.hourglass_empty, size: 50, color: Color(0xFFD4AF37))), const SizedBox(height: 25), const Text("M E M E N T O", style: TextStyle(fontFamily: 'Georgia', color: Colors.white, fontSize: 26, fontWeight: FontWeight.bold, letterSpacing: 6)), const SizedBox(height: 8), Text("Kendi gerçeğini keşfet.", style: TextStyle(fontFamily: 'Georgia', color: Colors.grey[600], fontStyle: FontStyle.italic, fontSize: 13, letterSpacing: 1))])), const SizedBox(height: 50), TextField(controller: _emailController, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(hintText: "E-posta", prefixIcon: Icon(Icons.email, color: Color(0xFFD4AF37)), filled: true, fillColor: Color(0xFF1E1E1E))), const SizedBox(height: 15), TextField(controller: _passwordController, obscureText: true, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(hintText: "Şifre", prefixIcon: Icon(Icons.lock, color: Color(0xFFD4AF37)), filled: true, fillColor: Color(0xFF1E1E1E))), const SizedBox(height: 25), SizedBox(width: double.infinity, height: 55, child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD4AF37)), onPressed: _isLoading ? null : _signIn, child: _isLoading ? const CircularProgressIndicator(color: Colors.black) : const Text("GİRİŞ YAP", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)))), const Spacer(flex: 2), Row(mainAxisAlignment: MainAxisAlignment.center, children: [const Text("Hesabın yok mu? ", style: TextStyle(color: Colors.grey)), GestureDetector(onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RegisterPage())), child: const Text("Kayıt Ol", style: TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold)))]), const SizedBox(height: 40)])))); }
+  late AnimationController _controller; 
+  late Animation<double> _fadeAnimation; 
+  bool _isLoading = false;
+  
+  final _emailController = TextEditingController(); 
+  final _passwordController = TextEditingController();
+
+  @override 
+  void initState() { 
+    super.initState(); 
+    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 2)); 
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_controller); 
+    _controller.forward(); 
+    checkUser(); 
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose(); 
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  void checkUser() { 
+    if (FirebaseAuth.instance.currentUser != null) { 
+      WidgetsBinding.instance.addPostFrameCallback((_) => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const MainScreen()))); 
+    } 
+  }
+
+  void _signIn() async { 
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) return; 
+    
+    setState(() => _isLoading = true); 
+    try { 
+      await FirebaseAuth.instance.signInWithEmailAndPassword(email: _emailController.text.trim(), password: _passwordController.text.trim()); 
+      if(mounted) Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const MainScreen())); 
+    } catch (e) { 
+      if(mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Hata: $e"), backgroundColor: Colors.red)); 
+    } finally { 
+      if(mounted) setState(() => _isLoading = false); 
+    } 
+  }
+
+  @override 
+  Widget build(BuildContext context) { 
+    return Scaffold(
+      backgroundColor: Colors.black, 
+      body: Container(
+        decoration: const BoxDecoration(gradient: RadialGradient(center: Alignment.center, radius: 1.3, colors: [Color(0xFF1F1F1F), Colors.black])), 
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30.0), 
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center, 
+            children: [
+              const Spacer(flex: 2), 
+              FadeTransition(
+                opacity: _fadeAnimation, 
+                child: Column(
+                  children: [
+                    Container(padding: const EdgeInsets.all(20), decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: const Color(0xFFD4AF37), width: 1.5), boxShadow: [BoxShadow(color: const Color(0xFFD4AF37).withOpacity(0.2), blurRadius: 40, spreadRadius: 1)]), child: const Icon(Icons.hourglass_empty, size: 50, color: Color(0xFFD4AF37))), 
+                    const SizedBox(height: 25), 
+                    const Text("M E M E N T O", style: TextStyle(fontFamily: 'Georgia', color: Colors.white, fontSize: 26, fontWeight: FontWeight.bold, letterSpacing: 6)), 
+                    const SizedBox(height: 8), 
+                    Text("Kendi gerçeğini keşfet.", style: TextStyle(fontFamily: 'Georgia', color: Colors.grey[600], fontStyle: FontStyle.italic, fontSize: 13, letterSpacing: 1))
+                  ]
+                )
+              ), 
+              const SizedBox(height: 50), 
+              TextField(controller: _emailController, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(hintText: "E-posta", prefixIcon: Icon(Icons.email, color: Color(0xFFD4AF37)), filled: true, fillColor: Color(0xFF1E1E1E))), 
+              const SizedBox(height: 15), 
+              TextField(controller: _passwordController, obscureText: true, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(hintText: "Şifre", prefixIcon: Icon(Icons.lock, color: Color(0xFFD4AF37)), filled: true, fillColor: Color(0xFF1E1E1E))), 
+              const SizedBox(height: 25), 
+              SizedBox(width: double.infinity, height: 55, child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD4AF37)), onPressed: _isLoading ? null : _signIn, child: _isLoading ? const CircularProgressIndicator(color: Colors.black) : const Text("GİRİŞ YAP", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)))), 
+              const Spacer(flex: 2), 
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: [const Text("Hesabın yok mu? ", style: TextStyle(color: Colors.grey)), GestureDetector(onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RegisterPage())), child: const Text("Kayıt Ol", style: TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold)))]), 
+              const SizedBox(height: 40)
+            ]
+          )
+        )
+      )
+    ); 
+  }
 }
 
 // --- KAYIT SAYFASI ---
@@ -96,7 +167,7 @@ class _MainScreenState extends State<MainScreen> {
   @override Widget build(BuildContext context) { return Scaffold(body: IndexedStack(index: _currentIndex, children: _pages), bottomNavigationBar: BottomNavigationBar(currentIndex: _currentIndex, onTap: (i) => setState(() => _currentIndex = i), type: BottomNavigationBarType.fixed, backgroundColor: Colors.black, showSelectedLabels: false, showUnselectedLabels: false, items: [const BottomNavigationBarItem(icon: Icon(Icons.style), label: "Keşfet"), const BottomNavigationBarItem(icon: Icon(Icons.emoji_events), label: "Zirve"), BottomNavigationBarItem(icon: Container(padding: const EdgeInsets.all(8), decoration: const BoxDecoration(color: Color(0xFFD4AF37), shape: BoxShape.rectangle, borderRadius: BorderRadius.all(Radius.circular(12))), child: const Icon(Icons.add, color: Colors.black)), label: "Oluştur"), const BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profil")])); }
 }
 
-// --- 🏆 ZİRVE (LİDERLİK) SAYFASI (CANLI + SENİN SIRAN) ---
+// --- 🏆 ZİRVE (LİDERLİK) SAYFASI ---
 class LeaderboardPage extends StatelessWidget {
   const LeaderboardPage({super.key});
   Future<Map<String, dynamic>> _getMyRank() async {
@@ -104,7 +175,6 @@ class LeaderboardPage extends StatelessWidget {
     if (user == null) return {'rank': '-', 'karma': 0};
     var myDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
     int myKarma = myDoc.data()?['karma'] ?? 0;
-    // Basit sıralama mantığı (Gelişmiş sorgu için 'Count' kullanılır ama şimdilik bu yeterli)
     var higherDocs = await FirebaseFirestore.instance.collection('users').where('karma', isGreaterThan: myKarma).get();
     int rank = higherDocs.docs.length + 1;
     return {'rank': rank, 'karma': myKarma};
@@ -175,63 +245,30 @@ class _CreateQuotePageState extends State<CreateQuotePage> {
   }
 }
 
-// --- 🔥 SWIPE SAYFASI (GÜNCELLENDİ: BUTONSUZ BEĞENİ & KAYDETME DÜZELDİ) ---
-// --- 🔥 SWIPE SAYFASI (GÜNCELLENDİ: BUTONSUZ BEĞENİ & KAYDETME DÜZELDİ) ---
+// --- 🔥 SWIPE SAYFASI (Bulut Kayıt & Sağ/Sol Puan Sistemi) ---
 class SwipePage extends StatefulWidget { const SwipePage({super.key}); @override State<SwipePage> createState() => _SwipePageState(); }
 class _SwipePageState extends State<SwipePage> {
   final CardSwiperController controller = CardSwiperController();
-  List<Quote> _quotes = []; List<String> _savedIds = []; bool _isLoading = true; Set<String> _likedSessionIds = {};
-  @override void initState() { super.initState(); _init(); }
-  void _init() async { await _loadQuotes(); await _loadSaved(); }
-  Future<void> _loadQuotes() async {Future<void> _loadQuotes() async {
-    // 1. Yerel JSON dosyasını yükle (Hali hazırda var olanları kaybetme)
-    List<Quote> localLoaded = [];
-    try { 
-      final r = await rootBundle.loadString('assets/quotes.json'); 
-      for(var i in jsonDecode(r)) localLoaded.add(Quote.fromJson(i)); 
-    } catch (_) {}
-    
-    // 2. Firebase Canlı Yayınını Başlat
-    // Bu yapı uygulamanın diğer sayfalarıyla ASLA çakışmaz.
-    FirebaseFirestore.instance.collection('quotes')
-        .where('privacy', isEqualTo: 'Herkese Açık')
-        .orderBy('created_at', descending: true)
-        .limit(30)
-        .snapshots() // Canlı bağlantı kurar
-        .listen((snapshot) {
-      
-      if (_isLoading) {
-        // Uygulama ilk açıldığında listeyi doldurur
-        List<Quote> firebaseLoaded = [];
-        for (var d in snapshot.docs) {
-          firebaseLoaded.add(Quote.fromJson(d.data(), docId: d.id));
-        }
-        if (mounted) {
-          setState(() { 
-            _quotes = [...localLoaded, ...firebaseLoaded]..shuffle(); 
-            _isLoading = false; 
-          });
-        }
-      } else {
-        // Paylaşım yapıldığında listeye sessizce yeni dökümanı ekler
-        bool isChanged = false;
-        for (var change in snapshot.docChanges) {
-          if (change.type == DocumentChangeType.added) {
-           var newQuote = Quote.fromJson(change.doc.data()!, docId: change.doc.id);
-            // Zaten listede yoksa ekle (Çift kayıt olmasın diye)
-            if (!_quotes.any((q) => q.docId == newQuote.docId)) {
-              _quotes.insert(0, newQuote); // En başa ekle
-              isChanged = true;
-            }
-          }
-        }
-        if (isChanged && mounted) setState(() {}); 
-      }
-    });
+  List<Quote> _quotes = []; bool _isLoading = true; 
+  Set<String> _likedSessionIds = {}; Set<String> _savedSessionIds = {}; 
+
+  @override void initState() { super.initState(); _loadQuotes(); _listenSaved(); }
+  
+  void _listenSaved() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      FirebaseFirestore.instance.collection('users').doc(user.uid).collection('saved').snapshots().listen((snap) {
+        if (mounted) setState(() { _savedSessionIds = snap.docs.map((d) => d.id).toSet(); });
+      });
+    }
   }
-   
+
+  Future<void> _loadQuotes() async {
+    List<Quote> loaded = [];
+    try { final r = await rootBundle.loadString('assets/quotes.json'); for(var i in jsonDecode(r)) loaded.add(Quote.fromJson(i)); } catch (_) {}
+    try { var sn = await FirebaseFirestore.instance.collection('quotes').where('privacy', isEqualTo: 'Herkese Açık').orderBy('created_at', descending: true).limit(30).get(); for (var d in sn.docs) loaded.add(Quote.fromJson(d.data(), docId: d.id)); } catch (_) {}
+    if (mounted) setState(() { _quotes = loaded..shuffle(); _isLoading = false; });
   }
-  Future<void> _loadSaved() async { final p = await SharedPreferences.getInstance(); setState(() => _savedIds = p.getStringList('saved_quotes_v2') ?? []); }
   
   void _like(Quote q) {
     HapticFeedback.mediumImpact();
@@ -242,123 +279,88 @@ class _SwipePageState extends State<SwipePage> {
     }
   }
 
-  // 🔥 YENİ GÜVENLİ KAYDETME FONKSİYONU
-  void _save(Quote q) async {
-    final p = await SharedPreferences.getInstance(); 
-    List<String> list = p.getStringList('saved_quotes_v2') ?? []; 
-    
-    bool exists = false;
-    for (var e in list) {
-      try { if (jsonDecode(e)['text'] == q.text) exists = true; } catch (_) {}
+  void _dislike(Quote q) {
+    HapticFeedback.lightImpact();
+    if(q.userId != null) {
+      FirebaseFirestore.instance.collection('users').doc(q.userId).update({'karma': FieldValue.increment(-1)});
     }
+  }
 
-    if (exists) { 
-      list.removeWhere((e) {
-        try { return jsonDecode(e)['text'] == q.text; } catch (_) { return false; }
-      }); 
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Kaldırıldı"))); 
-    } else { 
-      list.add(jsonEncode(q.toJson())); 
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Kaydedildi 🔖"), backgroundColor: Color(0xFFD4AF37))); 
+  void _save(Quote q) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null || q.docId == null) return;
+    
+    final docRef = FirebaseFirestore.instance.collection('users').doc(user.uid).collection('saved').doc(q.docId);
+    
+    if (_savedSessionIds.contains(q.docId)) {
+      await docRef.delete();
+      if(mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Kaldırıldı", style: TextStyle(color: Colors.white))));
+    } else {
+      await docRef.set(q.toJson());
+      if(mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Kaydedildi 🔖"), backgroundColor: Color(0xFFD4AF37)));
     }
-    await p.setStringList('saved_quotes_v2', list); 
-    _loadSaved();
   }
 
   @override Widget build(BuildContext context) {
-    return Scaffold(body: SafeArea(child: Column(children: [const SizedBox(height: 20), Expanded(child: _isLoading ? const Center(child: CircularProgressIndicator(color: Color(0xFFD4AF37))) : CardSwiper(controller: controller, cardsCount: _quotes.length, numberOfCardsDisplayed: _quotes.length < 3 ? _quotes.length : 3, padding: const EdgeInsets.all(24.0), onSwipe: (p, c, d) { if(d == CardSwiperDirection.right) _like(_quotes[p]); return true; }, cardBuilder: (c, i, x, y) => _buildCard(_quotes[i]))) ])));
+    return Scaffold(body: SafeArea(child: Column(children: [const SizedBox(height: 20), Expanded(child: _isLoading ? const Center(child: CircularProgressIndicator(color: Color(0xFFD4AF37))) : CardSwiper(controller: controller, cardsCount: _quotes.length, numberOfCardsDisplayed: _quotes.length < 3 ? _quotes.length : 3, padding: const EdgeInsets.all(24.0), 
+    onSwipe: (p, c, direction) { 
+      if(direction == CardSwiperDirection.right) _like(_quotes[p]); 
+      if(direction == CardSwiperDirection.left) _dislike(_quotes[p]); 
+      return true; 
+    }, cardBuilder: (c, i, x, y) => _buildCard(_quotes[i]))) ])));
   }
 
-  // 🔥 YENİ ANINDA TEPKİ VEREN KART (StatefulBuilder eklendi)
   Widget _buildCard(Quote q) {
     bool isLiked = (q.docId != null && _likedSessionIds.contains(q.docId));
+    bool isSaved = (q.docId != null && _savedSessionIds.contains(q.docId));
     
-    return StatefulBuilder(
-      builder: (context, setStateCard) {
-        bool isSaved = false;
-        for (var e in _savedIds) {
-          try { if (jsonDecode(e)['text'] == q.text) isSaved = true; } catch (_) {}
-        }
-
-        return Container(
-          decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(20), border: Border.all(color: const Color(0xFF333333))),
-          child: Stack(
-            fit: StackFit.expand, // KART BÜZÜŞMESİNİ ENGELLEYEN KOD BURADA
-            children: [
-              Positioned(top: 20, left: 20, child: Row(children: [
-                const CircleAvatar(radius: 16, backgroundColor: Color(0xFF333333), child: Icon(Icons.person, color: Colors.white, size: 20)),
-                const SizedBox(width: 8), Text(q.author, style: const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold))
-              ])),
-              Padding(padding: const EdgeInsets.symmetric(horizontal: 30), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                if(isLiked) const Icon(Icons.favorite, color: Colors.redAccent, size: 60), 
-                const SizedBox(height: 20),
-                Text("\"${q.text}\"", textAlign: TextAlign.center, style: const TextStyle(fontFamily: 'Georgia', color: Color(0xFFE0E0E0), fontSize: 24, fontStyle: FontStyle.italic)),
-              ])),
-              // KAYDETME BUTONU
-              Positioned(
-                bottom: 20, right: 20, 
-                child: IconButton(
-                  icon: Icon(isSaved ? Icons.bookmark : Icons.bookmark_border, color: isSaved ? const Color(0xFFD4AF37) : Colors.white54, size: 30), 
-                  onPressed: () {
-                    _save(q); 
-                    setStateCard(() {}); // Butonu anında sarıya boyar!
-                  }
-                )
-              ),
-            ],
-          ),
-        );
-      }
+    return Container(
+      decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(20), border: Border.all(color: const Color(0xFF333333))),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Positioned(top: 20, left: 20, child: Row(children: [const CircleAvatar(radius: 16, backgroundColor: Color(0xFF333333), child: Icon(Icons.person, color: Colors.white, size: 20)), const SizedBox(width: 8), Text(q.author, style: const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold))])),
+          Padding(padding: const EdgeInsets.symmetric(horizontal: 30), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [if(isLiked) const Icon(Icons.favorite, color: Colors.redAccent, size: 60), const SizedBox(height: 20), Text("\"${q.text}\"", textAlign: TextAlign.center, style: const TextStyle(fontFamily: 'Georgia', color: Color(0xFFE0E0E0), fontSize: 24, fontStyle: FontStyle.italic))])),
+          Positioned(bottom: 20, right: 20, child: IconButton(icon: Icon(isSaved ? Icons.bookmark : Icons.bookmark_border, color: isSaved ? const Color(0xFFD4AF37) : Colors.white54, size: 30), onPressed: () => _save(q))),
+        ],
+      ),
     );
   }
 }
-// --- 👤 PROFİL SAYFASI (DÜZELDİ: SEKME STİLİ VE LİSTE) ---
+
+// --- 👤 PROFİL SAYFASI (Canlı Firebase Akışı) ---
 class ProfilePage extends StatefulWidget { const ProfilePage({super.key}); @override State<ProfilePage> createState() => _ProfilePageState(); }
 class _ProfilePageState extends State<ProfilePage> {
   final _auth = FirebaseAuth.instance;
-  // --- BOT BASMA (Gizli Özellik) ---
-  void _addBots() async {
-    final names = ["Baki", "Seda", "Can", "Elif", "Mert", "Ece", "Ozan", "Gizem"];
-    final batch = FirebaseFirestore.instance.batch();
-    for(int i=0; i<50; i++) {
-      String id = FirebaseFirestore.instance.collection('users').doc().id;
-      batch.set(FirebaseFirestore.instance.collection('users').doc(id), {
-        'username': "${names[Random().nextInt(names.length)]}_${Random().nextInt(99)}",
-        'karma': Random().nextInt(500), 'uid': id, 'bio': "Bot", 'created_at': FieldValue.serverTimestamp()
-      });
-    }
-    await batch.commit();
-    if(mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("50 Bot Eklendi!"), backgroundColor: Colors.green));
-  }
 
   void _settings() {
-    showModalBottomSheet(context: context, backgroundColor: const Color(0xFF1E1E1E), builder: (c) => Column(mainAxisSize: MainAxisSize.min, children: [
-      ListTile(leading: const Icon(Icons.edit, color: Colors.white), title: const Text("Düzenle", style: TextStyle(color: Colors.white)), onTap: () { Navigator.pop(c); Navigator.push(context, MaterialPageRoute(builder: (_) => EditProfilePage(user: _auth.currentUser))); }),
-      ListTile(leading: const Icon(Icons.logout, color: Colors.red), title: const Text("Çıkış", style: TextStyle(color: Colors.red)), onTap: () async { await _auth.signOut(); Navigator.pop(c); if(mounted) Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginPage())); }),
-      const Divider(),
-      TextButton(onPressed: _addBots, child: const Text("TEST: Bot Ekle (Gizli)", style: TextStyle(color: Colors.grey)))
-    ]));
+    showModalBottomSheet(context: context, backgroundColor: const Color(0xFF1E1E1E), shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))), builder: (c) => Padding(padding: const EdgeInsets.symmetric(vertical: 20), child: Column(mainAxisSize: MainAxisSize.min, children: [
+      ListTile(leading: const Icon(Icons.edit, color: Colors.white), title: const Text("Profili Düzenle", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)), onTap: () { Navigator.pop(c); Navigator.push(context, MaterialPageRoute(builder: (_) => EditProfilePage(user: _auth.currentUser))); }),
+      ListTile(leading: const Icon(Icons.logout, color: Colors.redAccent), title: const Text("Çıkış Yap", style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)), onTap: () async { await _auth.signOut(); Navigator.pop(c); if(mounted) Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginPage())); }),
+    ])));
   }
 
   @override Widget build(BuildContext context) {
     final user = _auth.currentUser;
-    return DefaultTabController(length: 2, child: Scaffold(backgroundColor: Colors.black, appBar: AppBar(backgroundColor: Colors.black, title: const Text("PROFİL", style: TextStyle(color: Color(0xFFD4AF37))), actions: [IconButton(icon: const Icon(Icons.settings), onPressed: _settings)]), body: Column(children: [
+    return DefaultTabController(length: 2, child: Scaffold(backgroundColor: Colors.black, appBar: AppBar(backgroundColor: Colors.black, title: const Text("PROFİL", style: TextStyle(color: Color(0xFFD4AF37), letterSpacing: 2, fontWeight: FontWeight.bold)), actions: [IconButton(icon: const Icon(Icons.settings), onPressed: _settings)]), body: Column(children: [
       const SizedBox(height: 20),
-      const CircleAvatar(radius: 40, backgroundColor: Color(0xFF1E1E1E), child: Icon(Icons.person, color: Color(0xFFD4AF37), size: 40)),
-      const SizedBox(height: 10), Text(user?.displayName ?? "Misafir", style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-      const SizedBox(height: 20), const TabBar(labelColor: Color(0xFFD4AF37), unselectedLabelColor: Colors.grey, indicatorColor: Color(0xFFD4AF37), tabs: [Tab(text: "PAYLAŞTIKLARIM"), Tab(text: "KAYDETTİKLERİM")]),
+      Container(padding: const EdgeInsets.all(4), decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: const Color(0xFFD4AF37), width: 2)), child: const CircleAvatar(radius: 45, backgroundColor: Color(0xFF1E1E1E), child: Icon(Icons.person, color: Color(0xFFD4AF37), size: 50))),
+      const SizedBox(height: 15), 
+      Text(user?.displayName ?? "Zihin", style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
+      const SizedBox(height: 20), 
+      const TabBar(labelColor: Color(0xFFD4AF37), unselectedLabelColor: Colors.grey, indicatorColor: Color(0xFFD4AF37), indicatorWeight: 3, tabs: [Tab(text: "PAYLAŞTIKLARIM"), Tab(text: "KAYDETTİKLERİM")]),
       Expanded(child: TabBarView(children: [
-        // PAYLAŞTIKLARIM
         StreamBuilder<QuerySnapshot>(stream: FirebaseFirestore.instance.collection('quotes').where('user_id', isEqualTo: user?.uid).orderBy('created_at', descending: true).snapshots(), builder: (context, snapshot) {
           if (!snapshot.hasData) return const Center(child: CircularProgressIndicator(color: Color(0xFFD4AF37)));
-          if (snapshot.data!.docs.isEmpty) return const Center(child: Text("Henüz yok.", style: TextStyle(color: Colors.grey)));
-          return ListView.builder(itemCount: snapshot.data!.docs.length, itemBuilder: (context, index) { var data = snapshot.data!.docs[index].data() as Map<String, dynamic>; return Card(color: const Color(0xFF1E1E1E), margin: const EdgeInsets.all(8), child: ListTile(title: Text(data['text'], style: const TextStyle(color: Colors.white)), subtitle: Text("❤️ ${data['likes']} Beğeni", style: const TextStyle(color: Colors.grey)))); });
+          if (snapshot.data!.docs.isEmpty) return const Center(child: Text("Sessizlik...", style: TextStyle(color: Colors.grey, fontStyle: FontStyle.italic)));
+          return ListView.builder(itemCount: snapshot.data!.docs.length, itemBuilder: (context, index) { var data = snapshot.data!.docs[index].data() as Map<String, dynamic>; return Card(color: const Color(0xFF1E1E1E), margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)), child: ListTile(contentPadding: const EdgeInsets.all(16), title: Text("\"${data['text']}\"", style: const TextStyle(color: Colors.white, fontStyle: FontStyle.italic)), subtitle: Padding(padding: const EdgeInsets.only(top: 10), child: Row(children: [const Icon(Icons.favorite, color: Colors.redAccent, size: 16), const SizedBox(width: 5), Text("${data['likes']} Beğeni", style: const TextStyle(color: Colors.grey))])))); });
         }),
-        // KAYDETTİKLERİM (DÜZELTİLDİ)
-        FutureBuilder<List<String>>(future: SharedPreferences.getInstance().then((p) => p.getStringList('saved_quotes_v2') ?? []), builder: (context, snapshot) {
-          if (!snapshot.hasData || snapshot.data!.isEmpty) return const Center(child: Text("Henüz yok.", style: TextStyle(color: Colors.grey)));
-          return ListView.builder(itemCount: snapshot.data!.length, itemBuilder: (context, index) { 
-             try { var q = Quote.fromJson(jsonDecode(snapshot.data![index])); return Card(color: const Color(0xFF1E1E1E), margin: const EdgeInsets.all(8), child: ListTile(title: Text(q.text, style: const TextStyle(color: Colors.white)), subtitle: Text(q.author, style: const TextStyle(color: Color(0xFFD4AF37))))); } catch (e) { return const SizedBox(); }
+        StreamBuilder<QuerySnapshot>(stream: FirebaseFirestore.instance.collection('users').doc(user?.uid).collection('saved').snapshots(), builder: (context, snapshot) {
+          if (!snapshot.hasData) return const Center(child: CircularProgressIndicator(color: Color(0xFFD4AF37)));
+          if (snapshot.data!.docs.isEmpty) return const Center(child: Text("Henüz bir şey kaydetmedin.", style: TextStyle(color: Colors.grey, fontStyle: FontStyle.italic)));
+          return ListView.builder(itemCount: snapshot.data!.docs.length, itemBuilder: (context, index) { 
+             var qData = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+             return Card(color: const Color(0xFF1E1E1E), margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)), child: ListTile(contentPadding: const EdgeInsets.all(16), title: Text("\"${qData['text']}\"", style: const TextStyle(color: Colors.white, fontStyle: FontStyle.italic)), subtitle: Padding(padding: const EdgeInsets.only(top: 10), child: Text("- ${qData['author']}", style: const TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold)))));
           });
         })
       ]))
@@ -366,12 +368,52 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 }
 
-// --- DÜZENLEME SAYFASI ---
+// --- ⚙️ PROFİL DÜZENLEME SAYFASI (Profesyonel UI) ---
 class EditProfilePage extends StatefulWidget { final User? user; const EditProfilePage({super.key, required this.user}); @override State<EditProfilePage> createState() => _EditProfilePageState(); }
 class _EditProfilePageState extends State<EditProfilePage> {
   final _name = TextEditingController(); final _bio = TextEditingController(); bool _loading = false;
   @override void initState() { super.initState(); _load(); }
   void _load() async { var d = await FirebaseFirestore.instance.collection('users').doc(widget.user?.uid).get(); _name.text = d.data()?['username'] ?? ""; _bio.text = d.data()?['bio'] ?? ""; }
-  void _save() async { setState(() => _loading = true); await widget.user?.updateDisplayName(_name.text); await FirebaseFirestore.instance.collection('users').doc(widget.user?.uid).update({'username': _name.text, 'bio': _bio.text}); if(mounted) Navigator.pop(context); }
-  @override Widget build(BuildContext context) { return Scaffold(backgroundColor: Colors.black, appBar: AppBar(backgroundColor: Colors.black, title: const Text("Profili Düzenle")), body: Padding(padding: const EdgeInsets.all(20), child: Column(children: [TextField(controller: _name, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "İsim", filled: true, fillColor: Color(0xFF1E1E1E))), const SizedBox(height: 20), TextField(controller: _bio, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "Bio", filled: true, fillColor: Color(0xFF1E1E1E))), const SizedBox(height: 40), ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD4AF37), minimumSize: const Size(double.infinity, 50)), onPressed: _loading ? null : _save, child: const Text("KAYDET", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))) ]))); }
+  
+  void _save() async { 
+    if(_name.text.isEmpty) return;
+    setState(() => _loading = true); 
+    await widget.user?.updateDisplayName(_name.text.trim()); 
+    await FirebaseFirestore.instance.collection('users').doc(widget.user?.uid).update({'username': _name.text.trim(), 'bio': _bio.text.trim()}); 
+    if(mounted) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Profil Güncellendi"), backgroundColor: Color(0xFFD4AF37)));
+    }
+  }
+
+  @override Widget build(BuildContext context) { 
+    return Scaffold(
+      backgroundColor: Colors.black, 
+      appBar: AppBar(backgroundColor: Colors.black, elevation: 0, title: const Text("Profili Düzenle", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)), iconTheme: const IconThemeData(color: Colors.white)), 
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0), 
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(child: Stack(children: [
+                Container(padding: const EdgeInsets.all(4), decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: const Color(0xFFD4AF37), width: 2)), child: const CircleAvatar(radius: 50, backgroundColor: Color(0xFF1E1E1E), child: Icon(Icons.person, color: Color(0xFFD4AF37), size: 60))),
+                Positioned(bottom: 0, right: 0, child: Container(padding: const EdgeInsets.all(8), decoration: const BoxDecoration(color: Color(0xFFD4AF37), shape: BoxShape.circle), child: const Icon(Icons.camera_alt, color: Colors.black, size: 20)))
+              ])),
+              const SizedBox(height: 40),
+              const Text("Kullanıcı Adı", style: TextStyle(color: Colors.grey, fontSize: 14, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              TextField(controller: _name, style: const TextStyle(color: Colors.white), decoration: InputDecoration(prefixIcon: const Icon(Icons.person_outline, color: Color(0xFFD4AF37)), filled: true, fillColor: const Color(0xFF1E1E1E), border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none))), 
+              const SizedBox(height: 24), 
+              const Text("Biyografi", style: TextStyle(color: Colors.grey, fontSize: 14, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              TextField(controller: _bio, maxLines: 3, style: const TextStyle(color: Colors.white), decoration: InputDecoration(hintText: "Kendinden bahset...", hintStyle: const TextStyle(color: Colors.grey), filled: true, fillColor: const Color(0xFF1E1E1E), border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none))), 
+              const SizedBox(height: 50), 
+              SizedBox(width: double.infinity, height: 55, child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD4AF37), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))), onPressed: _loading ? null : _save, child: _loading ? const CircularProgressIndicator(color: Colors.black) : const Text("DEĞİŞİKLİKLERİ KAYDET", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16, letterSpacing: 1)))) 
+            ]
+          )
+        )
+      )
+    ); 
+  }
 }
