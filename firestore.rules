@@ -1,0 +1,168 @@
+rules_version = '2';
+
+// Memento — Firestore güvenlik kuralları
+//
+// Deploy:  firebase deploy --only firestore:rules
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() { return request.auth != null; }
+    function uid()        { return request.auth.uid; }
+
+    // Bu yazma SADECE listelenen alanlara mı dokunuyor?
+    function onlyFields(fields) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(fields);
+    }
+
+    function isFollowerOf(ownerId) {
+      return exists(/databases/$(database)/documents/users/$(ownerId)/followers/$(uid()));
+    }
+
+    // ---------------------------------------------------------------
+    // KULLANICI ADLARI — benzersizlik kilidi
+    //
+    // Döküman kimliği kullanıcı adının kendisi. İki kişi aynı anda aynı adı
+    // almaya çalışırsa ikincisi reddedilir: veritabanı seviyesinde garanti.
+    // ---------------------------------------------------------------
+    match /usernames/{name} {
+      allow read: if true;
+      allow create: if isSignedIn()
+                    && request.resource.data.uid == uid()
+                    && request.resource.data.keys().hasOnly(['uid']);
+      allow delete: if isSignedIn() && resource.data.uid == uid();
+      allow update: if false;
+    }
+
+    // ---------------------------------------------------------------
+    // KULLANICILAR
+    // ---------------------------------------------------------------
+    match /users/{userId} {
+      allow read: if true;   // Profiller ve zirve listesi herkese açık.
+
+      allow create: if isSignedIn()
+                    && userId == uid()
+                    && request.resource.data.uid == uid()
+                    && request.resource.data.karma == 0
+                    && request.resource.data.follower_count == 0
+                    && request.resource.data.following_count == 0;
+
+      allow update: if isSignedIn() && (
+        // 1) Sahibi kendi profil alanlarını değiştirir — sayaçlara dokunamaz.
+        (userId == uid() && onlyFields(
+          ['username','username_lower','display_name','bio','link',
+           'photo_url','updated_at']))
+        ||
+        // 2) Sahibi kendi söz sayacını günceller.
+        (userId == uid() && onlyFields(['quote_count']))
+        ||
+        // 3) Beğeni: başkasının karma'sı yalnızca 1 artabilir ya da azalabilir
+        //    (beğeni geri alınabildiği için -1 de gerekli).
+        (onlyFields(['karma'])
+          && (request.resource.data.karma == resource.data.karma + 1
+           || request.resource.data.karma == resource.data.karma - 1))
+        ||
+        // 4) Takip: takipçi/takip sayaçları +1 / -1.
+        (onlyFields(['follower_count'])
+          && (request.resource.data.follower_count == resource.data.follower_count + 1
+           || request.resource.data.follower_count == resource.data.follower_count - 1))
+        ||
+        (userId == uid() && onlyFields(['following_count']))
+      );
+
+      allow delete: if false;
+
+      // Kaydedilen sözler — sadece sahibi.
+      match /saved/{quoteId} {
+        allow read, write: if isSignedIn() && userId == uid();
+      }
+
+      // Beğeni geçmişi — hazır sözler dahil HER beğeni burada.
+      // Sadece sahibi görür ve yazar.
+      match /liked/{quoteId} {
+        allow read, write: if isSignedIn() && userId == uid();
+      }
+
+      // Engellenenler — sadece sahibi.
+      match /blocked/{blockedId} {
+        allow read, write: if isSignedIn() && userId == uid();
+      }
+
+      // Takip grafiği. Her iki kayıt da yalnızca takip EDEN tarafından
+      // yazılabiliyor; kimse kendini başkasının takipçisi yapamaz.
+      match /following/{targetId} {
+        allow read: if true;
+        allow create, delete: if isSignedIn() && userId == uid();
+      }
+      match /followers/{followerId} {
+        allow read: if true;
+        allow create, delete: if isSignedIn() && followerId == uid();
+      }
+    }
+
+    // ---------------------------------------------------------------
+    // SÖZLER
+    // ---------------------------------------------------------------
+    match /quotes/{quoteId} {
+
+      function q() { return resource.data; }
+
+      // ÖNEMLİ: Liste sorgularında bu kural dönen HER döküman için ayrı
+      // çalışır. Yani sorgunun kendisi de filtreli olmalı; filtresiz bir
+      // sorgu tüm isteği reddettirir.
+      allow read: if q().privacy == 'Herkese Açık'
+                  || (isSignedIn() && q().user_id == uid())
+                  || (isSignedIn()
+                      && q().privacy == 'Takipçilerim'
+                      && isFollowerOf(q().user_id));
+
+      allow create: if isSignedIn()
+                    && request.resource.data.user_id == uid()
+                    && request.resource.data.likes == 0
+                    && request.resource.data.text is string
+                    && request.resource.data.text.size() > 0
+                    && request.resource.data.text.size() <= 280
+                    && request.resource.data.author is string
+                    && request.resource.data.author.size() <= 60
+                    && request.resource.data.privacy in
+                       ['Herkese Açık', 'Takipçilerim', 'Yalnızca Ben'];
+
+      allow update: if isSignedIn() && (
+        // Sahibi düzenler — beğeni sayısına dokunamaz.
+        (q().user_id == uid() && onlyFields(
+          ['text','author','privacy','lang','owner_username','owner_photo_url','updated_at']))
+        ||
+        // Beğeni: likes +1 ya da -1.
+        (onlyFields(['likes'])
+          && (request.resource.data.likes == resource.data.likes + 1
+           || request.resource.data.likes == resource.data.likes - 1))
+      );
+
+      allow delete: if isSignedIn() && q().user_id == uid();
+
+      // Kim neyi beğendi. Döküman kimliği = beğenenin uid'si, bu yüzden
+      // aynı kişi aynı sözü ikinci kez beğenemez.
+      match /likes/{likerId} {
+        allow read: if isSignedIn();
+        allow create: if isSignedIn()
+                      && likerId == uid()
+                      && request.resource.data.user_id == uid();
+        allow delete: if isSignedIn() && likerId == uid();
+        allow update: if false;
+      }
+    }
+
+    // "Beğendiklerim" collectionGroup sorgusu için.
+    match /{path=**}/likes/{likerId} {
+      allow read: if isSignedIn();
+    }
+
+    // ---------------------------------------------------------------
+    // ŞİKÂYETLER — yazılır, okunmaz. Sadece konsoldan incelenir.
+    // ---------------------------------------------------------------
+    match /reports/{reportId} {
+      allow create: if isSignedIn()
+                    && request.resource.data.reporter_id == uid();
+      allow read, update, delete: if false;
+    }
+  }
+}
