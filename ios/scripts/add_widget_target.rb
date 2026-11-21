@@ -17,8 +17,16 @@ runner  = project.targets.find { |t| t.name == 'Runner' }
 abort 'Runner hedefi bulunamadı' unless runner
 
 # --- Runner: App Group yetkisi + gizlilik manifesti -------------------------
+TEAM_ID = ENV['TEAM_ID']
+
 runner.build_configurations.each do |c|
   c.build_settings['CODE_SIGN_ENTITLEMENTS'] = 'Runner/Runner.entitlements'
+  if TEAM_ID
+    c.build_settings['DEVELOPMENT_TEAM'] = TEAM_ID
+    c.build_settings['CODE_SIGN_STYLE']  = 'Automatic'
+    c.build_settings['CODE_SIGN_IDENTITY'] = 'Apple Development'
+    c.build_settings.delete('PROVISIONING_PROFILE_SPECIFIER')
+  end
 end
 
 runner_group = project.main_group.find_subpath('Runner', false)
@@ -62,6 +70,7 @@ widget.build_configurations.each do |c|
                                       '@executable_path/../../Frameworks']
   s['GENERATE_INFOPLIST_FILE']     = 'NO'
   s['CODE_SIGN_STYLE']             = 'Automatic'
+  s['DEVELOPMENT_TEAM']            = TEAM_ID if TEAM_ID
 end
 
 # Sürüm numarası ana uygulamayla aynı olmalı, yoksa App Store reddeder:
