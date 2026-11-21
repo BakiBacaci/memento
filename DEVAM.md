@@ -7,7 +7,7 @@
 ## Kısa özet
 
 - iOS uygulaması **Codemagic'te derleniyor** ve **App Store Connect / TestFlight'a otomatik yükleniyor.** Son başarılı derleme **2611211409**.
-- **21 Kasım 2026, 18:12: sürüm 1.0 (derleme 2611211409) App Store incelemesine gönderildi.** Durum: *Waiting for Review*. Onaylanınca otomatik yayınlanacak.
+- **Sürüm 1.0, 21 Kasım 2026'da App Store incelemesine gönderildi, sonra hataları düzeltmek için geri çekildi.** Durum: *Developer Rejected* (geliştirici geri çekti; sicile işlemez). Düzeltmeler bitince sürüm sayfasından yeni derleme seçilip **Add for Review** ile tekrar gönderilecek.
 - **TestFlight beta incelemesine de gönderildi** (dış grup *Testciler*, Baki'nin iki hesabı). Apple onaylayınca davet e-postası gidecek.
 - Apple Developer hesabı Esad'ın (Team ID `2PLFDNRQMR`). Uygulama orada **"Memento: Günün Sözü"** adıyla kayıtlı (Apple ID `6837676805`).
 
@@ -50,7 +50,11 @@
 
 ## Kalan işler
 
-1. **Apple'ın cevabını bekle** (genelde 24–48 saat). Ret gelirse e-postada sebep yazar; App Store Connect → App Review'da yanıtla ya da düzeltip yeni derleme gönder.
+1. **Düzeltilecekler** (incelemeden önce):
+   - Baki'nin yeni özellikleri ve yeni ikonu → `main` dalına gönder → Codemagic'te yeni derleme.
+   - **Demo hesap:** App Store Connect'te verilen demo hesap Baki'nin kendi hesabı. Yöneticiyse (Firestore'da `admins/{uid}` varsa) yöneticiliği olmayan ayrı bir demo hesap aç. Sürüm sayfasında (App Review → Sign-In) ve TestFlight → Test Information'da bilgileri onunla değiştir. Kendi hesabının şifresini de değiştir; şifre sohbette paylaşıldı.
+   - Akış ve Zirve'deki test içeriklerini temizle.
+   - Sonra sürüm sayfasında yeni derlemeyi seç → **Add for Review**. Sürüm numarası 1.0 olarak kalabilir; henüz yayınlanmadığı için 1.0.1 gerekmez.
 2. **Mağazaya çıkınca:** `lib/widgets/share_card.dart` → `QuoteShareSheet.storeLink` alanına App Store bağlantısını yaz (sonraki güncellemeyle çıkar).
 3. Akış ve Zirve ekranlarındaki test içeriklerini ("deneme", "aaaa" vb.) Firestore'dan temizle; mağazadaki kullanıcılar da görecek.
 4. **1.0.1 hazır, `main` dalında.** 1.0 incelemeye eski "eller + MEMENTO" simgesiyle gitti, çünkü iOS simge dosyaları yanlış adla kaydedilmişti. 21 Kasım'da düzeltildi (commit 447ab02).
