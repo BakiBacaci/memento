@@ -56,7 +56,20 @@ workflows:
           KEY_DIR="$HOME/private_keys"
           mkdir -p "$KEY_DIR"
           KEY_PATH="$KEY_DIR/AuthKey_${APP_STORE_CONNECT_KEY_IDENTIFIER}.p8"
-          printf '%s' "$APP_STORE_CONNECT_PRIVATE_KEY" > "$KEY_PATH"
+          KEY_VALUE="$APP_STORE_CONNECT_PRIVATE_KEY"
+          case "$KEY_VALUE" in
+            @file:*) cp "${KEY_VALUE#@file:}" "$KEY_PATH" ;;
+            @env:*)  VAR="${KEY_VALUE#@env:}"; printf '%s\n' "${!VAR}" > "$KEY_PATH" ;;
+            *)       printf '%b\n' "$KEY_VALUE" > "$KEY_PATH" ;;
+          esac
+          # Gizli içeriği yazdırmadan biçimi doğrula.
+          echo "Anahtar satır sayısı: $(wc -l < "$KEY_PATH")"
+          if head -1 "$KEY_PATH" | grep -q 'BEGIN PRIVATE KEY'; then
+            echo "Anahtar biçimi: PEM (uygun)"
+          else
+            echo "Anahtar PEM değil; ilk karakterler: $(head -c 6 "$KEY_PATH" | tr -c '[:alnum:]-@:' '?')"
+            exit 1
+          fi
           echo "ASC_KEY_PATH=$KEY_PATH" >> "$CM_ENV"
       - name: Derle ve imzala
         script: |
