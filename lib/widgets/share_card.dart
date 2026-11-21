@@ -30,16 +30,19 @@ enum ShareFormat {
 
 /// Sözü platforma göre tasarlanmış bir görsele çevirip paylaşır.
 ///
-/// Büyümenin ana kanalı bu: her görsel uygulamanın adını ve adresini taşıyor.
+/// Büyümenin ana kanalı bu: her görsel uygulamanın adını taşıyor.
 class QuoteShareSheet {
-  static const _link = 'bakibacaci.github.io/memento';
+  /// Uygulama mağazaya çıkınca buraya App Store / Play bağlantısı yazılır;
+  /// boşken paylaşımlarda bağlantı yer almaz (yalnızca "memento" adı).
+  static const storeLink = '';
+  static String get _tail => storeLink.isEmpty ? 'Memento' : 'Memento · $storeLink';
 
   static Future<void> show(BuildContext context, Quote quote) async {
     final messenger = ScaffoldMessenger.of(context);
     final lang = context.lang;
     final text = quote.textFor(lang);
     final author = quote.authorFor(lang);
-    final plain = '“$text”\n— $author\n\nMemento · https://$_link';
+    final plain = '“$text”\n— $author\n\n$_tail';
 
     Future<void> image(ShareFormat f) async {
       final ok = await _shareAsImage(quote, lang, plain, f);
@@ -102,7 +105,7 @@ class QuoteShareSheet {
                       // Metin + bağlantı doğrudan X'in gönderi ekranına; X 280
                       // karakter sınırı için söz gerekirse kısaltılır.
                       final short = text.length > 200 ? '${text.substring(0, 197)}…' : text;
-                      final tweet = '“$short” — $author\n\nhttps://$_link';
+                      final tweet = '“$short” — $author\n\n$_tail';
                       AppLinks.open('https://x.com/intent/post?text=${Uri.encodeComponent(tweet)}');
                     },
                   ),
@@ -216,11 +219,14 @@ class QuoteShareSheet {
       fontWeight: FontWeight.w800, letterSpacing: -1.5,
     ));
     brand.paint(canvas, Offset(side, format.top - brand.height - 20));
-    final link = paint(_link, TextStyle(
-      fontFamily: kSans, color: ink, fontSize: 28, fontWeight: FontWeight.w600,
-    ));
-    link.paint(canvas, Offset(w - format.right - link.width,
-        format.top - 20 - brand.height + (brand.height - link.height) / 2));
+    // Sağ üstte mağaza bağlantısı yalnızca uygulama yayındayken.
+    if (storeLink.isNotEmpty) {
+      final link = paint(storeLink, TextStyle(
+        fontFamily: kSans, color: ink, fontSize: 28, fontWeight: FontWeight.w600,
+      ));
+      link.paint(canvas, Offset(w - format.right - link.width,
+          format.top - 20 - brand.height + (brand.height - link.height) / 2));
+    }
 
     final image = await recorder.endRecording().toImage(w.toInt(), h.toInt());
     final data = await image.toByteData(format: ui.ImageByteFormat.png);
