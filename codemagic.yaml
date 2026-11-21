@@ -37,12 +37,16 @@ workflows:
         script: |
           gem install xcodeproj --no-document || true
           cd ios && ruby scripts/add_widget_target.rb
-      - name: Podfile ve CocoaPods
+      - name: Bağımlılıklar (SPM / CocoaPods)
         script: |
-          # Podfile depoda yok; Flutter üretir.
+          # Yeni Flutter, eklentileri Swift Package Manager ile kurar; Podfile
+          # yalnızca SPM desteklemeyen eklenti varsa oluşur.
           flutter build ios --config-only --release --no-codesign
-          sed -i '' "s/^# platform :ios.*/platform :ios, '13.0'/" ios/Podfile
-          cd ios && pod install --repo-update
+          if [ -f ios/Podfile ]; then
+            cd ios && pod install --repo-update
+          else
+            echo "Podfile yok, Swift Package Manager kullanılıyor."
+          fi
       - name: Apple API anahtarı (bulut imzalama için)
         script: |
           # Sertifika ve profilleri Xcode, Apple'ın bulutta yönettiği
