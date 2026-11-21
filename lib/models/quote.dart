@@ -53,6 +53,12 @@ class Quote {
   final int likes;
   final String visibility;
 
+  /// Yazarın seçtiği kart rengi (QuoteMood paletinde sıra). Yoksa null.
+  final int? color;
+
+  /// Günün sözü havuzunda mı (herkese iyi gelecek, motive eden sözler).
+  final bool daily;
+
   const Quote({
     required this.id,
     required this.text,
@@ -65,6 +71,8 @@ class Quote {
     this.ownerPhotoUrl,
     this.likes = 0,
     this.visibility = QuoteVisibility.public,
+    this.color,
+    this.daily = false,
   });
 
   /// Firestore'dan mı geldi? Beğeni ve karma yalnızca bunlarda çalışır.
@@ -88,13 +96,14 @@ class Quote {
       author: (json['author'] as String?) ?? 'Anonim',
       textEn: json['text_en'] as String?,
       authorEn: json['author_en'] as String?,
+      daily: json['daily'] == true,
     );
   }
 
   factory Quote.fromFirestore(String docId, Map<String, dynamic> d) {
     return Quote(
       id: docId,
-      text: (d['text'] as String?) ?? '',
+      text: ((d['text'] as String?) ?? '').trim(),
       author: (d['author'] as String?) ?? 'Anonim',
       lang: (d['lang'] as String?) ?? 'tr',
       ownerId: d['user_id'] as String?,
@@ -102,6 +111,7 @@ class Quote {
       ownerPhotoUrl: d['owner_photo_url'] as String?,
       likes: (d['likes'] as num?)?.toInt() ?? 0,
       visibility: (d['privacy'] as String?) ?? QuoteVisibility.public,
+      color: (d['color'] as num?)?.toInt(),
     );
   }
 
@@ -117,6 +127,7 @@ class Quote {
         'owner_photo_url': ownerPhotoUrl,
         'likes': likes,
         'privacy': visibility,
+        if (color != null) 'color': color,
       };
 
   factory Quote.fromJson(Map<String, dynamic> j) {
@@ -135,6 +146,7 @@ class Quote {
       ownerPhotoUrl: j['owner_photo_url'] as String?,
       likes: (j['likes'] as num?)?.toInt() ?? 0,
       visibility: (j['privacy'] as String?) ?? QuoteVisibility.public,
+      color: (j['color'] as num?)?.toInt(),
     );
   }
 
@@ -150,6 +162,7 @@ class Quote {
         ownerPhotoUrl: ownerPhotoUrl,
         likes: likes ?? this.likes,
         visibility: visibility,
+        color: color,
       );
 
   @override

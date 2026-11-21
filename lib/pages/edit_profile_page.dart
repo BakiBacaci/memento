@@ -1,13 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../l10n/strings.dart';
 import '../models/app_user.dart';
-import '../services/storage_service.dart';
 import '../services/user_service.dart';
 import '../theme.dart';
 import '../widgets/chunky_button.dart';
+import '../widgets/photo_sheet.dart';
 import '../widgets/user_avatar.dart';
 
 /// Profil düzenleme — Instagram/Twitter'ın kullandığı düzen.
@@ -36,6 +37,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   bool _saving = false;
   bool _uploading = false;
   String? _usernameError;
+  UsernameStatus? _status;
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -47,6 +50,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void dispose() {
     _name.dispose();
+    _debounce?.cancel();
     _username.dispose();
     _bio.dispose();
     _link.dispose();
@@ -58,31 +62,28 @@ class _EditProfilePageState extends State<EditProfilePage> {
     final err = v.isEmpty || UserService.isValidUsername(v)
         ? null
         : context.t('err_username_invalid');
-    if (err != _usernameError) setState(() => _usernameError = err);
+    setState(() {
+      _usernameError = err;
+      _status = null;
+    });
+    _debounce?.cancel();
+    if (err != null || v.isEmpty) return;
+    _debounce = Timer(const Duration(milliseconds: 450), () async {
+      final st = await UserService.instance.usernameStatus(v);
+      if (mounted && _username.text.trim() == v) setState(() => _status = st);
+    });
   }
 
   Future<void> _pickPhoto() async {
-    final uid = UserService.instance.uid;
-    if (uid == null) return;
-
-    final XFile? file = await StorageService.instance.pickImage();
-    if (file == null) return;
-
-    setState(() => _uploading = true);
-    final url = await StorageService.instance.uploadProfilePhoto(uid, file);
-    if (!mounted) return;
-
-    if (url == null) {
-      setState(() => _uploading = false);
-      _toast(context.t('photo_failed'));
-      return;
-    }
-    await UserService.instance.updatePhotoUrl(uid, url);
-    if (!mounted) return;
-    setState(() {
-      _photoUrl = url;
-      _uploading = false;
-    });
+    final url = await changeProfilePhoto(
+      context,
+      hasPhoto: (_photoUrl ?? '').isNotEmpty,
+      onBusy: (v) {
+        if (mounted) setState(() => _uploading = v);
+      },
+    );
+    if (url == null || !mounted) return;
+    setState(() => _photoUrl = url.isEmpty ? null : url);
   }
 
   void _toast(String msg) => ScaffoldMessenger.of(context)
@@ -100,10 +101,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     setState(() => _saving = true);
     try {
-      final changed =
-          username.toLowerCase() != (widget.user?.username ?? '').toLowerCase();
-      if (changed &&
-          !await UserService.instance.isUsernameAvailable(username)) {
+      if (await UserService.instance.usernameStatus(username) ==
+          UsernameStatus.taken) {
         if (!mounted) return;
         setState(() => _saving = false);
         _toast(context.t('err_username_taken'));
@@ -163,25 +162,25 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       initial: _name.text.isEmpty
                           ? _username.text
                           : _name.text,
-                      radius: 46,
+                      radius: 52,
                       onTap: _uploading ? null : _pickPhoto,
                     ),
                     Container(
-                      padding: const EdgeInsets.all(7),
+                      padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: AppColors.gold,
+                        color: AppColors.textPrimary,
                         shape: BoxShape.circle,
-                        border: Border.all(color: AppColors.bg, width: 2.5),
+                        border: Border.all(color: AppColors.bg, width: 3),
                       ),
                       child: _uploading
-                          ? const SizedBox(
+                          ? SizedBox(
                               width: 14,
                               height: 14,
                               child: CircularProgressIndicator(
-                                  strokeWidth: 2, color: Colors.black),
+                                  strokeWidth: 2, color: AppColors.bg),
                             )
-                          : const Icon(Icons.camera_alt,
-                              size: 15, color: Colors.black),
+                          : Icon(Icons.camera_alt,
+                              size: 16, color: AppColors.bg),
                     ),
                   ],
                 ),
@@ -206,8 +205,22 @@ class _EditProfilePageState extends State<EditProfilePage> {
             controller: _username,
             maxLength: 20,
             prefix: '@',
-            error: _usernameError,
-            helper: context.t('username_helper'),
+            error: _usernameError ??
+                (_status == UsernameStatus.taken
+                    ? context.t('err_username_taken')
+                    : null),
+            helper: switch (_status) {
+              UsernameStatus.free => context.t('username_free'),
+              UsernameStatus.mine => context.t('username_mine'),
+              _ => context.t('username_helper'),
+            },
+            suffix: switch (_status) {
+              UsernameStatus.free || UsernameStatus.mine =>
+                const Icon(Icons.check_circle, color: Color(0xFF2E9E5B)),
+              UsernameStatus.taken =>
+                const Icon(Icons.cancel, color: Color(0xFFE5482F)),
+              _ => null,
+            },
             formatters: [
               FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9_]')),
             ],
@@ -250,14 +263,14 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(20, 26, 20, 10),
+        padding: const EdgeInsets.fromLTRB(20, 26, 20, 12),
         child: Text(
-          text.toUpperCase(),
-          style: const TextStyle(
-            color: AppColors.gold,
-            fontSize: 11,
+          text,
+          style: TextStyle(
+            color: AppColors.textPrimary,
+            fontSize: 22,
             fontWeight: FontWeight.w800,
-            letterSpacing: 1.4,
+            letterSpacing: -0.5,
           ),
         ),
       );
@@ -275,6 +288,7 @@ class _Field extends StatelessWidget {
     this.helper,
     this.keyboardType,
     this.formatters,
+    this.suffix,
   });
 
   final String label;
@@ -287,6 +301,7 @@ class _Field extends StatelessWidget {
   final String? helper;
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? formatters;
+  final Widget? suffix;
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -295,9 +310,9 @@ class _Field extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(label,
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 13,
+                style: TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 15,
                     fontWeight: FontWeight.w600)),
             const SizedBox(height: 6),
             TextField(
@@ -306,15 +321,16 @@ class _Field extends StatelessWidget {
               maxLines: maxLines,
               keyboardType: keyboardType,
               inputFormatters: formatters,
-              style: const TextStyle(color: Colors.white, fontSize: 15),
+              style: TextStyle(color: AppColors.textPrimary, fontSize: 15),
               decoration: InputDecoration(
                 hintText: hint,
                 prefixText: prefix,
                 prefixStyle:
-                    const TextStyle(color: AppColors.textMuted, fontSize: 15),
+                    TextStyle(color: AppColors.textMuted, fontSize: 15),
                 errorText: error,
+                suffixIcon: suffix,
                 helperText: helper,
-                helperStyle: const TextStyle(
+                helperStyle: TextStyle(
                     color: AppColors.textMuted, fontSize: 11),
               ),
             ),

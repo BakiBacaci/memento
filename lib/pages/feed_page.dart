@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../l10n/strings.dart';
 import '../models/quote.dart';
+import '../services/block_service.dart';
 import '../services/quote_service.dart';
 import '../services/user_service.dart';
 import '../widgets/common.dart';
 import '../widgets/quote_actions.dart';
 import '../widgets/quote_tile.dart';
 import '../widgets/share_card.dart';
+import 'notifications_page.dart';
 import 'profile_page.dart';
 
 /// Üç sekmeli akış: Popüler / Yeni / Takip.
@@ -37,13 +39,23 @@ class _FeedPageState extends State<FeedPage>
     return Scaffold(
       appBar: AppBar(
         title: Text(context.t('feed')),
-        bottom: TabBar(
+        actions: [
+          if (UserService.instance.isSignedIn) const NotificationBell(),
+          const SizedBox(width: 6),
+        ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(52),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: TabBar(
           controller: _tabs,
           tabs: [
             Tab(text: context.t('tab_popular')),
             Tab(text: context.t('tab_new')),
             Tab(text: context.t('tab_following')),
           ],
+        ),
+          ),
         ),
       ),
       body: TabBarView(
@@ -104,7 +116,16 @@ class _QuoteStreamList extends StatelessWidget {
         }
         if (!snap.hasData) return const ShimmerList();
 
-        final quotes = snap.data!;
+        return ValueListenableBuilder<Set<String>>(
+          valueListenable: BlockService.instance.blocked,
+          builder: (context, _, __) => _buildList(context, snap.data!),
+        );
+      },
+    );
+  }
+
+  Widget _buildList(BuildContext context, List<Quote> all) {
+        final quotes = BlockService.instance.filter(all);
         if (quotes.isEmpty) {
           return EmptyState(message: context.t(emptyKey), icon: emptyIcon);
         }
@@ -129,7 +150,5 @@ class _QuoteStreamList extends StatelessWidget {
             );
           },
         );
-      },
-    );
   }
 }

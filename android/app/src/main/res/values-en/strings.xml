@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_name">Quote of the Day</string>
+    <string name="widget_description">A quote picked for you every day, in its own color.</string>
+    <string name="widget_small_name">Quote of the Day (small)</string>
+    <string name="widget_small_description">Today\'s quote, short and colorful.</string>
+    <string name="widget_journal_name">Your journal</string>
+    <string name="widget_journal_description">Your streak and the last 7 days.</string>
+</resources>

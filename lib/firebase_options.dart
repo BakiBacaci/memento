@@ -52,23 +52,21 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyB1EFILuQ2ZrcpJgiNIDTet52EZFWdiTr0',
-    appId: '1:906107187459:android:998279fe07ea3e79c23936',
+    appId: '1:906107187459:android:c15e6c94ca18c0e7c23936',
     messagingSenderId: '906107187459',
     projectId: 'memento-60cce',
     storageBucket: 'memento-60cce.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAbmKk48oRUp1q8pnz2Vksra-K-bL2tdHw',
-    appId: '1:906107187459:ios:3305573607aaca1ec23936',
+    appId: '1:906107187459:ios:f3d76df8b36ff293c23936',
     messagingSenderId: '906107187459',
     projectId: 'memento-60cce',
     storageBucket: 'memento-60cce.firebasestorage.app',
     androidClientId: '906107187459-t4j99pvoah71i0jkfrgn6p2fihdq3cfi.apps.googleusercontent.com',
-    iosClientId: '906107187459-0l31iad4lc4ksunpa3t2r5elb2cji7fk.apps.googleusercontent.com',
-    iosBundleId: 'com.example.Memento',
+    iosClientId: '906107187459-0a71lrtk5m7eoqtscimaqqab0j0vbdo9.apps.googleusercontent.com',
+    iosBundleId: 'com.bakibacaci.memento',
   );
-
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyAbmKk48oRUp1q8pnz2Vksra-K-bL2tdHw',
     appId: '1:906107187459:ios:3305573607aaca1ec23936',

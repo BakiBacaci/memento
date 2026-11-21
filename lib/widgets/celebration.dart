@@ -77,7 +77,7 @@ class _CelebrationBodyState extends State<_CelebrationBody>
       alignment: Alignment.topCenter,
       children: [
         Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: AppColors.surface,
             borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           ),
@@ -105,8 +105,8 @@ class _CelebrationBodyState extends State<_CelebrationBody>
                 Text(
                   widget.title,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: AppColors.textPrimary,
                     fontSize: 22,
                     fontWeight: FontWeight.w800,
                   ),
@@ -115,7 +115,7 @@ class _CelebrationBodyState extends State<_CelebrationBody>
                 Text(
                   widget.subtitle,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textMuted,
                     fontSize: 14,
                     height: 1.5,
@@ -212,7 +212,7 @@ class FloatingPlusOne extends StatelessWidget {
             offset: Offset(0, -46 * v),
             child: Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.gold,
                 fontSize: 22,
                 fontWeight: FontWeight.w900,

@@ -1,237 +1,1632 @@
 [
-  { "text": "Yarın, bugünden hazırlanır.", "author": "Mustafa Kemal Atatürk" },
-  { "text": "Kendini bilmek, tüm bilgeliğin başlangıcıdır.", "author": "Aristoteles" },
-  { "text": "Düşünüyorum, öyleyse varım.", "author": "Descartes" },
-  { "text": "Acı kaçınılmazdır, ıstırap tercihtir.", "author": "Buda" },
-  { "text": "Hayat, siz başka planlar yaparken başınıza gelenlerdir.", "author": "John Lennon" },
-  { "text": "Bir sorunu, onu yaratan zihinle çözemezsiniz.", "author": "Albert Einstein" },
-  { "text": "En karanlık gece bile sona erer ve güneş doğar.", "author": "Victor Hugo" },
-  { "text": "Cesaret, korkunun yokluğu değil, ona direnmektir.", "author": "Mark Twain" },
-  { "text": "Ne kadar bilirsen bil, söylediklerin karşındakinin anlayabileceği kadardır.", "author": "Mevlana" },
-  { "text": "Zorluklar, başarının süsüdür.", "author": "Moliere" },
-  { "text": "Bildiğim tek şey, hiçbir şey bilmediğimdir.", "author": "Sokrates" },
-  { "text": "Değişim, yaşamın tek değişmezidir.", "author": "Herakleitos" },
-  { "text": "Öldürmeyen acı güçlendirir.", "author": "Nietzsche" },
-  { "text": "Mutluluk gidilen yolun üzerindedir, yolun sonunda değil.", "author": "Epiktetos" },
-  { "text": "Karanlığa küfredeceğine bir mum yak.", "author": "Konfüçyüs" },
-  { "text": "Sabır, boyun eğmek değil, mücadele etmektir.", "author": "Hz. Ömer" },
-  { "text": "İnsan, düşünen bir kamıştır.", "author": "Blaise Pascal" },
-  { "text": "Adalet mülkün temelidir.", "author": "Hz. Ömer" },
-  { "text": "Cahil kimsenin yanında kitap gibi sessiz ol.", "author": "Mevlana" },
-  { "text": "Eğri cetvelden doğru çizgi çıkmaz.", "author": "Hz. Ali" },
-  { "text": "Dostluk, iki bedende yaşayan tek ruhtur.", "author": "Aristoteles" },
-  { "text": "Denemeyi bırakana kadar başarısız olmuş sayılmazsın.", "author": "Albert Einstein" },
-  { "text": "Gittiğin yer değil, baktığın yön önemlidir.", "author": "Tolstoy" },
-  { "text": "İnsan özgür doğar, ama her yerde zincire vurulmuştur.", "author": "J.J. Rousseau" },
-  { "text": "Hiçbir şey büyüklük kadar sade değildir.", "author": "Emerson" },
-  { "text": "Hayat geriye doğru anlaşılır, ama ileriye doğru yaşanır.", "author": "Kierkegaard" },
-  { "text": "Sözcüklerin gücünü anlamadan, insanların gücünü anlayamazsın.", "author": "Konfüçyüs" },
-  { "text": "Başkalarını bilen kimse bilgili, kendini bilen kimse akıllıdır.", "author": "Lao Tzu" },
-  { "text": "Fırtınalar, ağaçların daha derin kök salmasını sağlar.", "author": "Dolly Parton" },
-  { "text": "Gül sunan bir elde daima bir miktar gül kokusu kalır.", "author": "Çin Atasözü" },
-  { "text": "Bilgi, bölüşüldükçe artan hazinedir.", "author": "Bhartrihari" },
-  { "text": "Gözler sadece zihnin algılamaya hazır olduğu şeyleri görür.", "author": "Henri Bergson" },
-  { "text": "Vazgeçmek her zaman zayıflık demek değildir, bazen bırakacak kadar güçlü olmaktır.", "author": "Anonim" },
-  { "text": "Zaman, her şeyin ilacıdır ama eninde sonunda öldürür.", "author": "Anonim" },
-  { "text": "Uçurtmalar rüzgar gücüyle değil, o güce karşı koydukları için yükselirler.", "author": "W. Churchill" },
-  { "text": "Yolculuk bin millik bir adımla başlar.", "author": "Lao Tzu" },
-  { "text": "İyilik yap, denize at; balık bilmezse Halik bilir.", "author": "Türk Atasözü" },
-  { "text": "Ön yargıları kırmak, atom çekirdeğini parçalamaktan daha zordur.", "author": "Albert Einstein" },
-  { "text": "Savaşın kazananı olmaz, sadece kaybedenleri olur.", "author": "Anonim" },
-  { "text": "İnsan ne kadar az isterse, o kadar çok şeye sahip olur.", "author": "Seneca" },
-  { "text": "Kalp, aklın bilmediği sebeplere sahiptir.", "author": "Pascal" },
-  { "text": "Özgürlük, ne istediğini yapabilmek değil, istemediğini yapmamaktır.", "author": "Rousseau" },
-  { "text": "Bir hata yapıp düzeltmeyen kişi, ikinci bir hata yapmış olur.", "author": "Konfüçyüs" },
-  { "text": "Korku, karanlık tarafa giden yoldur.", "author": "Yoda" },
-  { "text": "Mucizeler, inanmayanlar için gerçekleşmez.", "author": "Anonim" },
-  { "text": "Kitaplar, soğuk ama güvenilir dostlardır.", "author": "Victor Hugo" },
-  { "text": "Gerçek keşif, yeni topraklar bulmak değil, yeni gözlerle bakmaktır.", "author": "Marcel Proust" },
-  { "text": "Aklın bittiği yerde hırs başlar.", "author": "Anonim" },
-  { "text": "İnsanlar köprü kuracakları yerde duvar ördükleri için yalnız kalırlar.", "author": "Newton" },
-  { "text": "Mutlu bir hayat için gereken çok az şey vardır; her şey senin düşünme biçimindedir.", "author": "Marcus Aurelius" },
-  { "text": "Yaptığın her işi, hayatındaki son işmiş gibi yap.", "author": "Marcus Aurelius" },
-  { "text": "Seni üzen dış olay değil, ona verdiğin hükümdür. Ve onu her an değiştirme gücün var.", "author": "Marcus Aurelius" },
-  { "text": "En iyi intikam, düşmanın gibi olmamaktır.", "author": "Marcus Aurelius" },
-  { "text": "Eyleme engel olan şey, eylemi ilerletir. Yolu kapatan, yolun kendisi olur.", "author": "Marcus Aurelius" },
-  { "text": "Sabah kalkmakta zorlandığında şunu düşün: İnsan olarak işimi yapmak üzere uyanıyorum.", "author": "Marcus Aurelius" },
-  { "text": "İnsanlar birbiri için var oldu; ya onları eğit ya da onlara katlan.", "author": "Marcus Aurelius" },
-  { "text": "Zor olduğu için cesaret edemiyoruz; cesaret edemediğimiz için zor.", "author": "Seneca" },
-  { "text": "Hayat kısa değildir, biz onu kısaltırız.", "author": "Seneca" },
-  { "text": "Her yerde olmak, hiçbir yerde olmamaktır.", "author": "Seneca" },
-  { "text": "Acıyı gerçekte olduğundan çok, hayalimizde çekeriz.", "author": "Seneca" },
-  { "text": "Nereye gideceğini bilmeyen gemiye hiçbir rüzgâr yardım etmez.", "author": "Seneca" },
-  { "text": "Bütün zalimlikler zayıflıktan doğar.", "author": "Seneca" },
-  { "text": "Şans, hazırlığın fırsatla buluştuğu yerdir.", "author": "Seneca" },
-  { "text": "Başımıza geleni seçemeyiz, ona vereceğimiz tepkiyi seçebiliriz.", "author": "Epiktetos" },
-  { "text": "İki kulağımız ve tek ağzımız var; iki kat dinleyip yarı yarıya konuşmalıyız.", "author": "Epiktetos" },
-  { "text": "Zengin olmak istiyorsan malını çoğaltma, arzunu azalt.", "author": "Epiktetos" },
-  { "text": "Kendi düşüncelerinin efendisi olmayan hiç kimse özgür değildir.", "author": "Epiktetos" },
-  { "text": "Neden'i olan, her nasıl'a katlanır.", "author": "Nietzsche" },
-  { "text": "Uçuruma uzun süre bakarsan, uçurum da senin içine bakar.", "author": "Nietzsche" },
-  { "text": "Dans eden bir yıldız doğurabilmek için insanın içinde kaos olmalı.", "author": "Nietzsche" },
-  { "text": "Kendi kendine emretmeyi bilmeyen, itaat etmeye mecburdur.", "author": "Nietzsche" },
-  { "text": "Sorgulanmamış bir hayat, yaşanmaya değmez.", "author": "Sokrates" },
-  { "text": "İyi insana ne yaşarken ne öldükten sonra hiçbir kötülük dokunmaz.", "author": "Sokrates" },
-  { "text": "Kendine hâkim olmak, en büyük zaferdir.", "author": "Platon" },
-  { "text": "Karanlıktan korkan çocuğu affedebiliriz; asıl trajedi, yetişkinlerin aydınlıktan korkmasıdır.", "author": "Platon" },
-  { "text": "Eğitimin kökleri acıdır, ama meyvesi tatlıdır.", "author": "Aristoteles" },
-  { "text": "Umut, uyanık insanın rüyasıdır.", "author": "Aristoteles" },
-  { "text": "Hiç kimse aynı nehirde iki kez yıkanamaz.", "author": "Herakleitos" },
-  { "text": "Karakter, kaderdir.", "author": "Herakleitos" },
-  { "text": "İnsan, her şeyin ölçüsüdür.", "author": "Protagoras" },
-  { "text": "Şüphe, bilgeliğin başlangıcıdır.", "author": "Descartes" },
-  { "text": "İnsan, kendini ne yaparsa odur.", "author": "Sartre" },
-  { "text": "Kışın ortasında, içimde yenilmez bir yaz olduğunu keşfettim.", "author": "Albert Camus" },
-  { "text": "Özgürlük, daha iyi olma şansından başka bir şey değildir.", "author": "Albert Camus" },
-  { "text": "Kendini tanı.", "author": "Delfi Tapınağı" },
-  { "text": "Mükemmel, iyinin düşmanıdır.", "author": "Voltaire" },
-  { "text": "Bir toplumun uygarlık düzeyi, hapishanelerine girilerek ölçülür.", "author": "Dostoyevski" },
-  { "text": "İnsan, her şeye alışan bir yaratıktır.", "author": "Dostoyevski" },
-  { "text": "Cehennem, artık sevemez olmanın ıstırabıdır.", "author": "Dostoyevski" },
-  { "text": "Herkes dünyayı değiştirmeyi düşünür, ama kimse kendini değiştirmeyi düşünmez.", "author": "Tolstoy" },
-  { "text": "En güçlü iki savaşçı sabır ve zamandır.", "author": "Tolstoy" },
-  { "text": "Bir kitap, içimizdeki donmuş denizi kıracak balta olmalı.", "author": "Kafka" },
-  { "text": "Hiçbir ordu, zamanı gelmiş bir fikir kadar güçlü değildir.", "author": "Victor Hugo" },
-  { "text": "Kendine karşı dürüst ol.", "author": "Shakespeare" },
-  { "text": "Bütün dünya bir sahnedir, kadın erkek herkes birer oyuncu.", "author": "Shakespeare" },
-  { "text": "Kimse, özgür olduğunu sanan bir köle kadar umutsuzca köle değildir.", "author": "Goethe" },
-  { "text": "Bilmek yetmez, uygulamalısın. İstemek yetmez, yapmalısın.", "author": "Goethe" },
-  { "text": "Konuşmak bir ihtiyaç, dinlemek bir sanattır.", "author": "Goethe" },
-  { "text": "Acele etmeden, ama durmadan.", "author": "Goethe" },
-  { "text": "Yolcu, yol yoktur; yol yürümekle açılır.", "author": "Antonio Machado" },
-  { "text": "Ormanda iki yol ayrılıyordu; ben az gidilenden gittim, bütün farkı yaratan bu oldu.", "author": "Robert Frost" },
-  { "text": "Kelimelerin yetmediği yerde müzik konuşur.", "author": "Hans Christian Andersen" },
-  { "text": "İnsanların çoğu sessiz bir çaresizlik içinde yaşar.", "author": "Thoreau" },
-  { "text": "Hayatta en hakiki mürşit ilimdir.", "author": "Mustafa Kemal Atatürk" },
-  { "text": "Benim manevi mirasım ilim ve akıldır.", "author": "Mustafa Kemal Atatürk" },
-  { "text": "Beni görmek demek mutlaka yüzümü görmek değildir. Fikirlerimi anlıyorsanız bu yeterlidir.", "author": "Mustafa Kemal Atatürk" },
-  { "text": "Yurtta sulh, cihanda sulh.", "author": "Mustafa Kemal Atatürk" },
-  { "text": "Öğretmenler, yeni nesil sizin eseriniz olacaktır.", "author": "Mustafa Kemal Atatürk" },
-  { "text": "Ya olduğun gibi görün, ya göründüğün gibi ol.", "author": "Mevlana" },
-  { "text": "Dün dünde kaldı cancağızım, bugün yeni şeyler söylemek lazım.", "author": "Mevlana" },
-  { "text": "Hamdım, piştim, yandım.", "author": "Mevlana" },
-  { "text": "Nice insanlar gördüm üzerinde elbise yok; nice elbiseler gördüm içinde insan yok.", "author": "Mevlana" },
-  { "text": "Bir ben vardır bende, benden içeri.", "author": "Yunus Emre" },
-  { "text": "İlim ilim bilmektir, ilim kendin bilmektir.", "author": "Yunus Emre" },
-  { "text": "Sevelim sevilelim, dünya kimseye kalmaz.", "author": "Yunus Emre" },
-  { "text": "Yaratılanı severiz, Yaratan'dan ötürü.", "author": "Yunus Emre" },
-  { "text": "Eline, diline, beline sahip ol.", "author": "Hacı Bektaş Veli" },
-  { "text": "Okunacak en büyük kitap insandır.", "author": "Hacı Bektaş Veli" },
-  { "text": "Düşünce karanlığına ışık tutanlara ne mutlu.", "author": "Hacı Bektaş Veli" },
-  { "text": "Nefsine ağır geleni kimseye tatbik etme.", "author": "Hacı Bektaş Veli" },
-  { "text": "Kişi dilinin altında gizlidir.", "author": "Hz. Ali" },
-  { "text": "İnsanlar uykudadır, öldüklerinde uyanırlar.", "author": "Hz. Ali" },
-  { "text": "İlim malı korur, malı ise sen korursun.", "author": "Hz. Ali" },
-  { "text": "Yaşamak bir ağaç gibi tek ve hür ve bir orman gibi kardeşçesine.", "author": "Nâzım Hikmet" },
-  { "text": "En güzel deniz, henüz gidilmemiş olanıdır.", "author": "Nâzım Hikmet" },
-  { "text": "Sen yanmazsan, ben yanmazsam, nasıl çıkar karanlıklar aydınlığa?", "author": "Nâzım Hikmet" },
-  { "text": "Benim sadık yârim kara topraktır.", "author": "Âşık Veysel" },
-  { "text": "İki kapılı bir handa, gidiyorum gündüz gece.", "author": "Âşık Veysel" },
-  { "text": "İnsanlar bir bedenin uzuvları gibidir; biri acı çekince diğerleri huzur bulamaz.", "author": "Sadi Şirazi" },
-  { "text": "Başkalarını yenmek güç, kendini yenmek gerçek kudrettir.", "author": "Lao Tzu" },
-  { "text": "Doğa acele etmez, yine de her şey tamamlanır.", "author": "Lao Tzu" },
-  { "text": "Sevdiğin işi seç, ömrün boyunca çalışmak zorunda kalmazsın.", "author": "Konfüçyüs" },
-  { "text": "Ne kadar yavaş gittiğin önemli değil, yeter ki durma.", "author": "Konfüçyüs" },
-  { "text": "Öç almaya niyetlenmeden önce iki mezar kaz.", "author": "Konfüçyüs" },
-  { "text": "Hayal gücü, bilgiden daha önemlidir.", "author": "Albert Einstein" },
-  { "text": "Bir şeyi basitçe anlatamıyorsan, yeterince iyi anlamamışsındır.", "author": "Albert Einstein" },
-  { "text": "Daha uzağı gördüysem, bu devlerin omuzlarında durduğum içindir.", "author": "Newton" },
-  { "text": "Hayatta hiçbir şeyden korkulmaz, sadece anlaşılır. Anlamanın zamanı şimdi.", "author": "Marie Curie" },
-  { "text": "Kendini kandırmamalısın; kandırılması en kolay kişi sensin.", "author": "Richard Feynman" },
-  { "text": "Geleceği tahmin etmenin en iyi yolu, onu yaratmaktır.", "author": "Peter Drucker" },
-  { "text": "Planlar işe yaramaz, ama planlamak vazgeçilmezdir.", "author": "Eisenhower" },
-  { "text": "Başarı son değil, başarısızlık ölümcül değil; önemli olan devam etme cesaretidir.", "author": "W. Churchill" },
-  { "text": "Cesaret ayağa kalkıp konuşmaktır; aynı zamanda oturup dinlemektir.", "author": "W. Churchill" },
-  { "text": "İyimser her felakette bir fırsat, kötümser her fırsatta bir felaket görür.", "author": "W. Churchill" },
-  { "text": "Bir şey, yapılana kadar imkânsız görünür.", "author": "Nelson Mandela" },
-  { "text": "Eğitim, dünyayı değiştirmek için kullanabileceğin en güçlü silahtır.", "author": "Nelson Mandela" },
-  { "text": "Karanlık karanlığı kovamaz, bunu sadece ışık yapar. Nefret nefreti kovamaz, bunu sadece sevgi yapar.", "author": "Martin Luther King" },
-  { "text": "Bir milletin büyüklüğü, hayvanlarına davranış biçiminden anlaşılır.", "author": "Gandhi" },
-  { "text": "Göze göz, bütün dünyayı kör eder.", "author": "Gandhi" },
-  { "text": "Bir araya gelmek başlangıç, bir arada durmak ilerleme, birlikte çalışmak başarıdır.", "author": "Henry Ford" },
-  { "text": "Yapabileceğini de yapamayacağını da düşünsen, her iki durumda da haklısın.", "author": "Henry Ford" },
-  { "text": "Bir işi yapmanın en iyi yolu, onu yapmaktır.", "author": "Amelia Earhart" },
-  { "text": "Sanat, ruhun günlük hayatın tozundan arınmasıdır.", "author": "Picasso" },
-  { "text": "Her çocuk bir sanatçıdır. Sorun, büyüdükten sonra sanatçı kalabilmektir.", "author": "Picasso" },
-  { "text": "İlham gelirse, beni çalışırken bulsun.", "author": "Picasso" },
-  { "text": "Damlaya damlaya göl olur.", "author": "Türk Atasözü" },
-  { "text": "Ağaç yaşken eğilir.", "author": "Türk Atasözü" },
-  { "text": "Akıl yaşta değil, baştadır.", "author": "Türk Atasözü" },
-  { "text": "Bir musibet, bin nasihatten yeğdir.", "author": "Türk Atasözü" },
-  { "text": "Sabreden derviş, muradına ermiş.", "author": "Türk Atasözü" },
-  { "text": "Bilmemek ayıp değil, öğrenmemek ayıptır.", "author": "Türk Atasözü" },
-  { "text": "İşleyen demir ışıldar.", "author": "Türk Atasözü" },
-  { "text": "Kervan yolda düzülür.", "author": "Türk Atasözü" },
-  { "text": "Rüzgâr eken fırtına biçer.", "author": "Türk Atasözü" },
-  { "text": "Sakla samanı, gelir zamanı.", "author": "Türk Atasözü" },
-  { "text": "Su akar, yatağını bulur.", "author": "Türk Atasözü" },
-  { "text": "Taşıma suyla değirmen dönmez.", "author": "Türk Atasözü" },
-  { "text": "Yalancının mumu yatsıya kadar yanar.", "author": "Türk Atasözü" },
-  { "text": "Keskin sirke küpüne zarar.", "author": "Türk Atasözü" },
-  { "text": "Ayağını yorganına göre uzat.", "author": "Türk Atasözü" },
-  { "text": "Gülü seven dikenine katlanır.", "author": "Türk Atasözü" },
-  { "text": "Dost kara günde belli olur.", "author": "Türk Atasözü" },
-  { "text": "Emek olmadan yemek olmaz.", "author": "Türk Atasözü" },
-  { "text": "Bir elin nesi var, iki elin sesi var.", "author": "Türk Atasözü" },
-  { "text": "Balık baştan kokar.", "author": "Türk Atasözü" },
-  { "text": "Görünen köy kılavuz istemez.", "author": "Türk Atasözü" },
-  { "text": "Ateş düştüğü yeri yakar.", "author": "Türk Atasözü" },
-  { "text": "Doğruyu söyleyeni dokuz köyden kovarlar.", "author": "Türk Atasözü" },
-  { "text": "Yuvarlanan taş yosun tutmaz.", "author": "Türk Atasözü" },
-  { "text": "Vakitsiz öten horozun başını keserler.", "author": "Türk Atasözü" },
-  { "text": "Yedi kere düş, sekiz kere kalk.", "author": "Japon Atasözü" },
-  { "text": "Ağaç dikmenin en iyi zamanı yirmi yıl önceydi; ikinci en iyi zamanı bugün.", "author": "Çin Atasözü" },
-  { "text": "Soru soran beş dakika aptal görünür, sormayan ömür boyu aptal kalır.", "author": "Çin Atasözü" },
-  { "text": "Sakin deniz, usta denizci yetiştirmez.", "author": "Afrika Atasözü" },
-  { "text": "Hızlı gitmek istiyorsan yalnız git, uzağa gitmek istiyorsan birlikte git.", "author": "Afrika Atasözü" },
-  { "text": "Bir çocuğu yetiştirmek için bütün bir köy gerekir.", "author": "Afrika Atasözü" },
-  { "text": "Filler kavga ederken ezilen çimen olur.", "author": "Afrika Atasözü" },
-  { "text": "Alışkanlıklar önce ipliktir, sonra halat olur.", "author": "İspanyol Atasözü" },
-  { "text": "Herkes dâhidir; ama bir balığı ağaca tırmanma yeteneğine göre yargılarsan, ömrü boyunca kendini aptal sanar.", "author": "Anonim" },
-  { "text": "Kimse geçmişe dönüp yeni bir başlangıç yapamaz, ama herkes bugünden yeni bir son yazabilir.", "author": "Anonim" },
-  { "text": "Ahlak, kimse bakmıyorken yaptığındır.", "author": "Anonim" },
-  { "text": "Bir insanın değeri, kendisine hiçbir faydası olmayan birine davranışıyla ölçülür.", "author": "Anonim" },
-  { "text": "Affetmek geçmişi değiştirmez, ama geleceği genişletir.", "author": "Anonim" },
-  { "text": "Yalnızken düşündüklerin, gerçekte kim olduğunu gösterir.", "author": "Anonim" },
-  { "text": "Sessizlik, bazen en yüksek sesli cevaptır.", "author": "Anonim" },
-  { "text": "Kalabalık, yalnızlığın en gürültülü hâlidir.", "author": "Anonim" },
-  { "text": "Kelimeler ok gibidir; bir kez atıldı mı geri dönmez.", "author": "Anonim" },
-  { "text": "En büyük risk, hiç risk almamaktır.", "author": "Anonim" },
-  { "text": "Yaşlanmak zorunludur, büyümek isteğe bağlıdır.", "author": "Anonim" },
-  { "text": "Zaman, en adil paylaştırılan şeydir: herkese günde yirmi dört saat.", "author": "Anonim" },
-  { "text": "Geçmiş bir ders, gelecek bir soru, bugün bir armağandır.", "author": "Anonim" },
-  { "text": "Her son, tanımadığın bir başlangıcın kılığıdır.", "author": "Anonim" },
-  { "text": "Bambu dört yıl kök salar, beşinci yıl gökyüzüne koşar.", "author": "Anonim" },
-  { "text": "Ölçmediğin şeyi yönetemezsin.", "author": "Anonim" },
-  { "text": "Bir yalanı bin kez söylemek onu gerçek yapmaz, sadece bin yalan yapar.", "author": "Anonim" },
-  { "text": "Fikrini söylemekten korkuyorsan, zaten özgür değilsindir.", "author": "Anonim" },
-  { "text": "Seninle aynı fikirde olmayanı dinlemek, öğrenmenin başlangıcıdır.", "author": "Anonim" },
-  { "text": "Cehaletin en tehlikeli yanı, kendini bilgi sanmasıdır.", "author": "Anonim" },
-  { "text": "Bir şeyi bildiğini sanmak, öğrenmenin en büyük düşmanıdır.", "author": "Anonim" },
-  { "text": "Öfke, sahibine en çok zarar veren silahtır.", "author": "Anonim" },
-  { "text": "Zorluk insanı ya kırar ya da biler.", "author": "Anonim" },
-  { "text": "Yalnızlık, kötü arkadaşlıktan iyidir.", "author": "Anonim" },
-  { "text": "En büyük zenginlik, azla yetinmeyi bilmektir.", "author": "Anonim" },
-  { "text": "Yıldızları görebilmek için önce karanlığa alışmak gerekir.", "author": "Anonim" },
-  { "text": "Hayal kurmayı bırakırsan, yaşamayı da bırakırsın.", "author": "Anonim" },
-  { "text": "İyi bir kitap, kapağını kapattığında bitmeyen şeydir.", "author": "Anonim" },
-  { "text": "Bir ağaç dikmek, geleceğe atılmış bir imzadır.", "author": "Anonim" },
-  { "text": "Yolun sonu görünmüyorsa, ilk adımı atman yeter.", "author": "Anonim" },
-  { "text": "İnsanların ne söylediğine değil, ne yaptığına bak.", "author": "Anonim" },
-  { "text": "Bir kalp kırmak, bin Kâbe yıkmaktan beterdir.", "author": "Anonim" },
-  { "text": "Mutluluk bir varış noktası değil, yolculuk biçimidir.", "author": "Anonim" },
-  { "text": "Dünya bir handır, biz de yolcuyuz.", "author": "Anonim" },
-  { "text": "Ölümden değil, yeterince yaşamamaktan kork.", "author": "Anonim" },
-  { "text": "Sükût, cevapların en ağırıdır.", "author": "Anonim" },
-  { "text": "Az bilen çok konuşur.", "author": "Anonim" },
-  { "text": "Kimse ikinci kez ilk izlenim bırakamaz.", "author": "Anonim" },
-  { "text": "Düşmanını affet, ama adını unutma.", "author": "Anonim" },
-  { "text": "Acı çekmek gerçeğe giden yollardan biridir, ama tek yol değildir.", "author": "Anonim" },
-  { "text": "Bugün yapabileceğini yarına bırakma.", "author": "Anonim" },
-  { "text": "Bir dili öğrenmek, o dilin evine misafir olmaktır.", "author": "Anonim" },
-  { "text": "Okumak, ruhun jimnastiğidir.", "author": "Anonim" },
-  { "text": "Kütüphane, ölülerin hâlâ konuştuğu tek yerdir.", "author": "Anonim" },
-  { "text": "Sabretmeyi öğrenen, hükmetmeyi de öğrenmiştir.", "author": "Anonim" },
-  { "text": "Denize düşen yılana sarılır.", "author": "Türk Atasözü" },
-  { "text": "Hayat, cesurca yaşananların hikâyesidir.", "author": "Anonim" }
+ {
+  "text": "Yarın, bugünden hazırlanır.",
+  "author": "Mustafa Kemal Atatürk",
+  "daily": true
+ },
+ {
+  "text": "Kendini bilmek, tüm bilgeliğin başlangıcıdır.",
+  "author": "Aristoteles"
+ },
+ {
+  "text": "Düşünüyorum, öyleyse varım.",
+  "author": "Descartes"
+ },
+ {
+  "text": "Acı kaçınılmazdır, ıstırap tercihtir.",
+  "author": "Buda"
+ },
+ {
+  "text": "Hayat, siz başka planlar yaparken başınıza gelenlerdir.",
+  "author": "John Lennon"
+ },
+ {
+  "text": "Bir sorunu, onu yaratan zihinle çözemezsiniz.",
+  "author": "Albert Einstein"
+ },
+ {
+  "text": "En karanlık gece bile sona erer ve güneş doğar.",
+  "author": "Victor Hugo",
+  "daily": true
+ },
+ {
+  "text": "Cesaret, korkunun yokluğu değil, ona direnmektir.",
+  "author": "Mark Twain",
+  "daily": true
+ },
+ {
+  "text": "Ne kadar bilirsen bil, söylediklerin karşındakinin anlayabileceği kadardır.",
+  "author": "Mevlana"
+ },
+ {
+  "text": "Zorluklar, başarının süsüdür.",
+  "author": "Moliere",
+  "daily": true
+ },
+ {
+  "text": "Bildiğim tek şey, hiçbir şey bilmediğimdir.",
+  "author": "Sokrates"
+ },
+ {
+  "text": "Değişim, yaşamın tek değişmezidir.",
+  "author": "Herakleitos"
+ },
+ {
+  "text": "Öldürmeyen acı güçlendirir.",
+  "author": "Nietzsche"
+ },
+ {
+  "text": "Mutluluk gidilen yolun üzerindedir, yolun sonunda değil.",
+  "author": "Epiktetos",
+  "daily": true
+ },
+ {
+  "text": "Karanlığa küfredeceğine bir mum yak.",
+  "author": "Konfüçyüs",
+  "daily": true
+ },
+ {
+  "text": "Sabır, boyun eğmek değil, mücadele etmektir.",
+  "author": "Hz. Ömer"
+ },
+ {
+  "text": "İnsan, düşünen bir kamıştır.",
+  "author": "Blaise Pascal"
+ },
+ {
+  "text": "Adalet mülkün temelidir.",
+  "author": "Hz. Ömer"
+ },
+ {
+  "text": "Cahil kimsenin yanında kitap gibi sessiz ol.",
+  "author": "Mevlana"
+ },
+ {
+  "text": "Eğri cetvelden doğru çizgi çıkmaz.",
+  "author": "Hz. Ali"
+ },
+ {
+  "text": "Dostluk, iki bedende yaşayan tek ruhtur.",
+  "author": "Aristoteles"
+ },
+ {
+  "text": "Denemeyi bırakana kadar başarısız olmuş sayılmazsın.",
+  "author": "Albert Einstein",
+  "daily": true
+ },
+ {
+  "text": "Gittiğin yer değil, baktığın yön önemlidir.",
+  "author": "Tolstoy",
+  "daily": true
+ },
+ {
+  "text": "İnsan özgür doğar, ama her yerde zincire vurulmuştur.",
+  "author": "J.J. Rousseau"
+ },
+ {
+  "text": "Hiçbir şey büyüklük kadar sade değildir.",
+  "author": "Emerson"
+ },
+ {
+  "text": "Hayat geriye doğru anlaşılır, ama ileriye doğru yaşanır.",
+  "author": "Kierkegaard"
+ },
+ {
+  "text": "Sözcüklerin gücünü anlamadan, insanların gücünü anlayamazsın.",
+  "author": "Konfüçyüs"
+ },
+ {
+  "text": "Başkalarını bilen kimse bilgili, kendini bilen kimse akıllıdır.",
+  "author": "Lao Tzu"
+ },
+ {
+  "text": "Fırtınalar, ağaçların daha derin kök salmasını sağlar.",
+  "author": "Dolly Parton",
+  "daily": true
+ },
+ {
+  "text": "Gül sunan bir elde daima bir miktar gül kokusu kalır.",
+  "author": "Çin Atasözü"
+ },
+ {
+  "text": "Bilgi, bölüşüldükçe artan hazinedir.",
+  "author": "Bhartrihari"
+ },
+ {
+  "text": "Gözler sadece zihnin algılamaya hazır olduğu şeyleri görür.",
+  "author": "Henri Bergson"
+ },
+ {
+  "text": "Vazgeçmek her zaman zayıflık demek değildir, bazen bırakacak kadar güçlü olmaktır.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Zaman, her şeyin ilacıdır ama eninde sonunda öldürür.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Uçurtmalar rüzgar gücüyle değil, o güce karşı koydukları için yükselirler.",
+  "author": "W. Churchill",
+  "daily": true
+ },
+ {
+  "text": "Yolculuk bin millik bir adımla başlar.",
+  "author": "Lao Tzu",
+  "daily": true
+ },
+ {
+  "text": "İyilik yap, denize at; balık bilmezse Halik bilir.",
+  "author": "Türk Atasözü"
+ },
+ {
+  "text": "Ön yargıları kırmak, atom çekirdeğini parçalamaktan daha zordur.",
+  "author": "Albert Einstein"
+ },
+ {
+  "text": "Savaşın kazananı olmaz, sadece kaybedenleri olur.",
+  "author": "Anonim"
+ },
+ {
+  "text": "İnsan ne kadar az isterse, o kadar çok şeye sahip olur.",
+  "author": "Seneca"
+ },
+ {
+  "text": "Kalp, aklın bilmediği sebeplere sahiptir.",
+  "author": "Pascal"
+ },
+ {
+  "text": "Özgürlük, ne istediğini yapabilmek değil, istemediğini yapmamaktır.",
+  "author": "Rousseau"
+ },
+ {
+  "text": "Bir hata yapıp düzeltmeyen kişi, ikinci bir hata yapmış olur.",
+  "author": "Konfüçyüs"
+ },
+ {
+  "text": "Korku, karanlık tarafa giden yoldur.",
+  "author": "Yoda"
+ },
+ {
+  "text": "Mucizeler, inanmayanlar için gerçekleşmez.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Kitaplar, soğuk ama güvenilir dostlardır.",
+  "author": "Victor Hugo"
+ },
+ {
+  "text": "Gerçek keşif, yeni topraklar bulmak değil, yeni gözlerle bakmaktır.",
+  "author": "Marcel Proust"
+ },
+ {
+  "text": "Aklın bittiği yerde hırs başlar.",
+  "author": "Anonim"
+ },
+ {
+  "text": "İnsanlar köprü kuracakları yerde duvar ördükleri için yalnız kalırlar.",
+  "author": "Newton"
+ },
+ {
+  "text": "Mutlu bir hayat için gereken çok az şey vardır; her şey senin düşünme biçimindedir.",
+  "author": "Marcus Aurelius",
+  "daily": true
+ },
+ {
+  "text": "Yaptığın her işi, hayatındaki son işmiş gibi yap.",
+  "author": "Marcus Aurelius",
+  "daily": true
+ },
+ {
+  "text": "Seni üzen dış olay değil, ona verdiğin hükümdür. Ve onu her an değiştirme gücün var.",
+  "author": "Marcus Aurelius",
+  "daily": true
+ },
+ {
+  "text": "En iyi intikam, düşmanın gibi olmamaktır.",
+  "author": "Marcus Aurelius"
+ },
+ {
+  "text": "Eyleme engel olan şey, eylemi ilerletir. Yolu kapatan, yolun kendisi olur.",
+  "author": "Marcus Aurelius",
+  "daily": true
+ },
+ {
+  "text": "Sabah kalkmakta zorlandığında şunu düşün: İnsan olarak işimi yapmak üzere uyanıyorum.",
+  "author": "Marcus Aurelius",
+  "daily": true
+ },
+ {
+  "text": "İnsanlar birbiri için var oldu; ya onları eğit ya da onlara katlan.",
+  "author": "Marcus Aurelius"
+ },
+ {
+  "text": "Zor olduğu için cesaret edemiyoruz; cesaret edemediğimiz için zor.",
+  "author": "Seneca",
+  "daily": true
+ },
+ {
+  "text": "Hayat kısa değildir, biz onu kısaltırız.",
+  "author": "Seneca",
+  "daily": true
+ },
+ {
+  "text": "Her yerde olmak, hiçbir yerde olmamaktır.",
+  "author": "Seneca"
+ },
+ {
+  "text": "Acıyı gerçekte olduğundan çok, hayalimizde çekeriz.",
+  "author": "Seneca"
+ },
+ {
+  "text": "Nereye gideceğini bilmeyen gemiye hiçbir rüzgâr yardım etmez.",
+  "author": "Seneca",
+  "daily": true
+ },
+ {
+  "text": "Bütün zalimlikler zayıflıktan doğar.",
+  "author": "Seneca"
+ },
+ {
+  "text": "Şans, hazırlığın fırsatla buluştuğu yerdir.",
+  "author": "Seneca",
+  "daily": true
+ },
+ {
+  "text": "Başımıza geleni seçemeyiz, ona vereceğimiz tepkiyi seçebiliriz.",
+  "author": "Epiktetos",
+  "daily": true
+ },
+ {
+  "text": "İki kulağımız ve tek ağzımız var; iki kat dinleyip yarı yarıya konuşmalıyız.",
+  "author": "Epiktetos"
+ },
+ {
+  "text": "Zengin olmak istiyorsan malını çoğaltma, arzunu azalt.",
+  "author": "Epiktetos"
+ },
+ {
+  "text": "Kendi düşüncelerinin efendisi olmayan hiç kimse özgür değildir.",
+  "author": "Epiktetos"
+ },
+ {
+  "text": "Neden'i olan, her nasıl'a katlanır.",
+  "author": "Nietzsche",
+  "daily": true
+ },
+ {
+  "text": "Uçuruma uzun süre bakarsan, uçurum da senin içine bakar.",
+  "author": "Nietzsche"
+ },
+ {
+  "text": "Dans eden bir yıldız doğurabilmek için insanın içinde kaos olmalı.",
+  "author": "Nietzsche"
+ },
+ {
+  "text": "Kendi kendine emretmeyi bilmeyen, itaat etmeye mecburdur.",
+  "author": "Nietzsche"
+ },
+ {
+  "text": "Sorgulanmamış bir hayat, yaşanmaya değmez.",
+  "author": "Sokrates"
+ },
+ {
+  "text": "İyi insana ne yaşarken ne öldükten sonra hiçbir kötülük dokunmaz.",
+  "author": "Sokrates"
+ },
+ {
+  "text": "Kendine hâkim olmak, en büyük zaferdir.",
+  "author": "Platon",
+  "daily": true
+ },
+ {
+  "text": "Karanlıktan korkan çocuğu affedebiliriz; asıl trajedi, yetişkinlerin aydınlıktan korkmasıdır.",
+  "author": "Platon"
+ },
+ {
+  "text": "Eğitimin kökleri acıdır, ama meyvesi tatlıdır.",
+  "author": "Aristoteles"
+ },
+ {
+  "text": "Umut, uyanık insanın rüyasıdır.",
+  "author": "Aristoteles",
+  "daily": true
+ },
+ {
+  "text": "Hiç kimse aynı nehirde iki kez yıkanamaz.",
+  "author": "Herakleitos"
+ },
+ {
+  "text": "Karakter, kaderdir.",
+  "author": "Herakleitos"
+ },
+ {
+  "text": "İnsan, her şeyin ölçüsüdür.",
+  "author": "Protagoras"
+ },
+ {
+  "text": "Şüphe, bilgeliğin başlangıcıdır.",
+  "author": "Descartes"
+ },
+ {
+  "text": "İnsan, kendini ne yaparsa odur.",
+  "author": "Sartre"
+ },
+ {
+  "text": "Kışın ortasında, içimde yenilmez bir yaz olduğunu keşfettim.",
+  "author": "Albert Camus",
+  "daily": true
+ },
+ {
+  "text": "Özgürlük, daha iyi olma şansından başka bir şey değildir.",
+  "author": "Albert Camus"
+ },
+ {
+  "text": "Kendini tanı.",
+  "author": "Delfi Tapınağı"
+ },
+ {
+  "text": "Mükemmel, iyinin düşmanıdır.",
+  "author": "Voltaire"
+ },
+ {
+  "text": "Bir toplumun uygarlık düzeyi, hapishanelerine girilerek ölçülür.",
+  "author": "Dostoyevski"
+ },
+ {
+  "text": "İnsan, her şeye alışan bir yaratıktır.",
+  "author": "Dostoyevski"
+ },
+ {
+  "text": "Cehennem, artık sevemez olmanın ıstırabıdır.",
+  "author": "Dostoyevski"
+ },
+ {
+  "text": "Herkes dünyayı değiştirmeyi düşünür, ama kimse kendini değiştirmeyi düşünmez.",
+  "author": "Tolstoy"
+ },
+ {
+  "text": "En güçlü iki savaşçı sabır ve zamandır.",
+  "author": "Tolstoy"
+ },
+ {
+  "text": "Bir kitap, içimizdeki donmuş denizi kıracak balta olmalı.",
+  "author": "Kafka"
+ },
+ {
+  "text": "Hiçbir ordu, zamanı gelmiş bir fikir kadar güçlü değildir.",
+  "author": "Victor Hugo"
+ },
+ {
+  "text": "Kendine karşı dürüst ol.",
+  "author": "Shakespeare"
+ },
+ {
+  "text": "Bütün dünya bir sahnedir, kadın erkek herkes birer oyuncu.",
+  "author": "Shakespeare"
+ },
+ {
+  "text": "Kimse, özgür olduğunu sanan bir köle kadar umutsuzca köle değildir.",
+  "author": "Goethe"
+ },
+ {
+  "text": "Bilmek yetmez, uygulamalısın. İstemek yetmez, yapmalısın.",
+  "author": "Goethe",
+  "daily": true
+ },
+ {
+  "text": "Konuşmak bir ihtiyaç, dinlemek bir sanattır.",
+  "author": "Goethe"
+ },
+ {
+  "text": "Acele etmeden, ama durmadan.",
+  "author": "Goethe",
+  "daily": true
+ },
+ {
+  "text": "Yolcu, yol yoktur; yol yürümekle açılır.",
+  "author": "Antonio Machado",
+  "daily": true
+ },
+ {
+  "text": "Ormanda iki yol ayrılıyordu; ben az gidilenden gittim, bütün farkı yaratan bu oldu.",
+  "author": "Robert Frost",
+  "daily": true
+ },
+ {
+  "text": "Kelimelerin yetmediği yerde müzik konuşur.",
+  "author": "Hans Christian Andersen"
+ },
+ {
+  "text": "İnsanların çoğu sessiz bir çaresizlik içinde yaşar.",
+  "author": "Thoreau"
+ },
+ {
+  "text": "Hayatta en hakiki mürşit ilimdir.",
+  "author": "Mustafa Kemal Atatürk"
+ },
+ {
+  "text": "Benim manevi mirasım ilim ve akıldır.",
+  "author": "Mustafa Kemal Atatürk"
+ },
+ {
+  "text": "Beni görmek demek mutlaka yüzümü görmek değildir. Fikirlerimi anlıyorsanız bu yeterlidir.",
+  "author": "Mustafa Kemal Atatürk"
+ },
+ {
+  "text": "Yurtta sulh, cihanda sulh.",
+  "author": "Mustafa Kemal Atatürk"
+ },
+ {
+  "text": "Öğretmenler, yeni nesil sizin eseriniz olacaktır.",
+  "author": "Mustafa Kemal Atatürk"
+ },
+ {
+  "text": "Ya olduğun gibi görün, ya göründüğün gibi ol.",
+  "author": "Mevlana"
+ },
+ {
+  "text": "Dün dünde kaldı cancağızım, bugün yeni şeyler söylemek lazım.",
+  "author": "Mevlana",
+  "daily": true
+ },
+ {
+  "text": "Hamdım, piştim, yandım.",
+  "author": "Mevlana"
+ },
+ {
+  "text": "Nice insanlar gördüm üzerinde elbise yok; nice elbiseler gördüm içinde insan yok.",
+  "author": "Mevlana"
+ },
+ {
+  "text": "Bir ben vardır bende, benden içeri.",
+  "author": "Yunus Emre"
+ },
+ {
+  "text": "İlim ilim bilmektir, ilim kendin bilmektir.",
+  "author": "Yunus Emre"
+ },
+ {
+  "text": "Sevelim sevilelim, dünya kimseye kalmaz.",
+  "author": "Yunus Emre"
+ },
+ {
+  "text": "Yaratılanı severiz, Yaratan'dan ötürü.",
+  "author": "Yunus Emre"
+ },
+ {
+  "text": "Eline, diline, beline sahip ol.",
+  "author": "Hacı Bektaş Veli"
+ },
+ {
+  "text": "Okunacak en büyük kitap insandır.",
+  "author": "Hacı Bektaş Veli"
+ },
+ {
+  "text": "Düşünce karanlığına ışık tutanlara ne mutlu.",
+  "author": "Hacı Bektaş Veli"
+ },
+ {
+  "text": "Nefsine ağır geleni kimseye tatbik etme.",
+  "author": "Hacı Bektaş Veli"
+ },
+ {
+  "text": "Kişi dilinin altında gizlidir.",
+  "author": "Hz. Ali"
+ },
+ {
+  "text": "İnsanlar uykudadır, öldüklerinde uyanırlar.",
+  "author": "Hz. Ali"
+ },
+ {
+  "text": "İlim malı korur, malı ise sen korursun.",
+  "author": "Hz. Ali"
+ },
+ {
+  "text": "Yaşamak bir ağaç gibi tek ve hür ve bir orman gibi kardeşçesine.",
+  "author": "Nâzım Hikmet"
+ },
+ {
+  "text": "En güzel deniz, henüz gidilmemiş olanıdır.",
+  "author": "Nâzım Hikmet",
+  "daily": true
+ },
+ {
+  "text": "Sen yanmazsan, ben yanmazsam, nasıl çıkar karanlıklar aydınlığa?",
+  "author": "Nâzım Hikmet",
+  "daily": true
+ },
+ {
+  "text": "Benim sadık yârim kara topraktır.",
+  "author": "Âşık Veysel"
+ },
+ {
+  "text": "İki kapılı bir handa, gidiyorum gündüz gece.",
+  "author": "Âşık Veysel"
+ },
+ {
+  "text": "İnsanlar bir bedenin uzuvları gibidir; biri acı çekince diğerleri huzur bulamaz.",
+  "author": "Sadi Şirazi"
+ },
+ {
+  "text": "Başkalarını yenmek güç, kendini yenmek gerçek kudrettir.",
+  "author": "Lao Tzu",
+  "daily": true
+ },
+ {
+  "text": "Doğa acele etmez, yine de her şey tamamlanır.",
+  "author": "Lao Tzu",
+  "daily": true
+ },
+ {
+  "text": "Sevdiğin işi seç, ömrün boyunca çalışmak zorunda kalmazsın.",
+  "author": "Konfüçyüs",
+  "daily": true
+ },
+ {
+  "text": "Ne kadar yavaş gittiğin önemli değil, yeter ki durma.",
+  "author": "Konfüçyüs",
+  "daily": true
+ },
+ {
+  "text": "Öç almaya niyetlenmeden önce iki mezar kaz.",
+  "author": "Konfüçyüs"
+ },
+ {
+  "text": "Hayal gücü, bilgiden daha önemlidir.",
+  "author": "Albert Einstein",
+  "daily": true
+ },
+ {
+  "text": "Bir şeyi basitçe anlatamıyorsan, yeterince iyi anlamamışsındır.",
+  "author": "Albert Einstein"
+ },
+ {
+  "text": "Daha uzağı gördüysem, bu devlerin omuzlarında durduğum içindir.",
+  "author": "Newton"
+ },
+ {
+  "text": "Hayatta hiçbir şeyden korkulmaz, sadece anlaşılır. Anlamanın zamanı şimdi.",
+  "author": "Marie Curie"
+ },
+ {
+  "text": "Kendini kandırmamalısın; kandırılması en kolay kişi sensin.",
+  "author": "Richard Feynman"
+ },
+ {
+  "text": "Geleceği tahmin etmenin en iyi yolu, onu yaratmaktır.",
+  "author": "Peter Drucker",
+  "daily": true
+ },
+ {
+  "text": "Planlar işe yaramaz, ama planlamak vazgeçilmezdir.",
+  "author": "Eisenhower"
+ },
+ {
+  "text": "Başarı son değil, başarısızlık ölümcül değil; önemli olan devam etme cesaretidir.",
+  "author": "W. Churchill",
+  "daily": true
+ },
+ {
+  "text": "Cesaret ayağa kalkıp konuşmaktır; aynı zamanda oturup dinlemektir.",
+  "author": "W. Churchill"
+ },
+ {
+  "text": "İyimser her felakette bir fırsat, kötümser her fırsatta bir felaket görür.",
+  "author": "W. Churchill",
+  "daily": true
+ },
+ {
+  "text": "Bir şey, yapılana kadar imkânsız görünür.",
+  "author": "Nelson Mandela",
+  "daily": true
+ },
+ {
+  "text": "Eğitim, dünyayı değiştirmek için kullanabileceğin en güçlü silahtır.",
+  "author": "Nelson Mandela",
+  "daily": true
+ },
+ {
+  "text": "Karanlık karanlığı kovamaz, bunu sadece ışık yapar. Nefret nefreti kovamaz, bunu sadece sevgi yapar.",
+  "author": "Martin Luther King",
+  "daily": true
+ },
+ {
+  "text": "Bir milletin büyüklüğü, hayvanlarına davranış biçiminden anlaşılır.",
+  "author": "Gandhi"
+ },
+ {
+  "text": "Göze göz, bütün dünyayı kör eder.",
+  "author": "Gandhi"
+ },
+ {
+  "text": "Bir araya gelmek başlangıç, bir arada durmak ilerleme, birlikte çalışmak başarıdır.",
+  "author": "Henry Ford",
+  "daily": true
+ },
+ {
+  "text": "Yapabileceğini de yapamayacağını da düşünsen, her iki durumda da haklısın.",
+  "author": "Henry Ford",
+  "daily": true
+ },
+ {
+  "text": "Bir işi yapmanın en iyi yolu, onu yapmaktır.",
+  "author": "Amelia Earhart",
+  "daily": true
+ },
+ {
+  "text": "Sanat, ruhun günlük hayatın tozundan arınmasıdır.",
+  "author": "Picasso"
+ },
+ {
+  "text": "Her çocuk bir sanatçıdır. Sorun, büyüdükten sonra sanatçı kalabilmektir.",
+  "author": "Picasso"
+ },
+ {
+  "text": "İlham gelirse, beni çalışırken bulsun.",
+  "author": "Picasso",
+  "daily": true
+ },
+ {
+  "text": "Damlaya damlaya göl olur.",
+  "author": "Türk Atasözü",
+  "daily": true
+ },
+ {
+  "text": "Ağaç yaşken eğilir.",
+  "author": "Türk Atasözü"
+ },
+ {
+  "text": "Akıl yaşta değil, baştadır.",
+  "author": "Türk Atasözü"
+ },
+ {
+  "text": "Bir musibet, bin nasihatten yeğdir.",
+  "author": "Türk Atasözü"
+ },
+ {
+  "text": "Sabreden derviş, muradına ermiş.",
+  "author": "Türk Atasözü",
+  "daily": true
+ },
+ {
+  "text": "Bilmemek ayıp değil, öğrenmemek ayıptır.",
+  "author": "Türk Atasözü",
+  "daily": true
+ },
+ {
+  "text": "İşleyen demir ışıldar.",
+  "author": "Türk Atasözü",
+  "daily": true
+ },
+ {
+  "text": "Kervan yolda düzülür.",
+  "author": "Türk Atasözü",
+  "daily": true
+ },
+ {
+  "text": "Rüzgâr eken fırtına biçer.",
+  "author": "Türk Atasözü"
+ },
+ {
+  "text": "Sakla samanı, gelir zamanı.",
+  "author": "Türk Atasözü"
+ },
+ {
+  "text": "Su akar, yatağını bulur.",
+  "author": "Türk Atasözü"
+ },
+ {
+  "text": "Taşıma suyla değirmen dönmez.",
+  "author": "Türk Atasözü"
+ },
+ {
+  "text": "Yalancının mumu yatsıya kadar yanar.",
+  "author": "Türk Atasözü"
+ },
+ {
+  "text": "Keskin sirke küpüne zarar.",
+  "author": "Türk Atasözü"
+ },
+ {
+  "text": "Ayağını yorganına göre uzat.",
+  "author": "Türk Atasözü"
+ },
+ {
+  "text": "Gülü seven dikenine katlanır.",
+  "author": "Türk Atasözü"
+ },
+ {
+  "text": "Dost kara günde belli olur.",
+  "author": "Türk Atasözü"
+ },
+ {
+  "text": "Emek olmadan yemek olmaz.",
+  "author": "Türk Atasözü",
+  "daily": true
+ },
+ {
+  "text": "Bir elin nesi var, iki elin sesi var.",
+  "author": "Türk Atasözü"
+ },
+ {
+  "text": "Balık baştan kokar.",
+  "author": "Türk Atasözü"
+ },
+ {
+  "text": "Görünen köy kılavuz istemez.",
+  "author": "Türk Atasözü"
+ },
+ {
+  "text": "Ateş düştüğü yeri yakar.",
+  "author": "Türk Atasözü"
+ },
+ {
+  "text": "Doğruyu söyleyeni dokuz köyden kovarlar.",
+  "author": "Türk Atasözü"
+ },
+ {
+  "text": "Yuvarlanan taş yosun tutmaz.",
+  "author": "Türk Atasözü"
+ },
+ {
+  "text": "Vakitsiz öten horozun başını keserler.",
+  "author": "Türk Atasözü"
+ },
+ {
+  "text": "Yedi kere düş, sekiz kere kalk.",
+  "author": "Japon Atasözü",
+  "daily": true
+ },
+ {
+  "text": "Ağaç dikmenin en iyi zamanı yirmi yıl önceydi; ikinci en iyi zamanı bugün.",
+  "author": "Çin Atasözü",
+  "daily": true
+ },
+ {
+  "text": "Soru soran beş dakika aptal görünür, sormayan ömür boyu aptal kalır.",
+  "author": "Çin Atasözü"
+ },
+ {
+  "text": "Sakin deniz, usta denizci yetiştirmez.",
+  "author": "Afrika Atasözü",
+  "daily": true
+ },
+ {
+  "text": "Hızlı gitmek istiyorsan yalnız git, uzağa gitmek istiyorsan birlikte git.",
+  "author": "Afrika Atasözü",
+  "daily": true
+ },
+ {
+  "text": "Bir çocuğu yetiştirmek için bütün bir köy gerekir.",
+  "author": "Afrika Atasözü"
+ },
+ {
+  "text": "Filler kavga ederken ezilen çimen olur.",
+  "author": "Afrika Atasözü"
+ },
+ {
+  "text": "Alışkanlıklar önce ipliktir, sonra halat olur.",
+  "author": "İspanyol Atasözü",
+  "daily": true
+ },
+ {
+  "text": "Herkes dâhidir; ama bir balığı ağaca tırmanma yeteneğine göre yargılarsan, ömrü boyunca kendini aptal sanar.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Kimse geçmişe dönüp yeni bir başlangıç yapamaz, ama herkes bugünden yeni bir son yazabilir.",
+  "author": "Anonim",
+  "daily": true
+ },
+ {
+  "text": "Ahlak, kimse bakmıyorken yaptığındır.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Bir insanın değeri, kendisine hiçbir faydası olmayan birine davranışıyla ölçülür.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Affetmek geçmişi değiştirmez, ama geleceği genişletir.",
+  "author": "Anonim",
+  "daily": true
+ },
+ {
+  "text": "Yalnızken düşündüklerin, gerçekte kim olduğunu gösterir.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Sessizlik, bazen en yüksek sesli cevaptır.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Kalabalık, yalnızlığın en gürültülü hâlidir.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Kelimeler ok gibidir; bir kez atıldı mı geri dönmez.",
+  "author": "Anonim"
+ },
+ {
+  "text": "En büyük risk, hiç risk almamaktır.",
+  "author": "Anonim",
+  "daily": true
+ },
+ {
+  "text": "Yaşlanmak zorunludur, büyümek isteğe bağlıdır.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Zaman, en adil paylaştırılan şeydir: herkese günde yirmi dört saat.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Geçmiş bir ders, gelecek bir soru, bugün bir armağandır.",
+  "author": "Anonim",
+  "daily": true
+ },
+ {
+  "text": "Her son, tanımadığın bir başlangıcın kılığıdır.",
+  "author": "Anonim",
+  "daily": true
+ },
+ {
+  "text": "Bambu dört yıl kök salar, beşinci yıl gökyüzüne koşar.",
+  "author": "Anonim",
+  "daily": true
+ },
+ {
+  "text": "Ölçmediğin şeyi yönetemezsin.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Bir yalanı bin kez söylemek onu gerçek yapmaz, sadece bin yalan yapar.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Fikrini söylemekten korkuyorsan, zaten özgür değilsindir.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Seninle aynı fikirde olmayanı dinlemek, öğrenmenin başlangıcıdır.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Cehaletin en tehlikeli yanı, kendini bilgi sanmasıdır.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Bir şeyi bildiğini sanmak, öğrenmenin en büyük düşmanıdır.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Öfke, sahibine en çok zarar veren silahtır.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Zorluk insanı ya kırar ya da biler.",
+  "author": "Anonim",
+  "daily": true
+ },
+ {
+  "text": "Yalnızlık, kötü arkadaşlıktan iyidir.",
+  "author": "Anonim"
+ },
+ {
+  "text": "En büyük zenginlik, azla yetinmeyi bilmektir.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Yıldızları görebilmek için önce karanlığa alışmak gerekir.",
+  "author": "Anonim",
+  "daily": true
+ },
+ {
+  "text": "Hayal kurmayı bırakırsan, yaşamayı da bırakırsın.",
+  "author": "Anonim",
+  "daily": true
+ },
+ {
+  "text": "İyi bir kitap, kapağını kapattığında bitmeyen şeydir.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Bir ağaç dikmek, geleceğe atılmış bir imzadır.",
+  "author": "Anonim",
+  "daily": true
+ },
+ {
+  "text": "Yolun sonu görünmüyorsa, ilk adımı atman yeter.",
+  "author": "Anonim",
+  "daily": true
+ },
+ {
+  "text": "İnsanların ne söylediğine değil, ne yaptığına bak.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Bir kalp kırmak, bin Kâbe yıkmaktan beterdir.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Mutluluk bir varış noktası değil, yolculuk biçimidir.",
+  "author": "Anonim",
+  "daily": true
+ },
+ {
+  "text": "Dünya bir handır, biz de yolcuyuz.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Ölümden değil, yeterince yaşamamaktan kork.",
+  "author": "Anonim",
+  "daily": true
+ },
+ {
+  "text": "Sükût, cevapların en ağırıdır.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Az bilen çok konuşur.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Kimse ikinci kez ilk izlenim bırakamaz.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Düşmanını affet, ama adını unutma.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Acı çekmek gerçeğe giden yollardan biridir, ama tek yol değildir.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Bugün yapabileceğini yarına bırakma.",
+  "author": "Anonim",
+  "daily": true
+ },
+ {
+  "text": "Bir dili öğrenmek, o dilin evine misafir olmaktır.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Okumak, ruhun jimnastiğidir.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Kütüphane, ölülerin hâlâ konuştuğu tek yerdir.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Sabretmeyi öğrenen, hükmetmeyi de öğrenmiştir.",
+  "author": "Anonim"
+ },
+ {
+  "text": "Denize düşen yılana sarılır.",
+  "author": "Türk Atasözü"
+ },
+ {
+  "text": "Hayat, cesurca yaşananların hikâyesidir.",
+  "author": "Anonim",
+  "daily": true
+ },
+ {
+  "text": "Ak akçe kara gün içindir.",
+  "author": "Türk Atasözü",
+  "text_en": "White coin is for a dark day.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Acele işe şeytan karışır.",
+  "author": "Türk Atasözü",
+  "text_en": "The devil meddles in hasty work.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Ağlamayan çocuğa meme vermezler.",
+  "author": "Türk Atasözü",
+  "text_en": "The baby who does not cry does not get fed.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Akıllı düşmanı akılsız dosta değişme.",
+  "author": "Türk Atasözü",
+  "text_en": "Never trade a wise enemy for a foolish friend.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Az veren candan, çok veren maldan.",
+  "author": "Türk Atasözü",
+  "text_en": "The one who gives little gives from the heart; the one who gives much gives from wealth.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Bakmakla öğrenilseydi, kediler kasap olurdu.",
+  "author": "Türk Atasözü",
+  "text_en": "If watching taught you, cats would be butchers.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Bin bilsen de bir bilene danış.",
+  "author": "Türk Atasözü",
+  "text_en": "Even if you know a thousand things, ask the one who knows.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Bin işit, bir söyle.",
+  "author": "Türk Atasözü",
+  "text_en": "Hear a thousand, say one.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Bir kahvenin kırk yıl hatırı vardır.",
+  "author": "Türk Atasözü",
+  "text_en": "A single cup of coffee is remembered for forty years.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Bugünün işini yarına bırakma.",
+  "author": "Türk Atasözü",
+  "text_en": "Don't leave today's work for tomorrow.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Çok bilen çok yanılır.",
+  "author": "Türk Atasözü",
+  "text_en": "Who knows much errs much.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Çivi çiviyi söker.",
+  "author": "Türk Atasözü",
+  "text_en": "A nail drives out a nail.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Dağ dağa kavuşmaz, insan insana kavuşur.",
+  "author": "Türk Atasözü",
+  "text_en": "Mountains never meet, but people do.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Dost acı söyler.",
+  "author": "Türk Atasözü",
+  "text_en": "A friend tells you the bitter truth.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Eğri oturup doğru konuşalım.",
+  "author": "Türk Atasözü",
+  "text_en": "Let's sit crooked but speak straight.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "El elden üstündür.",
+  "author": "Türk Atasözü",
+  "text_en": "There is always a hand above another hand.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Erken kalkan yol alır.",
+  "author": "Türk Atasözü",
+  "text_en": "Who rises early gets far.",
+  "author_en": "Turkish proverb",
+  "daily": true
+ },
+ {
+  "text": "Gönül ne kahve ister ne kahvehane, gönül sohbet ister, kahve bahane.",
+  "author": "Türk Atasözü",
+  "text_en": "The heart wants neither coffee nor the coffeehouse; it wants conversation, coffee is the excuse.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Göz görmeyince gönül katlanır.",
+  "author": "Türk Atasözü",
+  "text_en": "What the eye does not see, the heart endures.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Güneş balçıkla sıvanmaz.",
+  "author": "Türk Atasözü",
+  "text_en": "You can't plaster the sun with mud.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Hatasız kul olmaz.",
+  "author": "Türk Atasözü",
+  "text_en": "There is no one without fault.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "İki cambaz bir ipte oynamaz.",
+  "author": "Türk Atasözü",
+  "text_en": "Two acrobats can't play on one rope.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "İnsan yedisinde neyse yetmişinde de odur.",
+  "author": "Türk Atasözü",
+  "text_en": "What you are at seven, you are at seventy.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "İyi dost kara günde belli olur.",
+  "author": "Türk Atasözü",
+  "text_en": "A good friend shows on a dark day.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Kaz gelecek yerden tavuk esirgenmez.",
+  "author": "Türk Atasözü",
+  "text_en": "You don't spare the hen where a goose will come.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Komşu komşunun külüne muhtaçtır.",
+  "author": "Türk Atasözü",
+  "text_en": "A neighbour needs even the ashes of a neighbour.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Kul sıkışmayınca Hızır yetişmez.",
+  "author": "Türk Atasözü",
+  "text_en": "Help does not come until you are in a tight spot.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Laf ile peynir gemisi yürümez.",
+  "author": "Türk Atasözü",
+  "text_en": "A ship of cheese doesn't sail on words.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Meyveli ağacı taşlarlar.",
+  "author": "Türk Atasözü",
+  "text_en": "People throw stones at the tree that bears fruit.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Ne ekersen onu biçersin.",
+  "author": "Türk Atasözü",
+  "text_en": "You reap what you sow.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Öfkeyle kalkan zararla oturur.",
+  "author": "Türk Atasözü",
+  "text_en": "Who rises in anger sits down in loss.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Ölçmeden biçme.",
+  "author": "Türk Atasözü",
+  "text_en": "Don't cut before you measure.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Para parayı çeker.",
+  "author": "Türk Atasözü",
+  "text_en": "Money attracts money.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Sabrın sonu selamettir.",
+  "author": "Türk Atasözü",
+  "text_en": "The end of patience is salvation.",
+  "author_en": "Turkish proverb",
+  "daily": true
+ },
+ {
+  "text": "Söz gümüşse sükût altındır.",
+  "author": "Türk Atasözü",
+  "text_en": "If speech is silver, silence is gold.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Su testisi su yolunda kırılır.",
+  "author": "Türk Atasözü",
+  "text_en": "The water jug breaks on the way to the well.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Tatlı dil yılanı deliğinden çıkarır.",
+  "author": "Türk Atasözü",
+  "text_en": "A sweet tongue draws the snake out of its hole.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Tavşan dağa küsmüş, dağın haberi olmamış.",
+  "author": "Türk Atasözü",
+  "text_en": "The rabbit sulked at the mountain; the mountain never noticed.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Üzüm üzüme baka baka kararır.",
+  "author": "Türk Atasözü",
+  "text_en": "A grape darkens by looking at another grape.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Yalnız taş duvar olmaz.",
+  "author": "Türk Atasözü",
+  "text_en": "A single stone does not make a wall.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Yazın gölge hoş, kışın çuval boş.",
+  "author": "Türk Atasözü",
+  "text_en": "Shade is pleasant in summer, but the sack is empty in winter.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Zaman her şeyin ilacıdır.",
+  "author": "Türk Atasözü",
+  "text_en": "Time is the cure for everything.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Ateş olmayan yerden duman çıkmaz.",
+  "author": "Türk Atasözü",
+  "text_en": "There is no smoke without fire.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Bir fincan kahvenin kırk yıl hatırı vardır.",
+  "author": "Türk Atasözü",
+  "text_en": "A cup of coffee is remembered for forty years.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Mum dibine ışık vermez.",
+  "author": "Türk Atasözü",
+  "text_en": "A candle does not light its own base.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Her yokuşun bir inişi vardır.",
+  "author": "Türk Atasözü",
+  "text_en": "Every climb has its descent.",
+  "author_en": "Turkish proverb",
+  "daily": true
+ },
+ {
+  "text": "Dereyi görmeden paçaları sıvama.",
+  "author": "Türk Atasözü",
+  "text_en": "Don't roll up your trousers before you see the stream.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Gönül kimi severse güzel odur.",
+  "author": "Türk Atasözü",
+  "text_en": "Beautiful is whoever the heart loves.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Söz ağızdan bir kez çıkar.",
+  "author": "Türk Atasözü",
+  "text_en": "A word leaves the mouth only once.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Ummadığın taş baş yarar.",
+  "author": "Türk Atasözü",
+  "text_en": "The stone you least expect cracks the head.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Çıkmadık candan umut kesilmez.",
+  "author": "Türk Atasözü",
+  "text_en": "While there is life there is hope.",
+  "author_en": "Turkish proverb",
+  "daily": true
+ },
+ {
+  "text": "Az olsun, öz olsun.",
+  "author": "Türk Atasözü",
+  "text_en": "Let it be little, but let it be pure.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Her işte bir hayır vardır.",
+  "author": "Türk Atasözü",
+  "text_en": "There is good in everything.",
+  "author_en": "Turkish proverb",
+  "daily": true
+ },
+ {
+  "text": "Kendi düşen ağlamaz.",
+  "author": "Türk Atasözü",
+  "text_en": "Who falls by his own doing does not cry.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "İnsanın yüzüne bakma, işine bak.",
+  "author": "Türk Atasözü",
+  "text_en": "Don't look at a person's face, look at their work.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Bir dost bin düşmana bedeldir.",
+  "author": "Türk Atasözü",
+  "text_en": "One friend is worth a thousand enemies.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Gülme komşuna, gelir başına.",
+  "author": "Türk Atasözü",
+  "text_en": "Don't laugh at your neighbour; it may happen to you.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Atın ölümü arpadan olsun.",
+  "author": "Türk Atasözü",
+  "text_en": "Let the horse die of too much barley.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Dikensiz gül olmaz.",
+  "author": "Türk Atasözü",
+  "text_en": "There is no rose without thorns.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Çalışan kazanır.",
+  "author": "Türk Atasözü",
+  "text_en": "Who works, earns.",
+  "author_en": "Turkish proverb",
+  "daily": true
+ },
+ {
+  "text": "Her şeyin yenisi, dostun eskisi.",
+  "author": "Türk Atasözü",
+  "text_en": "Everything is best new, except a friend: best old.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Hayır dile komşuna, hayır gele başına.",
+  "author": "Türk Atasözü",
+  "text_en": "Wish your neighbour well and good will come to you.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "İğneyi kendine, çuvaldızı başkasına batır.",
+  "author": "Türk Atasözü",
+  "text_en": "Prick yourself with a needle before you prick others with an awl.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Kazma kuyuyu, düşersin kuyuya.",
+  "author": "Türk Atasözü",
+  "text_en": "Don't dig a pit for others; you will fall in it.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Yavaş yavaş yürüyen yol alır.",
+  "author": "Türk Atasözü",
+  "text_en": "Who walks slowly still covers the road.",
+  "author_en": "Turkish proverb",
+  "daily": true
+ },
+ {
+  "text": "Gün doğmadan neler doğar.",
+  "author": "Türk Atasözü",
+  "text_en": "So much is born before the sun rises.",
+  "author_en": "Turkish proverb",
+  "daily": true
+ },
+ {
+  "text": "Hesapsız yaşayan hesapsız gider.",
+  "author": "Türk Atasözü",
+  "text_en": "Who lives without reckoning leaves without reckoning.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Kalp kırmak kolay, gönül yapmak zordur.",
+  "author": "Türk Atasözü",
+  "text_en": "Breaking a heart is easy, mending one is hard.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Sevgi emek ister.",
+  "author": "Türk Atasözü",
+  "text_en": "Love takes effort.",
+  "author_en": "Turkish proverb",
+  "daily": true
+ },
+ {
+  "text": "Söz uçar, yazı kalır.",
+  "author": "Türk Atasözü",
+  "text_en": "Words fly away, writing remains.",
+  "author_en": "Turkish proverb"
+ },
+ {
+  "text": "Bin millik bir yolculuk tek bir adımla başlar.",
+  "author": "Lao Tzu",
+  "text_en": "A journey of a thousand miles begins with a single step.",
+  "author_en": "Lao Tzu",
+  "daily": true
+ },
+ {
+  "text": "Başkalarını bilen bilgedir, kendini bilen aydınlanmıştır.",
+  "author": "Lao Tzu",
+  "text_en": "Knowing others is wisdom; knowing yourself is enlightenment.",
+  "author_en": "Lao Tzu"
+ },
+ {
+  "text": "Bildiğini bildiğini, bilmediğini bilmediğini bilmek; işte gerçek bilgi budur.",
+  "author": "Konfüçyüs",
+  "text_en": "To know what you know and to know what you do not know: that is true knowledge.",
+  "author_en": "Confucius"
+ },
+ {
+  "text": "Kendine yapılmasını istemediğini başkasına yapma.",
+  "author": "Konfüçyüs",
+  "text_en": "Do not do to others what you do not want done to yourself.",
+  "author_en": "Confucius"
+ },
+ {
+  "text": "Sorgulanmamış bir hayat yaşamaya değmez.",
+  "author": "Sokrates",
+  "text_en": "The unexamined life is not worth living.",
+  "author_en": "Socrates"
+ },
+ {
+  "text": "Aynı nehirde iki kez yıkanılmaz.",
+  "author": "Herakleitos",
+  "text_en": "You cannot step into the same river twice.",
+  "author_en": "Heraclitus"
+ },
+ {
+  "text": "Yaşamaya hemen başla ve her günü ayrı bir hayat say.",
+  "author": "Seneca",
+  "text_en": "Begin at once to live, and count each separate day as a separate life.",
+  "author_en": "Seneca",
+  "daily": true
+ },
+ {
+  "text": "İyi bir insanın nasıl olması gerektiğini tartışarak vakit kaybetme. Öyle ol.",
+  "author": "Marcus Aurelius",
+  "text_en": "Waste no more time arguing what a good man should be. Be one.",
+  "author_en": "Marcus Aurelius",
+  "daily": true
+ },
+ {
+  "text": "Engel, yolun ta kendisi olur.",
+  "author": "Marcus Aurelius",
+  "text_en": "What stands in the way becomes the way.",
+  "author_en": "Marcus Aurelius",
+  "daily": true
+ },
+ {
+  "text": "Ruhun, düşüncelerinin rengine boyanır.",
+  "author": "Marcus Aurelius",
+  "text_en": "The soul becomes dyed with the colour of its thoughts.",
+  "author_en": "Marcus Aurelius",
+  "daily": true
+ },
+ {
+  "text": "İnsanları üzen olaylar değil, olaylar hakkındaki düşünceleridir.",
+  "author": "Epiktetos",
+  "text_en": "Men are disturbed not by things, but by the views they take of them.",
+  "author_en": "Epictetus"
+ },
+ {
+  "text": "Önce ne olmak istediğini kendine söyle; sonra yapman gerekeni yap.",
+  "author": "Epiktetos",
+  "text_en": "First say to yourself what you would be; then do what you have to do.",
+  "author_en": "Epictetus",
+  "daily": true
+ },
+ {
+  "text": "Neden yaşadığını bilen, nasıl yaşadığına katlanabilir.",
+  "author": "Nietzsche",
+  "text_en": "He who has a why to live can bear almost any how.",
+  "author_en": "Nietzsche"
+ },
+ {
+  "text": "Dans eden bir yıldız doğurmak için insanın içinde kaos olmalıdır.",
+  "author": "Nietzsche",
+  "text_en": "One must still have chaos in oneself to give birth to a dancing star.",
+  "author_en": "Nietzsche"
+ },
+ {
+  "text": "Güzellik dünyayı kurtaracak.",
+  "author": "Dostoyevski",
+  "text_en": "Beauty will save the world.",
+  "author_en": "Dostoevsky"
+ },
+ {
+  "text": "Kalbin, aklın bilmediği nedenleri vardır.",
+  "author": "Pascal",
+  "text_en": "The heart has its reasons which reason does not know.",
+  "author_en": "Pascal"
+ },
+ {
+  "text": "Dünyadaki en büyük şey, kendine ait olmayı bilmektir.",
+  "author": "Montaigne",
+  "text_en": "The greatest thing in the world is to know how to belong to oneself.",
+  "author_en": "Montaigne"
+ },
+ {
+  "text": "Olmak ya da olmamak, işte bütün mesele bu.",
+  "author": "Shakespeare",
+  "text_en": "To be, or not to be, that is the question.",
+  "author_en": "Shakespeare"
+ },
+ {
+  "text": "Hayallerinin yönünde güvenle ilerle.",
+  "author": "Thoreau",
+  "text_en": "Go confidently in the direction of your dreams.",
+  "author_en": "Thoreau",
+  "daily": true
+ },
+ {
+  "text": "Gelin tanış olalım, işi kolay kılalım; sevelim, sevilelim, dünya kimseye kalmaz.",
+  "author": "Yunus Emre",
+  "text_en": "Come, let us be friends and make things easy; let us love and be loved, the world is no one's to keep.",
+  "author_en": "Yunus Emre"
+ },
+ {
+  "text": "Dinle, bu ney nasıl şikâyet ediyor, ayrılıkları nasıl anlatıyor.",
+  "author": "Mevlana",
+  "text_en": "Listen to the reed, how it tells a tale, complaining of separations.",
+  "author_en": "Rumi"
+ },
+ {
+  "text": "İncinsen de incitme.",
+  "author": "Hacı Bektaş Veli",
+  "text_en": "Even if you are hurt, do not hurt.",
+  "author_en": "Hacı Bektaş Veli"
+ },
+ {
+  "text": "İnsan özgür doğar, oysa her yerde zincire vurulmuştur.",
+  "author": "Rousseau",
+  "text_en": "Man is born free, and everywhere he is in chains.",
+  "author_en": "Rousseau"
+ },
+ {
+  "text": "Mutluluk, kendi kendine yetenlerindir.",
+  "author": "Aristoteles",
+  "text_en": "Happiness belongs to the self-sufficient.",
+  "author_en": "Aristotle"
+ },
+ {
+  "text": "Bir kırlangıçla bahar gelmez.",
+  "author": "Aristoteles",
+  "text_en": "One swallow does not make a spring.",
+  "author_en": "Aristotle"
+ },
+ {
+  "text": "Bilgi güçtür.",
+  "author": "Francis Bacon",
+  "text_en": "Knowledge is power.",
+  "author_en": "Francis Bacon"
+ },
+ {
+  "text": "Kendi bahçeni ekip biçmelisin.",
+  "author": "Voltaire",
+  "text_en": "We must cultivate our garden.",
+  "author_en": "Voltaire",
+  "daily": true
+ },
+ {
+  "text": "Mutlu aileler birbirine benzer; her mutsuz aileninse kendine özgü bir mutsuzluğu vardır.",
+  "author": "Tolstoy",
+  "text_en": "Happy families are all alike; every unhappy family is unhappy in its own way.",
+  "author_en": "Tolstoy"
+ },
+ {
+  "text": "Azla yetinmeyen, hiçbir şeyle yetinmez.",
+  "author": "Epikuros",
+  "text_en": "He who is not satisfied with a little is satisfied with nothing.",
+  "author_en": "Epicurus"
+ },
+ {
+  "text": "Zaman, en bilge danışmandır.",
+  "author": "Perikles",
+  "text_en": "Time is the wisest counsellor of all.",
+  "author_en": "Pericles"
+ }
 ]

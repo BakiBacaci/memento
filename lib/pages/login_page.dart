@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../l10n/strings.dart';
+import '../services/account_service.dart';
 import '../services/settings_service.dart';
 import '../theme.dart';
 import 'register_page.dart';
@@ -71,6 +72,66 @@ class _LoginPageState extends State<LoginPage>
     }
   }
 
+  /// Şifre sıfırlama bağlantısı gönderir. E-posta kutusu doluysa onu kullanır.
+  Future<void> _forgotPassword() async {
+    final ctrl = TextEditingController(text: _email.text.trim());
+    final email = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        title: Text(ctx.t('reset_password'),
+            style: TextStyle(color: AppColors.textPrimary)),
+        content: TextField(
+          controller: ctrl,
+          keyboardType: TextInputType.emailAddress,
+          autofocus: true,
+          style: TextStyle(color: AppColors.textPrimary),
+          decoration: InputDecoration(hintText: ctx.t('email')),
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(ctx.t('cancel'))),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, ctrl.text.trim()),
+              child: Text(ctx.t('send'))),
+        ],
+      ),
+    );
+    ctrl.dispose();
+    if (email == null || email.isEmpty || !mounted) return;
+    try {
+      await AccountService.instance.sendPasswordReset(email);
+    } on FirebaseAuthException catch (e) {
+      // 'user-not-found' bilgisini açık etmiyoruz: kayıtlı e-postaları
+      // tahmin etmeye yarar. Her durumda aynı mesaj.
+      if (e.code == 'invalid-email' && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(context.t('err_invalid_email'))));
+        return;
+      }
+    }
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.t('reset_sent'))));
+  }
+
+  Future<void> _google() async {
+    setState(() => _loading = true);
+    try {
+      await AccountService.instance
+          .signInWithGoogle(defaultBio: context.t('bio_default'));
+      if (mounted && widget.canDismiss) Navigator.maybePop(context);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('${context.t('google_failed')}\n$e')));
+      }
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
   Future<void> _continueAsGuest() async {
     await SettingsService.instance.setGuestMode(true);
   }
@@ -79,12 +140,7 @@ class _LoginPageState extends State<LoginPage>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: RadialGradient(
-            radius: 1.3,
-            colors: [AppColors.surfaceAlt, AppColors.bg],
-          ),
-        ),
+        color: AppColors.bg,
         child: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 24),
@@ -94,67 +150,68 @@ class _LoginPageState extends State<LoginPage>
                   Align(
                     alignment: Alignment.centerLeft,
                     child: IconButton(
-                      icon: const Icon(Icons.close, color: Colors.white54),
+                      icon: Icon(Icons.close, color: AppColors.textMuted),
                       onPressed: () => Navigator.maybePop(context),
                     ),
                   ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 8),
                 FadeTransition(
                   opacity: _fade,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Text(
+                        'memento',
+                        style: TextStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: 52,
+                          height: 1,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -2.2,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
                       Container(
-                        padding: const EdgeInsets.all(20),
+                        width: double.infinity,
+                        padding: const EdgeInsets.fromLTRB(22, 22, 22, 20),
                         decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border:
-                              Border.all(color: AppColors.gold, width: 1.5),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.gold.withValues(alpha: 0.2),
-                              blurRadius: 40,
-                              spreadRadius: 1,
+                          color: QuoteMood.all.first.top,
+                          borderRadius: BorderRadius.circular(28),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              context.t('app_tagline'),
+                              style: quoteStyle(context.t('app_tagline'),
+                                  scale: 0.9,
+                                  color: QuoteMood.all.first.accent),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              context.t('login_sub'),
+                              style: TextStyle(
+                                  color: QuoteMood.all.first.accent,
+                                  fontSize: 15,
+                                  height: 1.35,
+                                  fontWeight: FontWeight.w600),
                             ),
                           ],
-                        ),
-                        child: const Icon(Icons.hourglass_empty,
-                            size: 48, color: AppColors.gold),
-                      ),
-                      const SizedBox(height: 24),
-                      const Text(
-                        'M E M E N T O',
-                        style: TextStyle(
-                          fontFamily: kSerif,
-                          color: Colors.white,
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 6,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        context.t('app_tagline'),
-                        style: TextStyle(
-                          fontFamily: kSerif,
-                          color: Colors.grey[600],
-                          fontStyle: FontStyle.italic,
-                          fontSize: 13,
-                          letterSpacing: 1,
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 44),
+                const SizedBox(height: 28),
                 TextField(
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
                   autofillHints: const [AutofillHints.email],
-                  style: const TextStyle(color: Colors.white),
+                  style: TextStyle(color: AppColors.textPrimary),
                   decoration: InputDecoration(
                     hintText: context.t('email'),
                     prefixIcon:
-                        const Icon(Icons.email_outlined, color: AppColors.gold),
+                        Icon(Icons.email_outlined, color: AppColors.textPrimary),
                   ),
                 ),
                 const SizedBox(height: 14),
@@ -163,31 +220,41 @@ class _LoginPageState extends State<LoginPage>
                   obscureText: true,
                   autofillHints: const [AutofillHints.password],
                   onSubmitted: (_) => _signIn(),
-                  style: const TextStyle(color: Colors.white),
+                  style: TextStyle(color: AppColors.textPrimary),
                   decoration: InputDecoration(
                     hintText: context.t('password'),
                     prefixIcon:
-                        const Icon(Icons.lock_outline, color: AppColors.gold),
+                        Icon(Icons.lock_outline, color: AppColors.textPrimary),
                   ),
                 ),
-                const SizedBox(height: 22),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: _forgotPassword,
+                    child: Text(context.t('forgot_password'),
+                        style: TextStyle(color: AppColors.textMuted, fontSize: 13)),
+                  ),
+                ),
+                const SizedBox(height: 8),
                 ElevatedButton(
                   onPressed: _loading ? null : _signIn,
                   child: _loading
-                      ? const SizedBox(
+                      ? SizedBox(
                           height: 20,
                           width: 20,
                           child: CircularProgressIndicator(
-                              color: Colors.black, strokeWidth: 2),
+                              color: AppColors.onAccent, strokeWidth: 2),
                         )
                       : Text(context.t('sign_in')),
                 ),
+                const SizedBox(height: 12),
+                _GoogleButton(onPressed: _loading ? null : _google),
                 const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(context.t('no_account'),
-                        style: const TextStyle(color: Colors.grey)),
+                        style: TextStyle(color: AppColors.textMuted)),
                     GestureDetector(
                       onTap: () => Navigator.push(
                         context,
@@ -196,7 +263,7 @@ class _LoginPageState extends State<LoginPage>
                       ),
                       child: Text(
                         context.t('register'),
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppColors.gold,
                           fontWeight: FontWeight.bold,
                         ),
@@ -206,7 +273,7 @@ class _LoginPageState extends State<LoginPage>
                 ),
                 if (!widget.canDismiss) ...[
                   const SizedBox(height: 28),
-                  const Divider(color: AppColors.border),
+                  Divider(color: AppColors.border),
                   const SizedBox(height: 8),
                   // Giriş duvarını kaldıran kapı: uygulamayı ilk açan kimse
                   // tek bir söz bile görmeden kayıt olmak zorunda değil.
@@ -214,7 +281,7 @@ class _LoginPageState extends State<LoginPage>
                     onPressed: _continueAsGuest,
                     child: Text(
                       context.t('continue_as_guest'),
-                      style: const TextStyle(color: Colors.grey),
+                      style: TextStyle(color: AppColors.textMuted),
                     ),
                   ),
                 ],
@@ -225,4 +292,35 @@ class _LoginPageState extends State<LoginPage>
       ),
     );
   }
+}
+
+/// "Google ile devam et" — beyaz hap, Google'ın marka kurallarına uygun düz yazı.
+class _GoogleButton extends StatelessWidget {
+  const _GoogleButton({required this.onPressed});
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) => OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          minimumSize: const Size.fromHeight(56),
+          backgroundColor: AppColors.surface,
+        ),
+        onPressed: onPressed,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('G',
+                style: TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800)),
+            const SizedBox(width: 10),
+            Text(context.t('continue_with_google'),
+                style: TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600)),
+          ],
+        ),
+      );
 }

@@ -5,7 +5,7 @@ import '../models/quote.dart';
 import '../theme.dart';
 import 'user_avatar.dart';
 
-/// Akış ve profil listelerindeki söz satırı.
+/// Akış ve profil listelerindeki söz: destedeki kartın küçük, düz renkli hali.
 class QuoteTile extends StatelessWidget {
   const QuoteTile({
     super.key,
@@ -30,14 +30,16 @@ class QuoteTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final lang = context.lang;
+    final mood = QuoteMood.forQuote(quote);
+    final ink = mood.accent;
+    final text = quote.textFor(lang);
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.fromLTRB(14, 5, 14, 5),
+      padding: const EdgeInsets.fromLTRB(20, 16, 8, 8),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        color: mood.top,
+        borderRadius: BorderRadius.circular(26),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,81 +47,72 @@ class QuoteTile extends StatelessWidget {
           Row(
             children: [
               if (rank != null) ...[
-                Text(
-                  '$rank',
-                  style: TextStyle(
-                    color: switch (rank!) {
-                      1 => AppColors.gold1,
-                      2 => AppColors.silver,
-                      3 => AppColors.bronze,
-                      _ => Colors.grey,
-                    },
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
+                Text('$rank',
+                    style: TextStyle(
+                        color: ink,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 28,
+                        height: 1,
+                        letterSpacing: -1)),
                 const SizedBox(width: 12),
               ],
-              UserAvatar(
-                photoUrl: quote.ownerPhotoUrl,
-                initial: quote.authorFor(lang),
-                radius: 15,
-                onTap: onAuthorTap,
-              ),
-              const SizedBox(width: 8),
+              if (quote.ownerId != null) ...[
+                UserAvatar(
+                  photoUrl: quote.ownerPhotoUrl,
+                  initial: quote.ownerUsername ?? quote.authorFor(lang),
+                  radius: 12,
+                  onTap: onAuthorTap,
+                ),
+                const SizedBox(width: 8),
+              ],
               Expanded(
                 child: GestureDetector(
                   onTap: onAuthorTap,
                   child: Text(
-                    quote.authorFor(lang),
+                    quote.ownerUsername != null
+                        ? '@${quote.ownerUsername}'
+                        : quote.authorFor(lang),
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13,
-                    ),
+                    style: TextStyle(
+                        color: ink, fontWeight: FontWeight.w600, fontSize: 14),
                   ),
                 ),
               ),
               if (onMoreTap != null)
-                GestureDetector(
-                  onTap: onMoreTap,
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4),
-                    child: Icon(Icons.more_horiz,
-                        color: Colors.white38, size: 20),
-                  ),
+                IconButton(
+                  visualDensity: VisualDensity.compact,
+                  onPressed: onMoreTap,
+                  icon: Icon(Icons.more_horiz, color: ink, size: 20),
                 ),
             ],
           ),
-          const SizedBox(height: 12),
-          Text(
-            '“${quote.textFor(lang)}”',
-            style: const TextStyle(
-              fontFamily: kSerif,
-              color: AppColors.textPrimary,
-              fontSize: 16,
-              fontStyle: FontStyle.italic,
-              height: 1.4,
-            ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: Text(text, style: quoteStyle(text, scale: 0.62, color: ink)),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
           Row(
             children: [
-              const Icon(Icons.favorite, size: 14, color: Colors.grey),
-              const SizedBox(width: 5),
+              Expanded(
+                child: Text(
+                  quote.ownerId != null ? quote.authorFor(lang) : '',
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                      color: ink, fontSize: 13, fontWeight: FontWeight.w600),
+                ),
+              ),
+              Icon(Icons.favorite, size: 16, color: ink),
+              const SizedBox(width: 4),
               Text('${quote.likes}',
-                  style: const TextStyle(color: Colors.grey, fontSize: 12)),
-              const Spacer(),
+                  style: TextStyle(
+                      color: ink, fontSize: 14, fontWeight: FontWeight.w800)),
               if (trailing != null) trailing!,
               if (onShareTap != null)
-                GestureDetector(
-                  onTap: onShareTap,
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 6),
-                    child:
-                        Icon(Icons.ios_share, color: Colors.white38, size: 18),
-                  ),
+                IconButton(
+                  visualDensity: VisualDensity.compact,
+                  onPressed: onShareTap,
+                  icon: Icon(Icons.ios_share, color: ink, size: 19),
                 ),
             ],
           ),

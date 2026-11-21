@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_name">Günün Sözü</string>
+    <string name="widget_description">Her gün sana özel bir söz, sözün kendi renginde.</string>
+    <string name="widget_small_name">Günün Sözü (küçük)</string>
+    <string name="widget_small_description">Günün sözü, kısa ve renkli.</string>
+    <string name="widget_journal_name">Defterin</string>
+    <string name="widget_journal_description">Serin ve son 7 günün sözleri.</string>
+</resources>

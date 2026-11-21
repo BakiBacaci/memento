@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'journal_sheet.dart';
 
 import '../l10n/strings.dart';
 import '../models/quote.dart';
 import '../services/quote_service.dart';
+import '../services/block_service.dart';
 import '../services/report_service.dart';
 import '../services/user_service.dart';
 import '../theme.dart';
@@ -41,14 +43,48 @@ class QuoteActions {
             ),
             const SizedBox(height: 10),
             ListTile(
-              leading: const Icon(Icons.ios_share, color: Colors.white),
+              leading: Icon(Icons.ios_share, color: AppColors.textPrimary),
               title: Text(sheetCtx.t('share'),
-                  style: const TextStyle(color: Colors.white)),
+                  style: TextStyle(color: AppColors.textPrimary)),
               onTap: () {
                 Navigator.pop(sheetCtx);
                 QuoteShareSheet.show(context, quote);
               },
             ),
+            if (UserService.instance.isSignedIn)
+              ListTile(
+                leading: Icon(Icons.menu_book_rounded, color: AppColors.textPrimary),
+                title: Text(sheetCtx.t('journal_write_button')),
+                onTap: () {
+                  Navigator.pop(sheetCtx);
+                  showJournalSheet(context, quote);
+                },
+              ),
+            if (UserService.instance.isSignedIn)
+              ListTile(
+                leading: Icon(Icons.push_pin_outlined,
+                    color: AppColors.textPrimary),
+                title: Text(sheetCtx.t('pin_to_profile')),
+                onTap: () async {
+                  Navigator.pop(sheetCtx);
+                  await UserService.instance.setPinned({
+                    'id': quote.id,
+                    'text': quote.text,
+                    'author': quote.author,
+                    if (quote.textEn != null) 'text_en': quote.textEn,
+                    if (quote.authorEn != null) 'author_en': quote.authorEn,
+                    if (quote.ownerId != null) 'user_id': quote.ownerId,
+                    if (quote.ownerUsername != null)
+                      'owner_username': quote.ownerUsername,
+                    if (quote.color != null) 'color': quote.color,
+                  });
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(context.t('pinned'))),
+                    );
+                  }
+                },
+              ),
             if (canModerate) ...[
               ListTile(
                 leading: const Icon(Icons.flag_outlined, color: Colors.orange),
@@ -65,7 +101,7 @@ class QuoteActions {
                     style: const TextStyle(color: Colors.redAccent)),
                 onTap: () async {
                   Navigator.pop(sheetCtx);
-                  await ReportService.instance.block(quote.ownerId!);
+                  await BlockService.instance.block(quote.ownerId!);
                   onBlocked?.call();
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -107,7 +143,7 @@ class QuoteActions {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.surface,
         content: Text(ctx.t('delete_confirm'),
-            style: const TextStyle(color: Colors.white)),
+            style: TextStyle(color: AppColors.textPrimary)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
@@ -139,8 +175,8 @@ class QuoteActions {
             const SizedBox(height: 20),
             Text(
               sheetCtx.t('report_title'),
-              style: const TextStyle(
-                  color: Colors.white,
+              style: TextStyle(
+                  color: AppColors.textPrimary,
                   fontSize: 16,
                   fontWeight: FontWeight.bold),
             ),
@@ -148,7 +184,7 @@ class QuoteActions {
             for (final key in ReportService.reasons)
               ListTile(
                 title: Text(sheetCtx.t(key),
-                    style: const TextStyle(color: Colors.white)),
+                    style: TextStyle(color: AppColors.textPrimary)),
                 onTap: () async {
                   Navigator.pop(sheetCtx);
                   await ReportService.instance.reportQuote(

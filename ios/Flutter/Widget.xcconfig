@@ -1,0 +1,3 @@
+// Widget uzantısı sürüm numarasını ana uygulamayla paylaşsın diye
+// (FLUTTER_BUILD_NAME / FLUTTER_BUILD_NUMBER). Pods ayarları bilerek yok.
+#include "Generated.xcconfig"

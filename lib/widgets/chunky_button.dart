@@ -3,32 +3,30 @@ import 'package:flutter/services.dart';
 
 import '../theme.dart';
 
-/// Duolingo tipi "basılabilir" buton.
-///
-/// Numara basit ama etkili: butonun altında koyu bir kenar var, basınca o
-/// kenar kayboluyor ve buton aşağı iniyor. Fiziksel bir tuşa basmış gibi
-/// hissettiriyor. Düz Material butonlarında bu his hiç yok.
+/// Ana düğme: siyah hap, basınca hafifçe küçülür.
 class ChunkyButton extends StatefulWidget {
   const ChunkyButton({
     super.key,
     required this.label,
     required this.onPressed,
     this.icon,
-    this.color = AppColors.gold,
-    this.foreground = Colors.black,
+    this.color,
+    this.foreground,
     this.loading = false,
     this.expand = true,
     this.compact = false,
+    this.outlined = false,
   });
 
   final String label;
   final VoidCallback? onPressed;
   final IconData? icon;
-  final Color color;
-  final Color foreground;
+  final Color? color;
+  final Color? foreground;
   final bool loading;
   final bool expand;
   final bool compact;
+  final bool outlined;
 
   @override
   State<ChunkyButton> createState() => _ChunkyButtonState();
@@ -37,14 +35,16 @@ class ChunkyButton extends StatefulWidget {
 class _ChunkyButtonState extends State<ChunkyButton> {
   bool _down = false;
 
-  static const _depth = 4.0;
-
   @override
   Widget build(BuildContext context) {
     final enabled = widget.onPressed != null && !widget.loading;
-    final base = enabled ? widget.color : AppColors.border;
-    final shadow = Color.lerp(base, Colors.black, 0.45)!;
-    final height = widget.compact ? 42.0 : 54.0;
+    final color = widget.color ?? AppColors.textPrimary;
+    final foreground = widget.foreground ?? AppColors.bg;
+    final bg = widget.outlined
+        ? Colors.transparent
+        : (enabled ? color : AppColors.border);
+    final fg = widget.outlined ? color : foreground;
+    final height = widget.compact ? 46.0 : 56.0;
 
     return GestureDetector(
       onTapDown: enabled ? (_) => setState(() => _down = true) : null,
@@ -56,47 +56,43 @@ class _ChunkyButtonState extends State<ChunkyButton> {
               widget.onPressed!.call();
             }
           : null,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 60),
-        width: widget.expand ? double.infinity : null,
-        height: height + _depth,
-        padding: EdgeInsets.only(
-          top: _down ? _depth : 0,
-          bottom: _down ? 0 : _depth,
-        ),
+      child: AnimatedScale(
+        scale: _down ? 0.97 : 1,
+        duration: const Duration(milliseconds: 90),
         child: Container(
-          decoration: BoxDecoration(
-            color: base,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: _down
-                ? null
-                : [BoxShadow(color: shadow, offset: const Offset(0, _depth))],
+          width: widget.expand ? double.infinity : null,
+          height: height,
+          decoration: ShapeDecoration(
+            color: bg,
+            shape: StadiumBorder(
+              side: widget.outlined
+                  ? BorderSide(color: color, width: 2)
+                  : BorderSide.none,
+            ),
           ),
           alignment: Alignment.center,
-          padding: EdgeInsets.symmetric(horizontal: widget.compact ? 18 : 24),
+          padding: const EdgeInsets.symmetric(horizontal: 22),
           child: widget.loading
               ? SizedBox(
                   height: 20,
                   width: 20,
-                  child: CircularProgressIndicator(
-                      color: widget.foreground, strokeWidth: 2.4),
+                  child: CircularProgressIndicator(color: fg, strokeWidth: 2.4),
                 )
               : Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     if (widget.icon != null) ...[
-                      Icon(widget.icon, color: widget.foreground, size: 19),
+                      Icon(widget.icon, color: fg, size: 19),
                       const SizedBox(width: 8),
                     ],
                     Flexible(
                       child: Text(
                         widget.label,
-                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: widget.foreground,
-                          fontWeight: FontWeight.w800,
-                          fontSize: widget.compact ? 13 : 15,
-                          letterSpacing: 0.6,
+                          color: fg,
+                          fontWeight: FontWeight.w600,
+                          fontSize: widget.compact ? 15 : 16,
                         ),
                       ),
                     ),
@@ -108,7 +104,7 @@ class _ChunkyButtonState extends State<ChunkyButton> {
   }
 }
 
-/// İkincil buton — dolu değil, çerçeveli. Aynı basma hissi.
+/// İkincil düğme: çerçeveli hap.
 class ChunkyOutlineButton extends StatelessWidget {
   const ChunkyOutlineButton({
     super.key,
@@ -132,7 +128,6 @@ class ChunkyOutlineButton extends StatelessWidget {
         icon: icon,
         compact: compact,
         expand: expand,
-        color: AppColors.surface2,
-        foreground: Colors.white,
+        outlined: true,
       );
 }

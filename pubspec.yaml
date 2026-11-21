@@ -32,6 +32,13 @@ dependencies:
   # 10.x'e sabitliyoruz ki Share.shareXFiles çağrıları geçerli kalsın.
   share_plus: ^10.1.4
   path_provider: ^2.1.5
+  home_widget: ^0.10.0
+  flutter_local_notifications: ^23.0.3
+  timezone: ^0.11.2
+  flutter_timezone: ^5.1.1
+  url_launcher: ^6.3.3
+  google_sign_in: ^7.2.0
+  firebase_app_check: ^0.3.2+10
 
 dev_dependencies:
   flutter_test:
@@ -43,3 +50,13 @@ flutter:
 
   assets:
     - assets/quotes.json
+
+  # Yazı tipi uygulamaya gömülü (SIL Open Font License, assets/fonts/OFL.txt).
+  fonts:
+    - family: Bricolage
+      fonts:
+        - asset: assets/fonts/Bricolage-Regular.ttf
+        - asset: assets/fonts/Bricolage-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Bricolage-ExtraBold.ttf
+          weight: 800

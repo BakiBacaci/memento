@@ -1,25 +1,3 @@
-// BU KISMI EN TEPEYE EKLE
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        // Firebase motoru burada
-        classpath("com.google.gms:google-services:4.4.0")
-    }
-}
-
-// --- Senin kodların buradan devam etsin ---
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-// ... (kalan kodlar aynı)
-
-
 allprojects {
     repositories {
         google()

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
 import '../models/quote.dart';
+import 'notification_service.dart';
 
 /// Beğeniler.
 ///
@@ -43,6 +44,13 @@ class LikeService {
     }
   }
 
+  /// Beğenilen sözlerin kimlikleri — canlı.
+  Stream<Set<String>> watchLikedIds() {
+    final col = _likedCol;
+    if (col == null) return Stream.value(<String>{});
+    return col.snapshots().map((s) => s.docs.map((d) => d.id).toSet());
+  }
+
   /// Beğenilen sözlerin kendisi — profildeki "Beğendiklerim" için.
   Stream<List<Quote>> watchLiked() {
     final col = _likedCol;
@@ -78,28 +86,37 @@ class LikeService {
     }
 
     // Sayaç ve karma yalnızca gerçek (Firestore'daki) sözler için.
-    if (q.isRemote) {
-      final quoteRef = _db.collection('quotes').doc(q.id);
+    final quoteRef = _db.collection('quotes').doc(q.id);
+    // Söz sahibi tarafından silinmişse sadece kendi geçmişimizi güncelleriz.
+    final quoteExists = q.isRemote && (await quoteRef.get()).exists;
+    if (quoteExists) {
+      // Herkese açık beğeni kaydının GERÇEK durumuna göre karar verilir:
+      // geçmiş ile sayaç kaydı eski sürümlerde ayrışmış olabilir, o zaman
+      // sayaca dokunmadan sadece geçmiş düzeltilir (kurallar reddetmesin).
       final publicLikeRef = quoteRef.collection('likes').doc(uid);
-      final delta = already ? -1 : 1;
+      final publicExists = (await publicLikeRef.get()).exists;
+      final wantLiked = !already;
+      if (wantLiked != publicExists) {
+        final delta = wantLiked ? 1 : -1;
+        if (wantLiked) {
+          batch.set(publicLikeRef, {
+            'user_id': uid,
+            'created_at': FieldValue.serverTimestamp(),
+          });
+        } else {
+          batch.delete(publicLikeRef);
+        }
+        batch.update(quoteRef, {'likes': FieldValue.increment(delta)});
 
-      if (already) {
-        batch.delete(publicLikeRef);
-      } else {
-        batch.set(publicLikeRef, {
-          'user_id': uid,
-          'created_at': FieldValue.serverTimestamp(),
-        });
-      }
-      batch.update(quoteRef, {'likes': FieldValue.increment(delta)});
-
-      if (q.ownerId != null && q.ownerId != uid) {
-        batch.update(_db.collection('users').doc(q.ownerId),
-            {'karma': FieldValue.increment(delta)});
+        if (q.ownerId != null && q.ownerId != uid) {
+          batch.update(_db.collection('users').doc(q.ownerId),
+              {'karma': FieldValue.increment(delta), 'karma_src': q.id});
+        }
       }
     }
 
     await batch.commit();
+    if (!already && quoteExists) NotificationService.instance.notifyLike(q);
     return !already;
   }
 }

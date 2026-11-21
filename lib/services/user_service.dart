@@ -3,8 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
 import '../models/app_user.dart';
+import 'storage_service.dart';
 
 class UsernameTakenException implements Exception {}
+
+enum UsernameStatus { free, mine, taken, unknown }
 
 class UserService {
   UserService._();
@@ -46,17 +49,31 @@ class UserService {
   static bool isValidUsername(String s) => _usernameRe.hasMatch(s);
 
   /// Kullanıcı adları `usernames/{kucukHarfli}` koleksiyonunda kilitleniyor.
-  /// Döküman kimliği kullanıcı adının kendisi olduğu için, iki kişi aynı anda
-  /// aynı adı almaya çalışırsa ikincisi başarısız olur.
-  Future<bool> isUsernameAvailable(String username) async {
+  /// Döküman kimliği adın kendisi: iki kişi aynı anda aynı adı alamaz.
+  ///
+  /// Bir kilit "sahipsiz" olabilir: sahibinin hesabı silinmiş ya da sahibi
+  /// başka bir ada geçmiş ama eski sürüm kilidi bırakmamış. Böyle kilitler
+  /// boş sayılır ve yeni sahibine devredilir (kurallar da bunu doğrular).
+  Future<UsernameStatus> usernameStatus(String username) async {
+    final lower = username.toLowerCase();
     try {
-      final s = await _db.collection('usernames').doc(username.toLowerCase()).get();
-      return !s.exists;
+      final lock = await _db.collection('usernames').doc(lower).get();
+      if (!lock.exists) return UsernameStatus.free;
+      final owner = lock.data()?['uid'] as String?;
+      if (owner != null && owner == uid) return UsernameStatus.mine;
+      if (owner == null) return UsernameStatus.free;
+      final ownerDoc = await _doc(owner).get();
+      final stillUsed = ownerDoc.exists &&
+          (ownerDoc.data()?['username_lower'] as String?) == lower;
+      return stillUsed ? UsernameStatus.taken : UsernameStatus.free;
     } catch (e) {
       debugPrint('Kullanıcı adı kontrol edilemedi: $e');
-      return true; // Kontrol edilemiyorsa yazma anında zaten reddedilir.
+      return UsernameStatus.unknown;
     }
   }
+
+  Future<bool> isUsernameAvailable(String username) async =>
+      (await usernameStatus(username)) != UsernameStatus.taken;
 
   // ---------------------------------------------------------------
   // Yazma
@@ -65,12 +82,12 @@ class UserService {
   Future<void> createProfile({
     required String uid,
     required String username,
-    required String email,
     required String defaultBio,
   }) async {
     final lower = username.toLowerCase();
     final batch = _db.batch();
 
+    // set: kilit yoksa oluşturur, sahipsizse devralır.
     batch.set(_db.collection('usernames').doc(lower), {'uid': uid});
     batch.set(_doc(uid), {
       'uid': uid,
@@ -78,7 +95,6 @@ class UserService {
       'username_lower': lower,
       'display_name': username,
       'link': '',
-      'email': email,
       'bio': defaultBio,
       'photo_url': null,
       'karma': 0,
@@ -91,13 +107,21 @@ class UserService {
     try {
       await batch.commit();
     } on FirebaseException catch (e) {
-      if (e.code == 'permission-denied') throw UsernameTakenException();
+      // Ret sebebi gerçekten ad mı? Yeniden kontrol et; değilse asıl hatayı göster.
+      if (e.code == 'permission-denied' &&
+          await usernameStatus(username) == UsernameStatus.taken) {
+        throw UsernameTakenException();
+      }
       rethrow;
     }
   }
 
-  /// Profil güncelleme. Kullanıcı adı değiştiyse eski kilit bırakılır,
-  /// yenisi alınır — ikisi tek batch içinde, yarım kalmasın diye.
+  /// Profil güncelleme. Ad değiştiyse eski kilit bırakılır, yenisi alınır;
+  /// hepsi tek batch içinde, yarım kalmasın diye.
+  ///
+  /// "Değişti mi?" sorusu ekrandaki eski değere değil, SUNUCUDAKİ kayda göre
+  /// cevaplanır: eski sürümden kalan hesaplarda ad alanı ya da ad kilidi hiç
+  /// olmayabiliyor; o durumda ad bu kayıtta ilk kez sahipleniliyor.
   Future<void> updateProfile({
     required String uid,
     required String username,
@@ -106,12 +130,34 @@ class UserService {
     String link = '',
     String? previousUsername,
   }) async {
-    final batch = _db.batch();
     final lower = username.toLowerCase();
+    final snap = await _doc(uid).get();
 
-    if (previousUsername != null &&
-        previousUsername.toLowerCase() != lower) {
-      batch.delete(_db.collection('usernames').doc(previousUsername.toLowerCase()));
+    // Profil kaydı hiç yoksa (yarım kalmış eski kayıt) önce oluştur.
+    if (!snap.exists) {
+      await createProfile(uid: uid, username: username, defaultBio: bio);
+      await _doc(uid).update({
+        'display_name': displayName,
+        'bio': bio,
+        'link': link,
+        'updated_at': FieldValue.serverTimestamp(),
+      });
+      return;
+    }
+
+    final data = snap.data() ?? const {};
+    final serverLower = data['username_lower'] as String?;
+    final serverName = data['username'] as String?;
+    final lockSnap = await _db.collection('usernames').doc(lower).get();
+    final ownsLock = lockSnap.exists && lockSnap.data()?['uid'] == uid;
+    final claim = serverLower != lower || !ownsLock;
+
+    final batch = _db.batch();
+    if (claim) {
+      if (serverLower != null && serverLower != lower) {
+        final old = await _db.collection('usernames').doc(serverLower).get();
+        if (old.exists && old.data()?['uid'] == uid) batch.delete(old.reference);
+      }
       batch.set(_db.collection('usernames').doc(lower), {'uid': uid});
     }
 
@@ -121,19 +167,60 @@ class UserService {
       'display_name': displayName,
       'bio': bio,
       'link': link,
+      // Eski sürüm e-postayı herkese açık profile yazıyordu: temizle.
+      if (data.containsKey('email')) 'email': FieldValue.delete(),
       'updated_at': FieldValue.serverTimestamp(),
     });
 
     try {
       await batch.commit();
     } on FirebaseException catch (e) {
-      if (e.code == 'permission-denied') throw UsernameTakenException();
+      if (e.code == 'permission-denied' &&
+          claim &&
+          await usernameStatus(username) == UsernameStatus.taken) {
+        throw UsernameTakenException();
+      }
       rethrow;
+    }
+
+    if (serverName != username) {
+      await _syncOwnerFields(uid, {'owner_username': username});
     }
   }
 
-  Future<void> updatePhotoUrl(String uid, String url) =>
-      _doc(uid).update({'photo_url': url});
+  Future<void> updatePhotoUrl(String uid, String url) async {
+    await _doc(uid).update({'photo_url': url});
+    await _syncOwnerFields(uid, {'owner_photo_url': url});
+  }
+
+  /// Profil fotoğrafını kaldırır: önce profil, sonra dosya.
+  Future<void> removePhoto(String uid) async {
+    await _doc(uid).update({'photo_url': null});
+    await _syncOwnerFields(uid, {'owner_photo_url': null});
+    await StorageService.instance.deleteAvatar(uid);
+  }
+
+  /// Sözlerin içindeki yazar kopyasını (ad, foto) günceller; akışta eski
+  /// foto/ad görünmesin diye.
+  Future<void> _syncOwnerFields(String uid, Map<String, Object?> fields) async {
+    try {
+      final mine =
+          await _db.collection('quotes').where('user_id', isEqualTo: uid).get();
+      for (var i = 0; i < mine.docs.length; i += 400) {
+        final batch = _db.batch();
+        for (final d in mine.docs.skip(i).take(400)) {
+          batch.update(d.reference, {...fields, 'updated_at': FieldValue.serverTimestamp()});
+        }
+        await batch.commit();
+      }
+    } catch (e) {
+      debugPrint('Sözlerdeki yazar bilgisi güncellenemedi: $e');
+    }
+  }
+
+  /// En sevilen sözü profile sabitler (null = kaldır).
+  Future<void> setPinned(Map<String, Object?>? quote) =>
+      _doc(uid!).update({'pinned': quote});
 
   // ---------------------------------------------------------------
   // Liderlik tablosu

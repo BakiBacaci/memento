@@ -12,6 +12,10 @@ class SettingsService {
 
   static const _kLang = 'app_language';
   static const _kGuest = 'guest_mode';
+  static const _kTheme = 'theme_mode';
+
+  /// 'system' | 'light' | 'dark'
+  final themeMode = ValueNotifier<String>('system');
 
   final language = ValueNotifier<String>('tr');
 
@@ -34,12 +38,20 @@ class SettingsService {
     }
 
     guestMode.value = _prefs?.getBool(_kGuest) ?? false;
+    final t = _prefs?.getString(_kTheme);
+    if (t == 'light' || t == 'dark' || t == 'system') themeMode.value = t!;
   }
 
   Future<void> setLanguage(String code) async {
     if (code != 'tr' && code != 'en') return;
     language.value = code;
     await _prefs?.setString(_kLang, code);
+  }
+
+  Future<void> setThemeMode(String mode) async {
+    if (mode != 'light' && mode != 'dark' && mode != 'system') return;
+    themeMode.value = mode;
+    await _prefs?.setString(_kTheme, mode);
   }
 
   Future<void> setGuestMode(bool value) async {

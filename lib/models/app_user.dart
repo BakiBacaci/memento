@@ -1,3 +1,5 @@
+import 'quote.dart';
+
 /// Bir kullanıcı profili.
 ///
 /// Instagram modelini takip ediyor: `username` benzersiz kullanıcı adı
@@ -16,6 +18,9 @@ class AppUser {
   final int followerCount;
   final int followingCount;
 
+  /// Profile sabitlenen söz (yoksa null).
+  final Quote? pinned;
+
   const AppUser({
     required this.uid,
     required this.username,
@@ -27,6 +32,7 @@ class AppUser {
     this.quoteCount = 0,
     this.followerCount = 0,
     this.followingCount = 0,
+    this.pinned,
   });
 
   /// Ekranda gösterilecek ad — displayName yoksa kullanıcı adına düşer.
@@ -41,7 +47,7 @@ class AppUser {
     d ??= const {};
     return AppUser(
       uid: uid,
-      username: (d['username'] as String?) ?? 'anonim',
+      username: (d['username'] as String?) ?? '',
       displayName: (d['display_name'] as String?) ?? '',
       bio: (d['bio'] as String?) ?? '',
       link: (d['link'] as String?) ?? '',
@@ -50,6 +56,9 @@ class AppUser {
       quoteCount: (d['quote_count'] as num?)?.toInt() ?? 0,
       followerCount: (d['follower_count'] as num?)?.toInt() ?? 0,
       followingCount: (d['following_count'] as num?)?.toInt() ?? 0,
+      pinned: d['pinned'] is Map
+          ? Quote.fromJson(Map<String, dynamic>.from(d['pinned'] as Map))
+          : null,
     );
   }
 }

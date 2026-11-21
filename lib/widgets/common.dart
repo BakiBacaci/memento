@@ -23,12 +23,18 @@ class EmptyState extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, color: AppColors.gold.withValues(alpha: 0.6), size: 44),
-              const SizedBox(height: 16),
+              Icon(icon, color: AppColors.textPrimary, size: 36),
+              const SizedBox(height: 14),
               Text(
                 message,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.grey, height: 1.5),
+                style: TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 20,
+                  height: 1.2,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.4,
+                ),
               ),
               if (action != null) ...[const SizedBox(height: 20), action!],
             ],
@@ -83,7 +89,7 @@ class _ShimmerListState extends State<ShimmerList>
             children: [
               Row(
                 children: [
-                  const CircleAvatar(radius: 15, backgroundColor: AppColors.border),
+                  CircleAvatar(radius: 15, backgroundColor: AppColors.border),
                   const SizedBox(width: 8),
                   _bar(110, 11),
                 ],
@@ -138,12 +144,12 @@ Future<bool> requireSignIn(BuildContext context) async {
               ),
             ),
             const SizedBox(height: 24),
-            const Icon(Icons.lock_outline, color: AppColors.gold, size: 40),
+            Icon(Icons.lock_outline, color: AppColors.gold, size: 40),
             const SizedBox(height: 16),
             Text(
               ctx.t('sign_in_required'),
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.white, fontSize: 16),
+              style: TextStyle(color: AppColors.textPrimary, fontSize: 16),
             ),
             const SizedBox(height: 24),
             ElevatedButton(

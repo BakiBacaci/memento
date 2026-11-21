@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Defter (2x2): seri ve son 7 günün sözlerinin renkleri. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/widget_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_round"
+        android:importantForAccessibility="no" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="14dp">
+        <TextView
+            android:id="@+id/j_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/bricolage_extrabold"
+            android:text="Defterin"
+            android:textColor="#FFFFE27A"
+            android:textSize="12sp" />
+        <TextView
+            android:id="@+id/j_streak"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:fontFamily="@font/bricolage_extrabold"
+            android:text="0"
+            android:textColor="#FFF5F3EE"
+            android:textSize="34sp" />
+        <TextView
+            android:id="@+id/j_sub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/bricolage_semibold"
+            android:text="gün üst üste"
+            android:textColor="#FFA3A3A9"
+            android:textSize="12sp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="14dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+            <ImageView android:id="@+id/c0" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:layout_marginEnd="3dp" android:scaleType="fitXY" android:importantForAccessibility="no" />
+            <ImageView android:id="@+id/c1" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:layout_marginEnd="3dp" android:scaleType="fitXY" android:importantForAccessibility="no" />
+            <ImageView android:id="@+id/c2" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:layout_marginEnd="3dp" android:scaleType="fitXY" android:importantForAccessibility="no" />
+            <ImageView android:id="@+id/c3" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:layout_marginEnd="3dp" android:scaleType="fitXY" android:importantForAccessibility="no" />
+            <ImageView android:id="@+id/c4" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:layout_marginEnd="3dp" android:scaleType="fitXY" android:importantForAccessibility="no" />
+            <ImageView android:id="@+id/c5" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:layout_marginEnd="3dp" android:scaleType="fitXY" android:importantForAccessibility="no" />
+            <ImageView android:id="@+id/c6" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:scaleType="fitXY" android:importantForAccessibility="no" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

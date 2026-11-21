@@ -45,6 +45,16 @@ class SavedService {
         .map((s) => s.docs.map(_fromDoc).toList());
   }
 
+  /// Kaydedilenlerin kimlikleri — canlı.
+  Stream<Set<String>> watchIds() {
+    final col = _col;
+    if (col == null) {
+      return Stream.fromFuture(_legacyAll()).map((l) => l.map((q) => q.id).toSet());
+    }
+    _migrateIfNeeded();
+    return col.snapshots().map((s) => s.docs.map((d) => d.id).toSet());
+  }
+
   Future<List<Quote>> all() async {
     final col = _col;
     if (col == null) return _legacyAll();

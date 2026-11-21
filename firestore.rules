@@ -2,35 +2,63 @@ rules_version = '2';
 
 // Memento — Firestore güvenlik kuralları
 //
-// Deploy:  firebase deploy --only firestore:rules
+// Deploy:  firebase deploy --only firestore:rules,firestore:indexes
+//
+// SAYAÇ İLKESİ: Hiçbir sayaç (karma, likes, follower_count, following_count,
+// quote_count) "çıplak" artırılamaz. Her ±1, aynı batch içinde gerçekten
+// oluşan / silinen bir kayda bağlı. Bunu doğrulamak için yazmaya bir
+// "*_src" alanı eklenir (hangi kaydın sayacı değiştirdiği) ve kural o
+// kaydın batch'ten önce ve sonra var olup olmadığına bakar.
 service cloud.firestore {
   match /databases/{database}/documents {
 
     function isSignedIn() { return request.auth != null; }
     function uid()        { return request.auth.uid; }
 
-    // Bu yazma SADECE listelenen alanlara mı dokunuyor?
-    function onlyFields(fields) {
-      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(fields);
+    function changed() {
+      return request.resource.data.diff(resource.data).affectedKeys();
     }
+    function onlyFields(fields) { return changed().hasOnly(fields); }
+
+    function delta(field) {
+      return request.resource.data.get(field, 0) - resource.data.get(field, 0);
+    }
+
+    // Kayıt bu batch'te oluşturuldu mu / silindi mi?
+    function created(path) { return !exists(path) && existsAfter(path); }
+    function removed(path) { return exists(path) && !existsAfter(path); }
 
     function isFollowerOf(ownerId) {
       return exists(/databases/$(database)/documents/users/$(ownerId)/followers/$(uid()));
     }
 
+    function str(v, min, max) {
+      return v is string && v.size() >= min && v.size() <= max;
+    }
+
     // ---------------------------------------------------------------
     // KULLANICI ADLARI — benzersizlik kilidi
-    //
-    // Döküman kimliği kullanıcı adının kendisi. İki kişi aynı anda aynı adı
-    // almaya çalışırsa ikincisi reddedilir: veritabanı seviyesinde garanti.
     // ---------------------------------------------------------------
     match /usernames/{name} {
       allow read: if true;
+      // Sadece kendi profiline yazdığın adı kilitleyebilirsin — boşta ad
+      // toplamak (squatting) mümkün değil.
       allow create: if isSignedIn()
+                    && name.matches('^[a-z0-9_]{3,20}$')
+                    && request.resource.data.keys().hasOnly(['uid'])
                     && request.resource.data.uid == uid()
-                    && request.resource.data.keys().hasOnly(['uid']);
+                    && getAfter(/databases/$(database)/documents/users/$(uid())).data.username_lower == name;
       allow delete: if isSignedIn() && resource.data.uid == uid();
-      allow update: if false;
+
+      // Sahipsiz kilidi devralma: kilidin sahibi silinmiş ya da başka bir
+      // ada geçmişse, ad yeniden alınabilir. Kendi kilidini yenilemek de serbest.
+      allow update: if isSignedIn()
+                    && request.resource.data.keys().hasOnly(['uid'])
+                    && request.resource.data.uid == uid()
+                    && getAfter(/databases/$(database)/documents/users/$(uid())).data.username_lower == name
+                    && (resource.data.uid == uid()
+                        || !exists(/databases/$(database)/documents/users/$(resource.data.uid))
+                        || get(/databases/$(database)/documents/users/$(resource.data.uid)).data.get('username_lower', '') != name);
     }
 
     // ---------------------------------------------------------------
@@ -41,62 +69,201 @@ service cloud.firestore {
 
       allow create: if isSignedIn()
                     && userId == uid()
+                    && request.resource.data.keys().hasOnly(
+                         ['uid','username','username_lower','display_name','bio',
+                          'link','photo_url','karma','quote_count',
+                          'follower_count','following_count','created_at'])
                     && request.resource.data.uid == uid()
+                    && request.resource.data.username.matches('^[a-zA-Z0-9_]{3,20}$')
+                    && request.resource.data.username_lower == request.resource.data.username.lower()
                     && request.resource.data.karma == 0
+                    && request.resource.data.quote_count == 0
                     && request.resource.data.follower_count == 0
                     && request.resource.data.following_count == 0;
 
+      function validProfile() {
+        let d = request.resource.data;
+        return d.username.matches('^[a-zA-Z0-9_]{3,20}$')
+            && d.username_lower == d.username.lower()
+            && str(d.display_name, 0, 40)
+            && str(d.bio, 0, 160)
+            && str(d.link, 0, 120)
+            // Ad değiştiyse yeni ad bu batch'te bu kullanıcıya kilitlenmiş olmalı.
+            && (d.username_lower == resource.data.username_lower
+                || getAfter(/databases/$(database)/documents/usernames/$(d.username_lower)).data.uid == uid());
+      }
+
       allow update: if isSignedIn() && (
-        // 1) Sahibi kendi profil alanlarını değiştirir — sayaçlara dokunamaz.
-        (userId == uid() && onlyFields(
-          ['username','username_lower','display_name','bio','link',
-           'photo_url','updated_at']))
+        // 1) Sahibi profilini düzenler — sayaçlara dokunamaz.
+        (userId == uid()
+          // 'email' yalnızca SİLİNEBİLİR: eski sürüm e-postayı herkese açık
+          // profile yazıyordu, giriş anında temizleniyor.
+          && onlyFields(['username','username_lower','display_name','bio','link','updated_at','email'])
+          && !('email' in request.resource.data)
+          && validProfile())
         ||
-        // 2) Sahibi kendi söz sayacını günceller.
-        (userId == uid() && onlyFields(['quote_count']))
+        // 1b) Eski e-posta alanını silme.
+        (userId == uid()
+          && onlyFields(['email'])
+          && !('email' in request.resource.data))
         ||
-        // 3) Beğeni: başkasının karma'sı yalnızca 1 artabilir ya da azalabilir
-        //    (beğeni geri alınabildiği için -1 de gerekli).
-        (onlyFields(['karma'])
-          && (request.resource.data.karma == resource.data.karma + 1
-           || request.resource.data.karma == resource.data.karma - 1))
+        // 2) Profil fotoğrafı — sadece kendi Storage yolundaki dosya.
+        (userId == uid()
+          && onlyFields(['photo_url'])
+          && (request.resource.data.photo_url == null
+              || request.resource.data.photo_url.matches('^avatar:' + uid() + ':[0-9]{10,16}$')
+              || request.resource.data.photo_url.matches(
+                   '^https://firebasestorage\\.googleapis\\.com/.*profile_photos%2F' + uid() + '\\.jpg.*')))
         ||
-        // 4) Takip: takipçi/takip sayaçları +1 / -1.
+        // 2b) Profile sabitlenen söz.
+        (userId == uid()
+          && onlyFields(['pinned'])
+          && (request.resource.data.pinned == null
+              || (request.resource.data.pinned is map
+                  && request.resource.data.pinned.keys().hasOnly(['id','text','author','text_en','author_en','user_id','owner_username','color'])
+                  && str(request.resource.data.pinned.text, 1, 400)
+                  && str(request.resource.data.pinned.author, 0, 80))))
+        ||
+        // 3) Söz sayacı: aynı batch'te sahibinin sözü oluştu / silindi.
+        (userId == uid()
+          && onlyFields(['quote_count','quote_src'])
+          && ((delta('quote_count') == 1
+                && created(/databases/$(database)/documents/quotes/$(request.resource.data.quote_src)))
+           || (delta('quote_count') == -1
+                && removed(/databases/$(database)/documents/quotes/$(request.resource.data.quote_src)))))
+        ||
+        // 4) Karma: bu kullanıcının bir sözüne aynı batch'te beğeni geldi / gitti.
+        (userId != uid()
+          && onlyFields(['karma','karma_src'])
+          && get(/databases/$(database)/documents/quotes/$(request.resource.data.karma_src)).data.user_id == userId
+          && ((delta('karma') == 1
+                && created(/databases/$(database)/documents/quotes/$(request.resource.data.karma_src)/likes/$(uid())))
+           || (delta('karma') == -1
+                && removed(/databases/$(database)/documents/quotes/$(request.resource.data.karma_src)/likes/$(uid())))))
+        ||
+        // 5) Takipçi sayacı: aynı batch'te takip kaydı oluştu / silindi.
         (onlyFields(['follower_count'])
-          && (request.resource.data.follower_count == resource.data.follower_count + 1
-           || request.resource.data.follower_count == resource.data.follower_count - 1))
+          && ((delta('follower_count') == 1
+                && created(/databases/$(database)/documents/users/$(userId)/followers/$(uid())))
+           || (delta('follower_count') == -1
+                && removed(/databases/$(database)/documents/users/$(userId)/followers/$(uid())))))
         ||
-        (userId == uid() && onlyFields(['following_count']))
+        // 5b) Takipçi çıkarma: profil sahibi kendi takipçi sayacını, o
+        //     takipçinin kaydını aynı batch'te silerek düşürür.
+        (userId == uid()
+          && onlyFields(['follower_count','follower_src'])
+          && delta('follower_count') == -1
+          && removed(/databases/$(database)/documents/users/$(uid())/followers/$(request.resource.data.follower_src)))
+        ||
+        // 6b) Takipçi çıkarma, karşı taraf: çıkarılan kişinin "takip
+        //     ettiklerim" sayacı, beni takip kaydı aynı batch'te silinirken düşer.
+        (userId != uid()
+          && onlyFields(['following_count','following_src'])
+          && request.resource.data.following_src == uid()
+          && delta('following_count') == -1
+          && removed(/databases/$(database)/documents/users/$(userId)/following/$(uid())))
+        ||
+        // 6) Takip edilen sayacı.
+        (userId == uid()
+          && onlyFields(['following_count','following_src'])
+          && ((delta('following_count') == 1
+                && created(/databases/$(database)/documents/users/$(uid())/following/$(request.resource.data.following_src)))
+           || (delta('following_count') == -1
+                && removed(/databases/$(database)/documents/users/$(uid())/following/$(request.resource.data.following_src)))))
       );
 
-      allow delete: if false;
+      // Hesap silme (App Store zorunluluğu).
+      allow delete: if isSignedIn() && userId == uid();
 
-      // Kaydedilen sözler — sadece sahibi.
+      // Memento defteri: günde bir söz + kısa not. Yalnızca sahibi görür.
+      match /journal/{day} {
+        allow read, delete: if isSignedIn() && userId == uid();
+        allow create, update: if isSignedIn() && userId == uid()
+                      && day.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+                      && request.resource.data.keys().hasOnly(['quote', 'note', 'created_at'])
+                      && request.resource.data.note is string
+                      && request.resource.data.note.size() <= 280
+                      && request.resource.data.quote is map
+                      && request.resource.data.quote.keys().hasOnly(
+                           ['id','text','author','text_en','author_en','lang','user_id',
+                            'owner_username','owner_photo_url','likes','privacy','color'])
+                      && str(request.resource.data.quote.text, 1, 400);
+      }
       match /saved/{quoteId} {
         allow read, write: if isSignedIn() && userId == uid();
       }
-
-      // Beğeni geçmişi — hazır sözler dahil HER beğeni burada.
-      // Sadece sahibi görür ve yazar.
       match /liked/{quoteId} {
         allow read, write: if isSignedIn() && userId == uid();
       }
-
-      // Engellenenler — sadece sahibi.
       match /blocked/{blockedId} {
         allow read, write: if isSignedIn() && userId == uid();
       }
 
-      // Takip grafiği. Her iki kayıt da yalnızca takip EDEN tarafından
-      // yazılabiliyor; kimse kendini başkasının takipçisi yapamaz.
+      // Uygulama içi bildirimler. İşlemi yapan yazar; kural işlemin gerçekten
+      // olduğunu ve kimliğin taklit edilmediğini doğrular. Kimlik sabit
+      // (like_<söz>_<kişi>, follow_<kişi>) → aynı olay için ikinci bildirim yok.
+      match /notifications/{notifId} {
+        function actorOk(d) {
+          let me = get(/databases/$(database)/documents/users/$(uid())).data;
+          return d.actor_uid == uid()
+              && d.actor_username == me.username
+              && d.get('actor_photo_url', null) == me.get('photo_url', null)
+              && d.created_at == request.time
+              && d.read == false;
+        }
+        allow read: if isSignedIn() && userId == uid();
+        allow create: if isSignedIn() && userId != uid() && (
+          (notifId == 'follow_' + uid()
+            && request.resource.data.keys().hasOnly(
+                 ['type','actor_uid','actor_username','actor_photo_url','created_at','read'])
+            && request.resource.data.type == 'follow'
+            && actorOk(request.resource.data)
+            && exists(/databases/$(database)/documents/users/$(userId)/followers/$(uid())))
+          ||
+          (request.resource.data.keys().hasOnly(
+                 ['type','actor_uid','actor_username','actor_photo_url','created_at','read','quote_id','quote_text'])
+            && request.resource.data.type == 'like'
+            && notifId == 'like_' + request.resource.data.quote_id + '_' + uid()
+            && str(request.resource.data.quote_text, 1, 160)
+            && actorOk(request.resource.data)
+            && get(/databases/$(database)/documents/quotes/$(request.resource.data.quote_id)).data.user_id == userId
+            && exists(/databases/$(database)/documents/quotes/$(request.resource.data.quote_id)/likes/$(uid())))
+        );
+        // Alıcı yalnızca okundu işaretleyebilir ve silebilir.
+        allow update: if isSignedIn() && userId == uid()
+                      && onlyFields(['read']) && request.resource.data.read is bool;
+        allow delete: if isSignedIn() && (userId == uid() || resource.data.actor_uid == uid());
+      }
+
+      // Takip grafiği. İki kayıt da yalnızca takip EDEN tarafından yazılır.
+      // Silmeye, hesabını silen karşı taraf da izinli (temizlik için).
       match /following/{targetId} {
         allow read: if true;
-        allow create, delete: if isSignedIn() && userId == uid();
+        allow create: if isSignedIn() && userId == uid() && targetId != uid()
+                      && request.resource.data.keys().hasOnly(['uid','created_at']);
+        allow delete: if isSignedIn() && (userId == uid() || targetId == uid());
       }
       match /followers/{followerId} {
         allow read: if true;
-        allow create, delete: if isSignedIn() && followerId == uid();
+        allow create: if isSignedIn() && followerId == uid() && userId != uid()
+                      && request.resource.data.keys().hasOnly(['uid','created_at']);
+        allow delete: if isSignedIn() && (followerId == uid() || userId == uid());
       }
+    }
+
+    // ---------------------------------------------------------------
+    // PROFİL FOTOĞRAFLARI — Firestore'da küçük JPEG (base64). Storage
+    // faturalandırma olmadan kilitlendiği için fotoğraflar burada.
+    // ---------------------------------------------------------------
+    match /avatars/{userId} {
+      allow read: if true;
+      allow create, update: if isSignedIn() && userId == uid()
+                    && request.resource.data.keys().hasOnly(['data', 'updated_at'])
+                    && request.resource.data.data is string
+                    && request.resource.data.data.size() > 100
+                    && request.resource.data.data.size() < 210000
+                    && request.resource.data.data.matches('^(/9j/|iVBOR).*');
+      allow delete: if isSignedIn() && userId == uid();
     }
 
     // ---------------------------------------------------------------
@@ -106,54 +273,72 @@ service cloud.firestore {
 
       function q() { return resource.data; }
 
-      // ÖNEMLİ: Liste sorgularında bu kural dönen HER döküman için ayrı
-      // çalışır. Yani sorgunun kendisi de filtreli olmalı; filtresiz bir
-      // sorgu tüm isteği reddettirir.
+      // Liste sorgularında bu kural dönen HER döküman için çalışır;
+      // sorgunun kendisi de filtreli olmalı.
       allow read: if q().privacy == 'Herkese Açık'
                   || (isSignedIn() && q().user_id == uid())
                   || (isSignedIn()
                       && q().privacy == 'Takipçilerim'
                       && isFollowerOf(q().user_id));
 
+      function validQuote(d) {
+        return str(d.text, 1, 280)
+            && str(d.author, 1, 60)
+            && d.privacy in ['Herkese Açık', 'Takipçilerim', 'Yalnızca Ben']
+            && d.get('lang', 'tr') in ['tr', 'en']
+            // Kart rengi: paletteki 8 renkten birinin sırası (isteğe bağlı).
+            && (!('color' in d) || (d.color is int && d.color >= 0 && d.color <= 7));
+      }
+
       allow create: if isSignedIn()
+                    && request.resource.data.keys().hasOnly(
+                         ['text','author','privacy','lang','user_id',
+                          'owner_username','owner_photo_url','likes','color','created_at'])
                     && request.resource.data.user_id == uid()
                     && request.resource.data.likes == 0
-                    && request.resource.data.text is string
-                    && request.resource.data.text.size() > 0
-                    && request.resource.data.text.size() <= 280
-                    && request.resource.data.author is string
-                    && request.resource.data.author.size() <= 60
-                    && request.resource.data.privacy in
-                       ['Herkese Açık', 'Takipçilerim', 'Yalnızca Ben'];
+                    && request.resource.data.created_at == request.time
+                    && validQuote(request.resource.data)
+                    // Yazar adı taklit edilemez: profildeki kullanıcı adı olmalı.
+                    && request.resource.data.owner_username ==
+                       get(/databases/$(database)/documents/users/$(uid())).data.username;
 
       allow update: if isSignedIn() && (
         // Sahibi düzenler — beğeni sayısına dokunamaz.
-        (q().user_id == uid() && onlyFields(
-          ['text','author','privacy','lang','owner_username','owner_photo_url','updated_at']))
+        (q().user_id == uid()
+          && onlyFields(['text','author','privacy','lang','color','owner_username','owner_photo_url','updated_at'])
+          && validQuote(request.resource.data)
+          && (!('owner_username' in changed())
+              || request.resource.data.owner_username ==
+                 get(/databases/$(database)/documents/users/$(uid())).data.username))
         ||
-        // Beğeni: likes +1 ya da -1.
+        // Beğeni sayacı: aynı batch'te bu kullanıcının beğeni kaydı oluştu / silindi.
         (onlyFields(['likes'])
-          && (request.resource.data.likes == resource.data.likes + 1
-           || request.resource.data.likes == resource.data.likes - 1))
+          && ((delta('likes') == 1
+                && created(/databases/$(database)/documents/quotes/$(quoteId)/likes/$(uid())))
+           || (delta('likes') == -1
+                && removed(/databases/$(database)/documents/quotes/$(quoteId)/likes/$(uid())))))
       );
 
       allow delete: if isSignedIn() && q().user_id == uid();
 
-      // Kim neyi beğendi. Döküman kimliği = beğenenin uid'si, bu yüzden
-      // aynı kişi aynı sözü ikinci kez beğenemez.
+      // Kim neyi beğendi. Kimlik = beğenenin uid'si → çift beğeni imkânsız.
+      // Beğeni kaydı ile sayaç ayrı ayrı oynanamaz: kayıt da sayacın
+      // aynı batch'te değişmesini şart koşuyor.
       match /likes/{likerId} {
-        allow read: if isSignedIn();
+        allow read: if isSignedIn() && likerId == uid();
         allow create: if isSignedIn()
                       && likerId == uid()
-                      && request.resource.data.user_id == uid();
-        allow delete: if isSignedIn() && likerId == uid();
+                      && request.resource.data.keys().hasOnly(['user_id','created_at'])
+                      && request.resource.data.user_id == uid()
+                      && getAfter(/databases/$(database)/documents/quotes/$(quoteId)).data.likes
+                         == get(/databases/$(database)/documents/quotes/$(quoteId)).data.likes + 1;
+        allow delete: if isSignedIn()
+                      && likerId == uid()
+                      && (!existsAfter(/databases/$(database)/documents/quotes/$(quoteId))
+                          || getAfter(/databases/$(database)/documents/quotes/$(quoteId)).data.likes
+                             == get(/databases/$(database)/documents/quotes/$(quoteId)).data.likes - 1);
         allow update: if false;
       }
-    }
-
-    // "Beğendiklerim" collectionGroup sorgusu için.
-    match /{path=**}/likes/{likerId} {
-      allow read: if isSignedIn();
     }
 
     // ---------------------------------------------------------------
@@ -161,7 +346,11 @@ service cloud.firestore {
     // ---------------------------------------------------------------
     match /reports/{reportId} {
       allow create: if isSignedIn()
-                    && request.resource.data.reporter_id == uid();
+                    && request.resource.data.keys().hasOnly(
+                         ['quote_id','owner_id','reporter_id','reason','created_at'])
+                    && request.resource.data.reporter_id == uid()
+                    && request.resource.data.reason in
+                       ['report_spam','report_hate','report_violence','report_sexual','report_other'];
       allow read, update, delete: if false;
     }
   }

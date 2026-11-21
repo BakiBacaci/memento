@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,7 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
 import '../models/quote.dart';
-import 'follow_service.dart';
 
 class QuoteService {
   QuoteService._();
@@ -66,18 +66,48 @@ class QuoteService {
   /// Firestore'da whereIn en fazla 30 değer alıyor. Daha fazla kişi takip
   /// edilirse ilk 30'u gösteriyoruz — gerçek bir akış motoru gerekirse
   /// sunucu tarafına taşınmalı.
-  Stream<List<Quote>> followingFeed({int limit = 40}) async* {
-    final ids = await FollowService.instance.followingIds(limit: 30);
-    if (ids.isEmpty) {
-      yield const [];
-      return;
-    }
-    yield* _quotes
-        .where('user_id', whereIn: ids)
-        .orderBy('created_at', descending: true)
-        .limit(limit)
-        .snapshots()
-        .map(_map);
+  ///
+  /// Canlı: birini takip edince / bırakınca akış kendiliğinden yenilenir.
+  /// Sadece herkese açık sözler — "takipçilerim" sözleri sahibinin
+  /// profilinde görünüyor (Firestore kuralları karışık sorguya izin vermiyor).
+  Stream<List<Quote>> followingFeed({int limit = 40}) {
+    final me = _uid;
+    if (me == null) return Stream.value(const []);
+    late StreamController<List<Quote>> ctrl;
+    StreamSubscription? idsSub;
+    StreamSubscription? quotesSub;
+
+    ctrl = StreamController<List<Quote>>(
+      onListen: () {
+        idsSub = _db
+            .collection('users')
+            .doc(me)
+            .collection('following')
+            .limit(30)
+            .snapshots()
+            .listen((s) {
+          quotesSub?.cancel();
+          final ids = s.docs.map((d) => d.id).toList();
+          if (ids.isEmpty) {
+            ctrl.add(const []);
+            return;
+          }
+          quotesSub = _quotes
+              .where('privacy', isEqualTo: QuoteVisibility.public)
+              .where('user_id', whereIn: ids)
+              .orderBy('created_at', descending: true)
+              .limit(limit)
+              .snapshots()
+              .map(_map)
+              .listen(ctrl.add, onError: ctrl.addError);
+        }, onError: ctrl.addError);
+      },
+      onCancel: () async {
+        await quotesSub?.cancel();
+        await idsSub?.cancel();
+      },
+    );
+    return ctrl.stream;
   }
 
   Stream<List<Quote>> byUser(String uid, {int limit = 50}) => _quotes
@@ -98,12 +128,14 @@ class QuoteService {
     required String lang,
     String? ownerUsername,
     String? ownerPhotoUrl,
+    int? color,
   }) async {
     final uid = _uid;
     if (uid == null) throw StateError('Giriş yapılmamış.');
 
     final batch = _db.batch();
-    batch.set(_quotes.doc(), {
+    final ref = _quotes.doc();
+    batch.set(ref, {
       'text': text.trim(),
       'author': author.trim().isEmpty ? 'Anonim' : author.trim(),
       'privacy': visibility,
@@ -114,10 +146,13 @@ class QuoteService {
       'owner_username': ownerUsername,
       'owner_photo_url': ownerPhotoUrl,
       'likes': 0,
+      if (color != null) 'color': color,
       'created_at': FieldValue.serverTimestamp(),
     });
     batch.update(_db.collection('users').doc(uid), {
       'quote_count': FieldValue.increment(1),
+      // Kurallar sayacın gerçek bir söze bağlı olduğunu bununla doğruluyor.
+      'quote_src': ref.id,
     });
     await batch.commit();
   }
@@ -129,6 +164,7 @@ class QuoteService {
     batch.delete(_quotes.doc(q.id));
     batch.update(_db.collection('users').doc(uid), {
       'quote_count': FieldValue.increment(-1),
+      'quote_src': q.id,
     });
     await batch.commit();
   }

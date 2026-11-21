@@ -10,6 +10,7 @@ import '../theme.dart';
 import '../widgets/celebration.dart';
 import '../widgets/chunky_button.dart';
 import '../widgets/common.dart';
+import 'edit_profile_page.dart';
 
 /// Söz paylaşma.
 ///
@@ -36,6 +37,13 @@ class _CreateQuotePageState extends State<CreateQuotePage> {
   bool _sending = false;
   AppUser? _me;
 
+  /// true: kendi sözüm (yazar = ben). false: alıntı (yazar adı zorunlu).
+  bool _own = true;
+
+  /// Seçilen kart rengi (palette sıra). Ekran her açıldığında rastgele
+  /// bir renkle başlar; kullanıcı değiştirebilir.
+  int _color = DateTime.now().millisecond % QuoteMood.all.length;
+
   @override
   void initState() {
     super.initState();
@@ -59,7 +67,6 @@ class _CreateQuotePageState extends State<CreateQuotePage> {
     if (!mounted || me == null) return;
     setState(() {
       _me = me;
-      if (_author.text.isEmpty) _author.text = me.name;
     });
   }
 
@@ -73,15 +80,34 @@ class _CreateQuotePageState extends State<CreateQuotePage> {
     final text = _text.text.trim();
     if (text.isEmpty) return;
 
+    // Kullanıcı adı olmayan (eski) hesap: önce ad seçtir; yoksa sunucu
+    // sözü reddediyor ve kullanıcı nedenini anlamıyordu.
+    if ((_me?.username ?? '').isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.t('pick_username_first'))));
+      await Navigator.push(context,
+          MaterialPageRoute(builder: (_) => EditProfilePage(user: _me)));
+      await _loadMe();
+      return;
+    }
+
+    final author = _own ? _me!.name : _author.text.trim();
+    if (author.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.t('author_required'))));
+      return;
+    }
+
     setState(() => _sending = true);
     try {
       await QuoteService.instance.createQuote(
         text: text,
-        author: _author.text,
+        author: author,
         visibility: _visibility,
         lang: _quoteLang,
         ownerUsername: _me?.username,
         ownerPhotoUrl: _me?.photoUrl,
+        color: _color,
       );
       if (!mounted) return;
 
@@ -121,9 +147,11 @@ class _CreateQuotePageState extends State<CreateQuotePage> {
                 children: [
                   Text(
                     context.t('share_wisdom'),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
+                    style: TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 32,
+                      height: 1,
+                      letterSpacing: -1,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
@@ -134,7 +162,7 @@ class _CreateQuotePageState extends State<CreateQuotePage> {
               const SizedBox(height: 4),
               Text(
                 context.t('share_wisdom_sub'),
-                style: const TextStyle(
+                style: TextStyle(
                     color: AppColors.textMuted, fontSize: 13, height: 1.4),
               ),
               const SizedBox(height: 20),
@@ -142,35 +170,53 @@ class _CreateQuotePageState extends State<CreateQuotePage> {
               // --- Canlı önizleme: yazdığın şey nasıl görünecek ---
               _LivePreview(
                 text: _text.text.trim(),
-                author: _author.text.trim(),
+                author: _own ? (_me?.name ?? '') : _author.text.trim(),
                 placeholder: context.t('preview_placeholder'),
+                mood: QuoteMood.all[_color],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 14),
+              _ColorPicker(
+                selected: _color,
+                onSelect: (i) => setState(() => _color = i),
+              ),
+              const SizedBox(height: 18),
 
               TextField(
                 controller: _text,
                 maxLines: 4,
                 maxLength: _maxLength,
                 autofocus: false,
-                style: const TextStyle(
-                    color: Colors.white, fontFamily: kSerif, fontSize: 16),
+                style: TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600),
                 decoration: InputDecoration(
                   hintText: context.t('quote_hint'),
                   counterText: '',
                 ),
               ),
               const SizedBox(height: 12),
-              TextField(
-                controller: _author,
-                maxLength: 60,
-                style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  hintText: context.t('author_hint'),
-                  prefixIcon: const Icon(Icons.person_outline,
-                      color: AppColors.textMuted, size: 20),
-                  counterText: '',
-                ),
+              _Chips(
+                options: const ['own', 'quote'],
+                selected: _own ? 'own' : 'quote',
+                labelOf: (v) => context.t(v == 'own' ? 'my_own_words' : 'a_quote'),
+                iconOf: (v) => v == 'own' ? Icons.edit_outlined : Icons.format_quote,
+                onSelect: (v) => setState(() => _own = v == 'own'),
               ),
+              if (!_own) ...[
+                const SizedBox(height: 12),
+                TextField(
+                  controller: _author,
+                  maxLength: 60,
+                  style: TextStyle(color: AppColors.textPrimary),
+                  decoration: InputDecoration(
+                    hintText: context.t('author_hint'),
+                    prefixIcon: Icon(Icons.person_outline,
+                        color: AppColors.textMuted, size: 20),
+                    counterText: '',
+                  ),
+                ),
+              ],
 
               const SizedBox(height: 22),
               _Label(context.t('quote_language')),
@@ -200,7 +246,6 @@ class _CreateQuotePageState extends State<CreateQuotePage> {
               const SizedBox(height: 30),
               ChunkyButton(
                 label: context.t('publish'),
-                icon: Icons.auto_awesome,
                 loading: _sending,
                 onPressed: ready && !_sending ? _submit : null,
               ),
@@ -212,62 +257,52 @@ class _CreateQuotePageState extends State<CreateQuotePage> {
   }
 }
 
-/// Yazarken sözün gerçek kart görünümü.
+/// Yazarken sözün renkli kart görünümü.
 class _LivePreview extends StatelessWidget {
   const _LivePreview({
     required this.text,
     required this.author,
     required this.placeholder,
+    required this.mood,
   });
 
   final String text;
   final String author;
   final String placeholder;
+  final QuoteMood mood;
 
   @override
   Widget build(BuildContext context) {
     final empty = text.isEmpty;
+    final shown = empty ? placeholder : text;
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 250),
+      duration: const Duration(milliseconds: 280),
       width: double.infinity,
-      constraints: const BoxConstraints(minHeight: 150),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+      constraints: const BoxConstraints(minHeight: 190),
+      padding: const EdgeInsets.fromLTRB(22, 22, 22, 20),
       decoration: BoxDecoration(
-        gradient: const RadialGradient(
-          radius: 1.2,
-          colors: [AppColors.surfaceAlt, AppColors.bg],
-        ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: empty ? AppColors.border : AppColors.gold.withValues(alpha: 0.55),
-        ),
+        color: mood.top,
+        borderRadius: BorderRadius.circular(28),
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Text(
-            empty ? placeholder : '“$text”',
-            textAlign: TextAlign.center,
+            shown,
+            style: quoteStyle(shown,
+                scale: 0.72,
+                color: empty ? mood.accent.withValues(alpha: 0.45) : mood.accent),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            author.isEmpty ? '—' : author,
             style: TextStyle(
-              fontFamily: kSerif,
-              fontSize: text.length > 120 ? 16 : 19,
-              fontStyle: FontStyle.italic,
-              height: 1.5,
-              color: empty ? AppColors.textMuted : AppColors.textPrimary,
+              color: mood.accent,
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
             ),
           ),
-          if (author.isNotEmpty) ...[
-            const SizedBox(height: 14),
-            Text(
-              '— $author',
-              style: const TextStyle(
-                color: AppColors.gold,
-                fontFamily: kSerif,
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
         ],
       ),
     );
@@ -294,12 +329,12 @@ class _CharRing extends StatelessWidget {
             value: p,
             strokeWidth: 3,
             backgroundColor: AppColors.border,
-            color: near ? Colors.orangeAccent : AppColors.gold,
+            color: near ? const Color(0xFFE5482F) : AppColors.textPrimary,
           ),
           if (near)
             Text('${max - current}',
                 style: const TextStyle(
-                    color: Colors.orangeAccent,
+                    color: Color(0xFFE5482F),
                     fontSize: 10,
                     fontWeight: FontWeight.bold)),
         ],
@@ -336,11 +371,10 @@ class _Chips extends StatelessWidget {
                 duration: const Duration(milliseconds: 160),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                decoration: BoxDecoration(
-                  color: o == selected ? AppColors.gold : AppColors.surface,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: o == selected ? AppColors.gold : AppColors.border,
+                decoration: ShapeDecoration(
+                  color: o == selected ? AppColors.textPrimary : Colors.transparent,
+                  shape: StadiumBorder(
+                    side: BorderSide(color: AppColors.textPrimary, width: 1.5),
                   ),
                 ),
                 child: Row(
@@ -350,16 +384,16 @@ class _Chips extends StatelessWidget {
                       Icon(iconOf!(o),
                           size: 15,
                           color: o == selected
-                              ? Colors.black
-                              : AppColors.textMuted),
+                              ? AppColors.bg
+                              : AppColors.textPrimary),
                       const SizedBox(width: 6),
                     ],
                     Text(
                       labelOf(o),
                       style: TextStyle(
-                        color: o == selected ? Colors.black : Colors.white,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 13,
+                        color: o == selected ? AppColors.bg : AppColors.textPrimary,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
                       ),
                     ),
                   ],
@@ -376,12 +410,61 @@ class _Label extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Text(
-        text.toUpperCase(),
-        style: const TextStyle(
-          color: AppColors.textMuted,
-          fontSize: 11,
+        text,
+        style: TextStyle(
+          color: AppColors.textPrimary,
+          fontSize: 16,
           fontWeight: FontWeight.w800,
-          letterSpacing: 1.2,
         ),
       );
+}
+
+/// Kart rengi seçici: paletteki her renk bir daire. Seçili olanın etrafında
+/// halka ve içinde tik var. Dokununca önizleme o renge yumuşakça geçer.
+class _ColorPicker extends StatelessWidget {
+  const _ColorPicker({required this.selected, required this.onSelect});
+  final int selected;
+  final ValueChanged<int> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    final moods = QuoteMood.all;
+    return SizedBox(
+      height: 48,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: moods.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        itemBuilder: (context, i) {
+          final m = moods[i];
+          final on = i == selected;
+          return Semantics(
+            button: true,
+            selected: on,
+            label: '${context.t('card_color')} ${i + 1}',
+            child: GestureDetector(
+              onTap: () => onSelect(i),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                width: 48,
+                height: 48,
+                padding: EdgeInsets.all(on ? 4 : 0),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: on ? AppColors.textPrimary : AppColors.border,
+                    width: on ? 2.5 : 1,
+                  ),
+                ),
+                child: Container(
+                  decoration: BoxDecoration(color: m.top, shape: BoxShape.circle),
+                  child: on ? Icon(Icons.check, size: 20, color: m.accent) : null,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
 }
