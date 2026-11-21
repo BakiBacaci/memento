@@ -44,6 +44,7 @@ button:disabled { opacity: .5; cursor: default; }
     <input id="email" type="email" placeholder="E-posta" autocomplete="username">
     <input id="pass" type="password" placeholder="Şifre" autocomplete="current-password">
     <button id="loginBtn">Giriş yap</button>
+    <button id="resetBtn" class="ghost" type="button">Şifremi unuttum</button>
   </div>
   <p id="loginErr" class="err"></p>
 </div>
@@ -80,7 +81,7 @@ button:disabled { opacity: .5; cursor: default; }
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
+import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
 import { getFirestore, doc, getDoc, getDocs, collection, query, orderBy, limit, where, startAt, endAt, updateDoc, deleteDoc, serverTimestamp, getCountFromServer } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
 
 const app = initializeApp({
@@ -105,7 +106,19 @@ async function user(uid) {
 $('loginBtn').onclick = async () => {
   $('loginErr').textContent = '';
   try { await signInWithEmailAndPassword(auth, $('email').value.trim(), $('pass').value); }
-  catch (e) { $('loginErr').textContent = 'Giriş yapılamadı: ' + (e.code || e.message); }
+  catch (e) {
+    $('loginErr').textContent = e.code === 'auth/invalid-credential' || e.code === 'auth/wrong-password'
+      ? 'E-posta ya da şifre yanlış. Şifreni hatırlamıyorsan "Şifremi unuttum"a bas.'
+      : 'Giriş yapılamadı: ' + (e.code || e.message);
+  }
+};
+$('resetBtn').onclick = async () => {
+  const email = $('email').value.trim();
+  if (!email) { $('loginErr').textContent = 'Önce e-posta adresini yaz.'; return; }
+  try {
+    await sendPasswordResetEmail(auth, email);
+    $('loginErr').textContent = 'Şifre sıfırlama bağlantısı ' + email + ' adresine gönderildi. Gelen kutunu (ve spam klasörünü) kontrol et.';
+  } catch (e) { $('loginErr').textContent = 'Gönderilemedi: ' + (e.code || e.message); }
 };
 $('logout').onclick = () => signOut(auth);
 
