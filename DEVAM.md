@@ -53,7 +53,11 @@
 1. **Apple'ın cevabını bekle** (genelde 24–48 saat). Ret gelirse e-postada sebep yazar; App Store Connect → App Review'da yanıtla ya da düzeltip yeni derleme gönder.
 2. **Mağazaya çıkınca:** `lib/widgets/share_card.dart` → `QuoteShareSheet.storeLink` alanına App Store bağlantısını yaz (sonraki güncellemeyle çıkar).
 3. Akış ve Zirve ekranlarındaki test içeriklerini ("deneme", "aaaa" vb.) Firestore'dan temizle; mağazadaki kullanıcılar da görecek.
-4. Baki'nin bilgisayarındaki yeni özellikler ve yeni ikon henüz GitHub'da değil. Aşağıdaki "Güncelleme nasıl yayınlanır" adımlarıyla 1.0.1 olarak çıkarılacak.
+4. **1.0.1 hazır, `main` dalında.** 1.0 incelemeye eski "eller + MEMENTO" simgesiyle gitti, çünkü iOS simge dosyaları yanlış adla kaydedilmişti. 21 Kasım'da düzeltildi (commit 447ab02).
+   - Yeni simge: siyah zemin üstünde renkli kartlar.
+   - 1.0 onaylanınca aşağıdaki "Güncelleme nasıl yayınlanır" adımlarıyla `main`'den derleyip 1.0.1 olarak gönder.
+   - "What's New" için öneri: "Yeni simge, Memento defteri, kişiye özel günün sözü ve yenilenen widget'lar."
+   - Yönetim paneli: https://bakibacaci.github.io/memento/admin.html (yöneticiler Firestore'daki `admins/{uid}` belgesiyle belirlenir).
 
 ## Dikkat edilecekler
 
