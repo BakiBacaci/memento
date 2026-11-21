@@ -29,6 +29,24 @@ class AccountService {
     return ids.contains('google.com') && !ids.contains('password');
   }
 
+  /// Hesap Apple ile mi açılmış (şifresi yok)?
+  bool get isAppleOnly {
+    final u = _auth.currentUser;
+    if (u == null) return false;
+    final ids = u.providerData.map((p) => p.providerId).toSet();
+    return ids.contains('apple.com') && !ids.contains('password');
+  }
+
+  /// Şifresiz hesap (Google ya da Apple): silerken şifre sorulmaz.
+  bool get hasNoPassword => isGoogleOnly || isAppleOnly;
+
+  /// Apple ile giriş yalnızca iOS'ta sunulur (Guideline 4.8).
+  bool get appleAvailable =>
+      !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
+
+  AppleAuthProvider get _appleProvider =>
+      AppleAuthProvider()..addScope('email')..addScope('name');
+
   bool _googleReady = false;
 
   Future<UserCredential> _googleCredential({bool reauth = false}) async {
@@ -52,6 +70,29 @@ class AccountService {
     return reauth
         ? _auth.currentUser!.reauthenticateWithCredential(cred)
         : _auth.signInWithCredential(cred);
+  }
+
+  /// Apple ile giriş. İlk kez giren kişiye boşta bir kullanıcı adı verilir.
+  /// İptal edilirse null döner.
+  Future<User?> signInWithApple({required String defaultBio}) async {
+    final UserCredential result;
+    try {
+      result = await _auth.signInWithProvider(_appleProvider);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'canceled' || e.code == 'web-context-canceled') return null;
+      rethrow;
+    }
+    final user = result.user;
+    if (user == null) return null;
+
+    final doc = await _db.collection('users').doc(user.uid).get();
+    if (!doc.exists) {
+      final name = await _freeUsername(user.displayName ?? user.email ?? 'memento');
+      await UserService.instance.createProfile(
+          uid: user.uid, username: name, defaultBio: defaultBio);
+    }
+    await SettingsService.instance.setGuestMode(false);
+    return user;
   }
 
   /// Google ile giriş. İlk kez giren kişiye boşta bir kullanıcı adı verilir
@@ -123,7 +164,19 @@ class AccountService {
     if (user == null) return;
     final uid = user.uid;
 
-    if (isGoogleOnly) {
+    if (isAppleOnly) {
+      // Apple, hesap silinirken Apple oturum belirtecinin de iptal
+      // edilmesini istiyor (Sign in with Apple, hesap silme kuralı).
+      final cred = await user.reauthenticateWithProvider(_appleProvider);
+      final code = cred.additionalUserInfo?.authorizationCode;
+      if (code != null) {
+        try {
+          await _auth.revokeTokenWithAuthorizationCode(code);
+        } catch (e) {
+          debugPrint('Apple token iptali başarısız: $e');
+        }
+      }
+    } else if (isGoogleOnly) {
       await _googleCredential(reauth: true);
     } else {
       await user.reauthenticateWithCredential(
