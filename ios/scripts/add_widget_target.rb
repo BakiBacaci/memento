@@ -89,10 +89,17 @@ build_file = embed.add_file_reference(widget.product_reference, true)
 build_file.settings = { 'ATTRIBUTES' => ['RemoveHeadersOnCopy'] }
 runner.add_dependency(widget)
 
-# "Thin Binary" / Flutter betikleri uzantıdan önce çalışmalı; gömme fazını
-# sona taşıyarak döngüsel bağımlılık hatasını önle.
+# Gömme fazı Flutter'ın "Thin Binary" betiğinden ÖNCE olmalı; aksi halde
+# Xcode "Cycle inside Runner" hatası verir (Info.plist → appex → Thin Binary).
 runner.build_phases.delete(embed)
-runner.build_phases << embed
+thin = runner.build_phases.index do |p|
+  p.respond_to?(:name) && p.name.to_s.include?('Thin Binary')
+end
+if thin
+  runner.build_phases.insert(thin, embed)
+else
+  runner.build_phases << embed
+end
 
 project.save
 puts 'Widget hedefi eklendi.'
