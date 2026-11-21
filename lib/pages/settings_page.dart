@@ -145,7 +145,7 @@ class SettingsPage extends StatelessWidget {
   }
 
   Future<void> _confirmDeleteAccount(BuildContext context) async {
-    final google = AccountService.instance.isGoogleOnly;
+    final google = AccountService.instance.hasNoPassword;
     final pass = TextEditingController();
     final password = await showDialog<String>(
       context: context,

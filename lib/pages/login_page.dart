@@ -132,6 +132,22 @@ class _LoginPageState extends State<LoginPage>
     }
   }
 
+  Future<void> _apple() async {
+    setState(() => _loading = true);
+    try {
+      await AccountService.instance
+          .signInWithApple(defaultBio: context.t('bio_default'));
+      if (mounted && widget.canDismiss) Navigator.maybePop(context);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('${context.t('apple_failed')}: $e')));
+      }
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
   Future<void> _continueAsGuest() async {
     await SettingsService.instance.setGuestMode(true);
   }
@@ -248,6 +264,10 @@ class _LoginPageState extends State<LoginPage>
                       : Text(context.t('sign_in')),
                 ),
                 const SizedBox(height: 12),
+                if (AccountService.instance.appleAvailable) ...[
+                  _AppleButton(onPressed: _loading ? null : _apple),
+                  const SizedBox(height: 12),
+                ],
                 _GoogleButton(onPressed: _loading ? null : _google),
                 const SizedBox(height: 20),
                 Row(
@@ -292,6 +312,35 @@ class _LoginPageState extends State<LoginPage>
       ),
     );
   }
+}
+
+/// "Apple ile devam et" — Apple'ın kurallarına uygun siyah düğme.
+class _AppleButton extends StatelessWidget {
+  const _AppleButton({required this.onPressed});
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) => ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          minimumSize: const Size.fromHeight(56),
+          backgroundColor: Colors.black,
+          foregroundColor: Colors.white,
+          elevation: 0,
+        ),
+        onPressed: onPressed,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.apple, color: Colors.white, size: 24),
+            const SizedBox(width: 10),
+            Text(context.t('continue_with_apple'),
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600)),
+          ],
+        ),
+      );
 }
 
 /// "Google ile devam et" — beyaz hap, Google'ın marka kurallarına uygun düz yazı.
