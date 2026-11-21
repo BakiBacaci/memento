@@ -21,7 +21,7 @@ Kod: https://github.com/BakiBacaci/memento (dal: `main`)
    - Platform: iOS · Ad: `Memento: Günün Sözü` (alınmışsa benzeri) · Dil: Türkçe
    - Bundle ID: `com.bakibacaci.memento` · SKU: `memento`
 2. **Kullanıcılar ve Erişim → Entegrasyonlar → App Store Connect API → +**
-   - Ad: `codemagic` · Erişim: **App Manager**
+   - Ad: `codemagic` · Erişim: **Admin** (bulut imzalama yalnızca Admin anahtarıyla çalışır)
    - `.p8` dosyasını indir (yalnızca bir kez indirilebilir). **Issuer ID** ve **Key ID**'yi not et.
 
 ### c) Codemagic (codemagic.io, ücretsiz)
@@ -63,6 +63,8 @@ Xcode'da:
 | `App Group ... not found` | App Group oluşturulup iki App ID'ye de bağlanmalı. |
 | `Invalid bundle / already exists` | Bundle ID başka bir hesapta kullanılıyorsa farklı bir ID seç ve bize haber ver, koddaki ID'yi değiştirelim. |
 | Codemagic `memento_asc not found` | Entegrasyon adı tam olarak `memento_asc` olmalı. |
+| `Cloud signing permission error` | API anahtarı **Admin** yetkili olmalı. Yeni Admin anahtarı oluştur, Codemagic'te `memento_asc`'yi onunla değiştir. |
+| `No Podfile found` | Yeni Flutter Swift Package Manager kullanıyor; `codemagic.yaml` Podfile yoksa CocoaPods'u atlıyor. |
 
 ## App Store'da yayınlamadan önce (TestFlight için gerekmez)
 - **Apple ile giriş** eklenecek (Google ile giriş olduğu için Apple zorunlu tutuyor).

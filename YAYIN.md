@@ -26,7 +26,7 @@ Mac gerekmez. iPhone sürümü Codemagic'te (bulutta macOS) derlenir; Android s�
 
 ### 1.2 App Store Connect
 1. **Uygulamalar → + → Yeni Uygulama**: iOS, ad `Memento: Günün Sözü` (alınmışsa benzeri), dil Türkçe, Bundle ID `com.bakibacaci.memento`, SKU `memento`.
-2. **Kullanıcılar ve Erişim → Entegrasyonlar → App Store Connect API → +**: ad `codemagic`, erişim **App Manager**. `.p8` dosyasını indir (bir kez indirilebilir), **Issuer ID** ve **Key ID**'yi not et.
+2. **Kullanıcılar ve Erişim → Entegrasyonlar → App Store Connect API → +**: ad `codemagic`, erişim **Admin** (Apple'ın bulutta yönettiği dağıtım sertifikasını yalnızca Admin anahtarı kullanabilir; App Manager ile dışa aktarma "Cloud signing permission error" verir). `.p8` dosyasını indir (bir kez indirilebilir), **Issuer ID** ve **Key ID**'yi not et.
 
 ### 1.3 Codemagic
 1. codemagic.io → GitHub ile giriş → **Add application** → `BakiBacaci/memento` → yapılandırma: `codemagic.yaml`.
