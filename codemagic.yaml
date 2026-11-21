@@ -50,10 +50,9 @@ workflows:
       - name: Geçici dağıtım sertifikası ve profiller
         script: |
           set -e
-          # Her derlemede yeni bir anahtar ve dağıtım sertifikası oluşturulur,
-          # derlemenin sonunda iptal edilir. Hesapta sertifika birikmez; App
-          # Store'daki uygulamayı Apple yeniden imzaladığı için iptal yayındaki
-          # sürümü etkilemez.
+          # UYARI: Bu adım hiçbir sertifikayı SİLMEZ. (Önceki otomatik iptal
+          # adımı filtre çalışmadığı için hesaptaki diğer sertifikaları da
+          # sildi; kaldırıldı.)
           openssl genrsa -out /tmp/cert_key.pem 2048 2>/dev/null
           keychain initialize
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
@@ -70,20 +69,6 @@ workflows:
           flutter build ipa --release --build-number=$BUILD_NUMBER \
             --export-options-plist=/Users/builder/export_options.plist
           ls -la build/ios/ipa
-      - name: Geçici sertifikayı iptal et
-        script: |
-          # Yalnızca bu derlemenin anahtarıyla eşleşen sertifikayı sil.
-          for t in DISTRIBUTION IOS_DISTRIBUTION; do
-            app-store-connect certificates list --type "$t" \
-              --certificate-key=@file:/tmp/cert_key.pem --json 2>/dev/null \
-              | python3 -c 'import sys,json
-          try:
-              for c in json.load(sys.stdin): print(c["id"])
-          except Exception: pass' \
-              | while read -r id; do
-                  app-store-connect certificates delete "$id" && echo "İptal edildi: $id"
-                done
-          done || true
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
