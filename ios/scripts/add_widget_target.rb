@@ -76,8 +76,10 @@ end
 # Sürüm numarası ana uygulamayla aynı olmalı, yoksa App Store reddeder:
 # Flutter'ın ürettiği sürüm değişkenlerini xcconfig üzerinden al.
 flutter_group = project.main_group.find_subpath('Flutter', false)
-widget_xcconfig = flutter_group.files.find { |f| f.path == 'Widget.xcconfig' } ||
-                  flutter_group.new_reference('Widget.xcconfig')
+# Flutter grubunun kendi klasör yolu yok (yalnızca adı var); diğer
+# xcconfig'ler gibi yolu 'Flutter/...' olarak vermek gerekiyor.
+widget_xcconfig = flutter_group.files.find { |f| f.path == 'Flutter/Widget.xcconfig' } ||
+                  flutter_group.new_reference('Flutter/Widget.xcconfig')
 widget.build_configurations.each { |c| c.base_configuration_reference = widget_xcconfig }
 
 # Uzantıyı uygulamanın içine göm.
