@@ -7,6 +7,7 @@ import '../services/quote_service.dart';
 import '../services/settings_service.dart';
 import '../services/user_service.dart';
 import '../theme.dart';
+import '../utils/content_filter.dart';
 import '../widgets/celebration.dart';
 import '../widgets/chunky_button.dart';
 import '../widgets/common.dart';
@@ -92,6 +93,12 @@ class _CreateQuotePageState extends State<CreateQuotePage> {
     }
 
     final author = _own ? _me!.name : _author.text.trim();
+    if (ContentFilter.isObjectionable(text) ||
+        ContentFilter.isObjectionable(author)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.t('content_blocked'))));
+      return;
+    }
     if (author.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(context.t('author_required'))));

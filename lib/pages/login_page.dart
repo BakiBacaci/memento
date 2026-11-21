@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../l10n/strings.dart';
 import '../services/account_service.dart';
 import '../services/settings_service.dart';
 import '../theme.dart';
+import '../utils/links.dart';
 import 'register_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -269,6 +271,32 @@ class _LoginPageState extends State<LoginPage>
                   const SizedBox(height: 12),
                 ],
                 _GoogleButton(onPressed: _loading ? null : _google),
+                const SizedBox(height: 10),
+                // Google/Apple ile girişte de koşullar kabul edilmiş olmalı
+                // (App Store Guideline 1.2: kullanıcı içeriği olan uygulamalar).
+                Text.rich(
+                  TextSpan(
+                    style: TextStyle(color: AppColors.textMuted, fontSize: 12, height: 1.4),
+                    children: [
+                      TextSpan(text: context.t('social_terms_prefix')),
+                      TextSpan(
+                        text: context.t('terms_of_use'),
+                        style: TextStyle(color: AppColors.gold, fontWeight: FontWeight.w600),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => AppLinks.open(AppLinks.terms(context.lang)),
+                      ),
+                      TextSpan(text: context.t('terms_and')),
+                      TextSpan(
+                        text: context.t('privacy_policy'),
+                        style: TextStyle(color: AppColors.gold, fontWeight: FontWeight.w600),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => AppLinks.open(AppLinks.privacy(context.lang)),
+                      ),
+                      TextSpan(text: context.t('social_terms_suffix')),
+                    ],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
                 const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

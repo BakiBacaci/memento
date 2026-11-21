@@ -228,6 +228,9 @@ class L {
 
     // --- Hesap & yasal ---
     'err_accept_terms': 'Devam etmek için koşulları kabul etmelisin.',
+    'content_blocked': 'Bu söz uygunsuz ifadeler içeriyor. Lütfen düzenle.',
+    'social_terms_prefix': 'Devam ederek ',
+    'social_terms_suffix': "'nı kabul etmiş olursun. Uygunsuz içeriğe sıfır tolerans.",
     'terms_prefix': '',
     'terms_of_use': 'Kullanım Koşulları',
     'terms_and': ' ve ',
@@ -472,6 +475,9 @@ class L {
 
     // --- Account & legal ---
     'err_accept_terms': 'Please accept the terms to continue.',
+    'content_blocked': 'This quote contains objectionable language. Please edit it.',
+    'social_terms_prefix': 'By continuing you accept the ',
+    'social_terms_suffix': '. Zero tolerance for objectionable content.',
     'terms_prefix': 'I have read and accept the ',
     'terms_of_use': 'Terms of Use',
     'terms_and': ' and ',
