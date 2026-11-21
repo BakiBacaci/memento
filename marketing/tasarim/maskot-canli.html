@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Memento maskotları</title>
+<style>
+:root { --bg: #F5F3EE; --ink: #17171A; --muted: #6B6B70; --card: #FFFFFF; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #151517; --ink: #F5F3EE; --muted: #A3A3A9; --card: #1F1F22; } }
+:root[data-theme="dark"] { --bg: #151517; --ink: #F5F3EE; --muted: #A3A3A9; --card: #1F1F22; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--ink); font-family: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", sans-serif; padding: 20px 16px 40px; }
+h1 { font-size: 30px; font-weight: 800; letter-spacing: -.8px; }
+p.lead { color: var(--muted); font-size: 15px; line-height: 1.45; margin-top: 6px; max-width: 640px; }
+.wrap { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-top: 20px; max-width: 980px; }
+.card { background: var(--card); border-radius: 28px; padding: 18px; }
+.stage { height: 330px; border-radius: 22px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.name { font-size: 24px; font-weight: 800; margin-top: 14px; }
+.desc { color: var(--muted); font-size: 14px; line-height: 1.45; margin-top: 4px; }
+.btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+button { border: 0; border-radius: 999px; padding: 10px 14px; font: inherit; font-weight: 700; font-size: 14px; background: var(--bg); color: var(--ink); cursor: pointer; }
+button.on { background: var(--ink); color: var(--bg); }
+.lvl { display: flex; align-items: center; gap: 10px; margin-top: 12px; font-size: 13px; font-weight: 700; color: var(--muted); }
+input[type=range] { flex: 1; accent-color: var(--ink); }
+svg { overflow: visible; }
+</style>
+</head>
+<body>
+<h1>Maskotlar, canlı</h1>
+<p class="lead">Kod ile çizildi: uygulamada da aynı şekilde vektör olarak, her ekranda net ve küçük dosya boyutuyla çalışır. Durumlara dokun; altındaki çubuk defter ilerledikçe büyümeyi gösterir.</p>
+
+<div class="wrap">
+  <div class="card">
+    <div class="stage" style="background:#E9E3FF"><svg id="damla" width="300" height="300" viewBox="-150 -170 300 300"></svg></div>
+    <div class="name">Damla</div>
+    <div class="desc">Tombul bir mürekkep damlası. Her gün defterine söz işledikçe büyür; 30 günde küçük bir göle, sonra denize dönüşür.</div>
+    <div class="btns" data-for="damla"></div>
+    <div class="lvl">Defter <input type="range" min="0" max="2" step="1" value="0" data-grow="damla"> <span id="damla-lvl">1. gün</span></div>
+  </div>
+  <div class="card">
+    <div class="stage" style="background:#1B1B2A"><svg id="isil" width="300" height="300" viewBox="-150 -170 300 300"></svg></div>
+    <div class="name">Işıl</div>
+    <div class="desc">Yuvarlak bir ateşböceği. Seri büyüdükçe karnı daha parlak yanar; bir gün kaçırırsan ışığı söner ama ertesi gün yeniden yanar.</div>
+    <div class="btns" data-for="isil"></div>
+    <div class="lvl">Defter <input type="range" min="0" max="2" step="1" value="0" data-grow="isil"> <span id="isil-lvl">1. gün</span></div>
+  </div>
+</div>
+
+<script>
+const NS = 'http://www.w3.org/2000/svg';
+const STATES = [['idle', 'Bekliyor'], ['happy', 'Deftere işledin'], ['sleepy', 'Bugün açmadın'], ['sad', 'Seri bozuldu']];
+const LVL = ['1. gün', '7 gün', '30 gün'];
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const ease = (x) => 1 - Math.pow(1 - x, 3);
+const back = (x) => { const c = 1.9; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+function el(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent && parent.appendChild(e); return e; }
+
+// ------------------------------------------------------------------ ortak: gözler
+function makeEyes(g, x, y, r) {
+  const eyes = [-1, 1].map((s) => {
+    const eg = el('g', {}, g);
+    const white = el('ellipse', { cx: s * x, cy: y, rx: r, ry: r * 1.12, fill: '#fff' }, eg);
+    const pupil = el('ellipse', { cx: s * x, cy: y + 2, rx: r * .62, ry: r * .7, fill: '#1A1240' }, eg);
+    const h1 = el('circle', { cx: s * x + r * .22, cy: y - r * .3, r: r * .26, fill: '#fff' }, eg);
+    const h2 = el('circle', { cx: s * x - r * .2, cy: y + r * .25, r: r * .11, fill: '#fff' }, eg);
+    const lid = el('path', { d: '', fill: 'none', stroke: '#1A1240', 'stroke-width': 5, 'stroke-linecap': 'round' }, eg);
+    return { s, white, pupil, h1, h2, lid, x, y, r };
+  });
+  return {
+    eyes,
+    set(open, lookX, lookY, mode) {
+      eyes.forEach((e) => {
+        const cx = e.s * e.x;
+        if (mode === 'happy') { // ^ ^
+          [e.white, e.pupil, e.h1, e.h2].forEach((n) => n.setAttribute('opacity', 0));
+          e.lid.setAttribute('d', `M${cx - e.r * .8} ${e.y + 3} Q${cx} ${e.y - e.r * 1.1} ${cx + e.r * .8} ${e.y + 3}`);
+          e.lid.setAttribute('opacity', 1);
+          return;
+        }
+        if (open < .12) { // kapalı göz çizgisi
+          [e.white, e.pupil, e.h1, e.h2].forEach((n) => n.setAttribute('opacity', 0));
+          const sag = mode === 'sad' ? -1 : 1;
+          e.lid.setAttribute('d', `M${cx - e.r * .8} ${e.y} Q${cx} ${e.y + sag * e.r * .45} ${cx + e.r * .8} ${e.y}`);
+          e.lid.setAttribute('opacity', 1);
+          return;
+        }
+        e.lid.setAttribute('opacity', 0);
+        [e.white, e.pupil, e.h1, e.h2].forEach((n) => n.setAttribute('opacity', 1));
+        e.white.setAttribute('ry', e.r * 1.12 * open);
+        e.pupil.setAttribute('cx', cx + lookX * e.r * .3);
+        e.pupil.setAttribute('cy', e.y + 2 + lookY * e.r * .3);
+        e.pupil.setAttribute('ry', e.r * .7 * Math.min(1, open * 1.1));
+        e.h1.setAttribute('cx', cx + lookX * e.r * .3 + e.r * .22);
+        e.h1.setAttribute('cy', e.y - e.r * .3 * open + lookY * e.r * .3);
+        e.h2.setAttribute('cx', cx + lookX * e.r * .3 - e.r * .2);
+        e.h2.setAttribute('cy', e.y + e.r * .25 * open + lookY * e.r * .3);
+      });
+    },
+  };
+}
+
+// ------------------------------------------------------------------ DAMLA
+function buildDamla(svg) {
+  const shadow = el('ellipse', { cx: 0, cy: 118, rx: 70, ry: 10, fill: '#2A1460', opacity: .14 }, svg);
+  const puddle = el('ellipse', { cx: 0, cy: 116, rx: 0, ry: 0, fill: '#7C6BF2', opacity: .9 }, svg);
+  const root = el('g', {}, svg);
+  const feet = [-1, 1].map((s) => el('ellipse', { cx: s * 24, cy: 112, rx: 17, ry: 9, fill: '#5A47D6' }, root));
+  const body = el('g', {}, root);
+  // tombul damla: alt yuvarlak, üstte yumuşak sivri uç
+  el('path', { d: 'M0 -120 C 18 -88, 82 -40, 82 22 C 82 76, 44 108, 0 108 C -44 108, -82 76, -82 22 C -82 -40, -18 -88, 0 -120 Z', fill: '#7C6BF2' }, body);
+  el('path', { d: 'M-46 30 C -46 70, -20 92, 0 92 C 20 92, 46 70, 46 30 C 30 44, -30 44, -46 30 Z', fill: '#9C8EFF' }, body); // karın
+  el('ellipse', { cx: -42, cy: -18, rx: 11, ry: 22, fill: '#fff', opacity: .45, transform: 'rotate(22 -42 -18)' }, body); // parlaklık
+  el('circle', { cx: -30, cy: -46, r: 5, fill: '#fff', opacity: .55 }, body);
+  const arms = [-1, 1].map((s) => el('ellipse', { cx: s * 80, cy: 34, rx: 11, ry: 18, fill: '#6A58E6', transform: `rotate(${s * -20} ${s * 80} 34)` }, root));
+  const face = el('g', {}, root);
+  const eyes = makeEyes(face, 26, 6, 16);
+  const blush = [-1, 1].map((s) => el('ellipse', { cx: s * 46, cy: 32, rx: 11, ry: 7, fill: '#FF9EC8', opacity: .75 }, face));
+  const mouth = el('path', { d: '', fill: 'none', stroke: '#1A1240', 'stroke-width': 5, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, face);
+  const tongue = el('path', { d: '', fill: '#FF7AA8' }, face);
+  const tear = el('path', { d: 'M0 0 C 4 6, 6 10, 0 14 C -6 10, -4 6, 0 0 Z', fill: '#9AD1FF', opacity: 0 }, face);
+  const fx = el('g', {}, svg);
+  const zzz = ['z', 'z', 'Z'].map((c, i) => { const t = el('text', { x: 0, y: 0, fill: '#5A47D6', 'font-size': 18 + i * 6, 'font-weight': 800, opacity: 0, 'font-family': 'system-ui' }, fx); t.textContent = c; return t; });
+  const sparks = Array.from({ length: 8 }, (_, i) => el('path', { d: 'M0 -8 L2 -2 L8 0 L2 2 L0 8 L-2 2 L-8 0 L-2 -2 Z', fill: ['#FFD25A', '#FF9EC8', '#9AD1FF', '#D7F75B'][i % 4], opacity: 0 }, fx));
+
+  return function frame(t, st, stT, grow) {
+    const k = [0.62, 0.82, 1][grow];
+    let sx = 1, sy = 1, y = 0, rot = 0, open = 1, lookX = Math.sin(t * .7) * .5, lookY = 0, armA = 0, mode = st;
+    // göz kırpma
+    const bl = (t % 3.6); if (bl < .14) open = Math.abs(bl - .07) / .07;
+    if (st === 'idle') {
+      const b = Math.sin(t * 2.6); sy = 1 + b * .025; sx = 1 - b * .02; y = -Math.max(0, Math.sin(t * 1.3)) * 0;
+      armA = Math.sin(t * 2.6) * 6;
+    } else if (st === 'happy') {
+      const p = (stT % 1.1) / 1.1;
+      const air = p > .18 && p < .78 ? Math.sin(Math.PI * (p - .18) / .6) : 0;
+      y = -air * 70;
+      const land = p < .18 ? Math.sin(Math.PI * p / .18) : (p > .78 ? Math.sin(Math.PI * (p - .78) / .22) : 0);
+      sy = 1 - land * .18 + air * .08; sx = 1 + land * .16 - air * .05;
+      rot = Math.sin(p * Math.PI * 2) * 4; armA = -60 * air - 10; lookY = -.4;
+    } else if (st === 'sleepy') {
+      const b = Math.sin(t * 1.2); sy = 1 + b * .035; sx = 1 - b * .025; open = .1; rot = -6 + b * 2; armA = 10; lookY = .5;
+    } else if (st === 'sad') {
+      sy = .93; sx = 1.05; y = 6; open = .85; lookY = .7; lookX = 0; armA = 22; rot = Math.sin(t * 1.6) * 1.5;
+    }
+    root.setAttribute('transform', `translate(0 ${y + 108 * (1 - k)}) scale(${k}) translate(0 108) rotate(${rot}) scale(${sx} ${sy}) translate(0 -108)`);
+    shadow.setAttribute('rx', 70 * k * (1 - Math.min(.5, -y / 160)));
+    shadow.setAttribute('opacity', .14 * (1 - Math.min(.6, -y / 120)));
+    // büyüme: 30 günde ayağının altında küçük göl
+    puddle.setAttribute('rx', grow === 2 ? 118 : 0); puddle.setAttribute('ry', grow === 2 ? 16 : 0);
+    arms.forEach((a, i) => { const s = i ? 1 : -1; a.setAttribute('transform', `rotate(${s * (-20 - armA)} ${s * 62} 22)`); });
+    eyes.set(open, lookX, lookY, mode === 'happy' ? 'happy' : mode);
+    blush.forEach((b) => b.setAttribute('opacity', st === 'happy' ? .95 : st === 'sad' ? .3 : .7));
+    if (st === 'happy') {
+      mouth.setAttribute('d', 'M-16 34 Q0 54 16 34 Z'); mouth.setAttribute('fill', '#1A1240');
+      tongue.setAttribute('d', 'M-8 44 Q0 52 8 44 Q0 40 -8 44 Z');
+    } else if (st === 'sad') {
+      mouth.setAttribute('d', 'M-12 44 Q0 34 12 44'); mouth.setAttribute('fill', 'none'); tongue.setAttribute('d', '');
+    } else if (st === 'sleepy') {
+      mouth.setAttribute('d', `M-5 40 Q0 ${44 + Math.sin(t * 1.2) * 2} 5 40`); mouth.setAttribute('fill', 'none'); tongue.setAttribute('d', '');
+    } else {
+      mouth.setAttribute('d', 'M-12 36 Q0 48 12 36'); mouth.setAttribute('fill', 'none'); tongue.setAttribute('d', '');
+    }
+    // gözyaşı
+    const tp = (t % 2.2) / 2.2;
+    tear.setAttribute('opacity', st === 'sad' ? (tp < .8 ? 1 : 0) : 0);
+    tear.setAttribute('transform', `translate(${-28} ${18 + tp * 40}) scale(${.8 + tp * .4})`);
+    // zZz
+    zzz.forEach((z, i) => {
+      const p = ((t * .45) + i / 3) % 1;
+      z.setAttribute('opacity', st === 'sleepy' ? Math.sin(Math.PI * p) : 0);
+      z.setAttribute('x', 50 * k + p * 40 + i * 6); z.setAttribute('y', -60 * k - p * 70);
+    });
+    // kıvılcımlar
+    sparks.forEach((s, i) => {
+      const p = ((stT * 1.0) + i / 8) % 1;
+      const a = (i / 8) * Math.PI * 2;
+      const r = 70 + p * 60;
+      s.setAttribute('opacity', st === 'happy' ? Math.sin(Math.PI * p) : 0);
+      s.setAttribute('transform', `translate(${Math.cos(a) * r * k} ${-20 + Math.sin(a) * r * k}) scale(${.6 + Math.sin(Math.PI * p) * .6}) rotate(${p * 90})`);
+    });
+  };
+}
+
+// ------------------------------------------------------------------ IŞIL
+function buildIsil(svg) {
+  const glow = el('circle', { cx: 0, cy: 30, r: 90, fill: '#FFE27A', opacity: .2 }, svg);
+  const glow2 = el('circle', { cx: 0, cy: 30, r: 55, fill: '#FFE27A', opacity: .25 }, svg);
+  const root = el('g', {}, svg);
+  const wings = [-1, 1].map((s) => el('ellipse', { cx: s * 52, cy: -58, rx: 38, ry: 22, fill: '#BFE3FF', opacity: .75, transform: `rotate(${s * 28} ${s * 52} -58)` }, root));
+  const belly = el('ellipse', { cx: 0, cy: 46, rx: 52, ry: 44, fill: '#FFE27A' }, root);
+  el('ellipse', { cx: -16, cy: 30, rx: 14, ry: 9, fill: '#fff', opacity: .55 }, root);
+  el('circle', { cx: 0, cy: -16, r: 64, fill: '#5B4AB8' }, root);
+  el('ellipse', { cx: -28, cy: -50, rx: 14, ry: 8, fill: '#fff', opacity: .3, transform: 'rotate(-25 -28 -50)' }, root);
+  const ant = [-1, 1].map((s) => {
+    const p = el('path', { d: `M${s * 18} -74 Q${s * 26} -104 ${s * 40} -112`, stroke: '#5B4AB8', 'stroke-width': 6, fill: 'none', 'stroke-linecap': 'round' }, root);
+    const b = el('circle', { cx: s * 40, cy: -112, r: 8, fill: '#FFE27A' }, root);
+    return { p, b, s };
+  });
+  const feet = [-1, 1].map((s) => el('ellipse', { cx: s * 22, cy: 92, rx: 12, ry: 7, fill: '#5B4AB8' }, root));
+  const face = el('g', {}, root);
+  const eyes = makeEyes(face, 24, -22, 15);
+  const blush = [-1, 1].map((s) => el('ellipse', { cx: s * 44, cy: 2, rx: 10, ry: 6, fill: '#FF9EC8', opacity: .8 }, face));
+  const mouth = el('path', { d: '', fill: 'none', stroke: '#1A1240', 'stroke-width': 5, 'stroke-linecap': 'round' }, face);
+  const fx = el('g', {}, svg);
+  const zzz = ['z', 'z', 'Z'].map((c, i) => { const t = el('text', { x: 0, y: 0, fill: '#BFE3FF', 'font-size': 18 + i * 6, 'font-weight': 800, opacity: 0, 'font-family': 'system-ui' }, fx); t.textContent = c; return t; });
+  const motes = Array.from({ length: 10 }, (_, i) => el('circle', { r: 3 + (i % 3), fill: '#FFE27A', opacity: 0 }, fx));
+
+  return function frame(t, st, stT, grow) {
+    const k = [0.7, 0.86, 1][grow];
+    const bright = [.45, .75, 1][grow];
+    let y = Math.sin(t * 2) * 8, rot = Math.sin(t * 1.3) * 4, open = 1, lookX = Math.sin(t * .8) * .5, lookY = 0, flap = Math.sin(t * 22) * 14, lit = bright;
+    const bl = (t % 3.2); if (bl < .14) open = Math.abs(bl - .07) / .07;
+    if (st === 'happy') {
+      const p = (stT % 1.4) / 1.4;
+      rot = ease(clamp(p / .7)) * 360; y = -Math.sin(Math.PI * clamp(p / .7)) * 50; flap = Math.sin(t * 30) * 18; lit = 1.25;
+    } else if (st === 'sleepy') {
+      y = 30 + Math.sin(t * 1.1) * 3; rot = -10; open = .1; flap = 0; lit = .2 + .05 * Math.sin(t * 1.1); lookY = .5;
+    } else if (st === 'sad') {
+      y = 24; rot = Math.sin(t * 1.4) * 2; open = .85; lookY = .7; lookX = 0; flap = Math.sin(t * 6) * 4; lit = 0.08;
+    }
+    root.setAttribute('transform', `translate(0 ${y}) scale(${k}) rotate(${rot} 0 10)`);
+    wings.forEach((w, i) => { const s = i ? 1 : -1; w.setAttribute('transform', `rotate(${s * (28 + flap)} ${s * 30} -50)`); });
+    const pulse = .85 + .15 * Math.sin(t * 3);
+    belly.setAttribute('fill', lit < .15 ? '#8C7F4A' : '#FFE27A');
+    glow.setAttribute('opacity', (.22 * lit * pulse).toFixed(3)); glow2.setAttribute('opacity', (.3 * lit * pulse).toFixed(3));
+    glow.setAttribute('r', 70 + 50 * lit); glow.setAttribute('cy', 30 * k + y); glow2.setAttribute('cy', 30 * k + y);
+    ant.forEach((a) => a.b.setAttribute('fill', lit < .15 ? '#8C7F4A' : '#FFE27A'));
+    eyes.set(open, lookX, lookY, st === 'happy' ? 'happy' : st);
+    blush.forEach((b) => b.setAttribute('opacity', st === 'sad' ? .3 : .8));
+    mouth.setAttribute('d', st === 'happy' ? 'M-12 2 Q0 18 12 2' : st === 'sad' ? 'M-10 12 Q0 4 10 12' : st === 'sleepy' ? 'M-5 8 Q0 11 5 8' : 'M-10 4 Q0 14 10 4');
+    zzz.forEach((z, i) => {
+      const p = ((t * .45) + i / 3) % 1;
+      z.setAttribute('opacity', st === 'sleepy' ? Math.sin(Math.PI * p) : 0);
+      z.setAttribute('x', 50 + p * 40 + i * 6); z.setAttribute('y', -40 - p * 70);
+    });
+    motes.forEach((m, i) => {
+      const p = ((t * .25) + i / 10) % 1;
+      const a = i * 2.4;
+      m.setAttribute('cx', Math.cos(a) * (60 + p * 70)); m.setAttribute('cy', 20 + Math.sin(a) * (40 + p * 50) - p * 40);
+      m.setAttribute('opacity', (st === 'sad' || st === 'sleepy' ? 0 : Math.sin(Math.PI * p) * .8 * Math.min(1, lit)).toFixed(2));
+    });
+  };
+}
+
+// ------------------------------------------------------------------ çalıştır
+const M = {
+  damla: { frame: buildDamla(document.getElementById('damla')), st: 'idle', since: 0, grow: 0 },
+  isil: { frame: buildIsil(document.getElementById('isil')), st: 'idle', since: 0, grow: 0 },
+};
+document.querySelectorAll('.btns').forEach((box) => {
+  const id = box.dataset.for;
+  STATES.forEach(([st, label]) => {
+    const b = document.createElement('button');
+    b.textContent = label; if (st === 'idle') b.classList.add('on');
+    b.onclick = () => { M[id].st = st; M[id].since = performance.now() / 1000; box.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b)); };
+    box.appendChild(b);
+  });
+});
+document.querySelectorAll('[data-grow]').forEach((r) => r.oninput = () => {
+  const id = r.dataset.grow; M[id].grow = +r.value; document.getElementById(id + '-lvl').textContent = LVL[+r.value];
+});
+function loop() {
+  const t = performance.now() / 1000;
+  for (const id in M) { const m = M[id]; m.frame(t, m.st, t - m.since, m.grow); }
+  requestAnimationFrame(loop);
+}
+loop();
+</script>
+</body>
+</html>

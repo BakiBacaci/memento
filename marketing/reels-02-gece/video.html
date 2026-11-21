@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<style>
+@font-face { font-family: B; src: url(../../assets/fonts/Bricolage-Regular.ttf); font-weight: 400; }
+@font-face { font-family: B; src: url(../../assets/fonts/Bricolage-SemiBold.ttf); font-weight: 600; }
+@font-face { font-family: B; src: url(../../assets/fonts/Bricolage-ExtraBold.ttf); font-weight: 800; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: #0B0B0D; }
+body { font-family: B, sans-serif; color: #F5F3EE; position: relative; }
+.abs { position: absolute; }
+#bg { position: absolute; inset: 0; background: radial-gradient(110% 70% at 50% 42%, #1E1E24 0%, #0B0B0D 72%); }
+#view { position: absolute; inset: 0; perspective: 1300px; perspective-origin: 50% 46%; overflow: hidden; }
+#world { position: absolute; left: 540px; top: 880px; transform-style: preserve-3d; }
+.fc { position: absolute; width: 420px; height: 540px; margin: -270px 0 0 -210px; border-radius: 36px; padding: 34px; }
+.fc .q { font-weight: 800; font-size: 44px; line-height: 1.02; letter-spacing: -1.4px; }
+.fc .u { position: absolute; left: 34px; bottom: 30px; font-weight: 600; font-size: 22px; opacity: .8; }
+.cap { position: absolute; left: 90px; width: 900px; top: 300px; font-weight: 800; font-size: 76px; line-height: 1.04; letter-spacing: -2.4px; }
+.phone { position: absolute; width: 640px; height: 1300px; left: 220px; top: 470px; transform-origin: 50% 0; border-radius: 96px; background: #050506; padding: 16px;
+         box-shadow: 0 80px 160px rgba(0,0,0,.6), inset 0 0 0 2px #2a2a30; transform-style: preserve-3d; }
+.screen { position: absolute; inset: 16px; border-radius: 82px; background: #151517; overflow: hidden; }
+.notch { position: absolute; left: 50%; top: 22px; width: 190px; height: 52px; margin-left: -95px; background: #050506; border-radius: 26px; }
+.pill { position: absolute; display: flex; align-items: center; justify-content: center; border-radius: 999px; font-weight: 700; }
+.notif { position: absolute; left: 130px; width: 820px; height: 150px; border-radius: 44px; background: #26262C;
+         box-shadow: 0 30px 60px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.06); display: flex; align-items: center; gap: 26px; padding: 0 34px; }
+.notif .av { width: 84px; height: 84px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 40px; flex: none; }
+.notif .t { font-size: 34px; line-height: 1.2; }
+.notif .t b { font-weight: 800; }
+.notif .t span { color: #A3A3A9; font-size: 26px; display: block; }
+.tile { position: absolute; width: 124px; height: 150px; border-radius: 30px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 112px; letter-spacing: -4px; }
+#grain, #leak, #flash, #vig { position: absolute; inset: 0; pointer-events: none; }
+#grain { width: 1080px; height: 1920px; opacity: .085; mix-blend-mode: screen; }
+#vig { background: radial-gradient(120% 85% at 50% 48%, transparent 55%, rgba(0,0,0,.65) 100%); }
+#flash { background: #E6DDFF; opacity: 0; mix-blend-mode: screen; }
+#leak { opacity: 0; mix-blend-mode: screen; }
+</style>
+</head>
+<body>
+<div id="bg"></div>
+<div id="view"><div id="world"></div></div>
+
+<!-- A · Gece 02.00 -->
+<div class="abs" id="typeA" style="left:0; width:1080px; top:860px; text-align:center; font-weight:800; font-size:110px; letter-spacing:-4px;"></div>
+
+<div class="abs" id="scrim" style="left:0; top:0; width:1080px; height:720px; background:linear-gradient(#0B0B0D 0%, rgba(11,11,13,.85) 45%, transparent 100%); opacity:0;"></div>
+<div class="cap" id="capB">Herkesin aklında<br>bir cümle var.</div>
+
+<!-- C · Yazan telefon -->
+<div class="phone" id="phoneC"><div class="screen">
+  <div class="notch"></div>
+  <div class="abs" style="left:48px; top:120px; font-weight:800; font-size:56px; letter-spacing:-2px;">Söz yaz</div>
+  <div class="abs" id="prevC" style="left:40px; top:220px; width:528px; height:560px; border-radius:46px; background:#C9B6FF; color:#2A1460;">
+    <div class="abs" id="typedC" style="left:40px; bottom:96px; width:450px; font-weight:800; font-size:62px; line-height:1.02; letter-spacing:-2px;"></div>
+    <div class="abs" style="left:40px; bottom:40px; font-weight:600; font-size:26px;">@deniz</div>
+  </div>
+  <div id="dotsC"></div>
+  <div class="abs" style="left:40px; top:930px; width:528px; height:150px; border-radius:36px; background:#1F1F22; box-shadow: inset 0 0 0 2px #34343A;"></div>
+  <div class="pill" id="shareC" style="left:40px; top:1120px; width:528px; height:110px; background:#F5F3EE; color:#151517; font-size:40px;">Paylaş</div>
+</div></div>
+<div class="abs" id="flyC" style="border-radius:46px; background:#C9B6FF;"></div>
+
+<!-- E · Bulan telefon -->
+<div class="phone" id="phoneE"><div class="screen">
+  <div class="notch"></div>
+  <div class="abs" style="left:48px; top:118px; font-weight:800; font-size:44px; letter-spacing:-1.5px;">memento</div>
+  <div class="abs" id="deckE"></div>
+  <div class="abs" id="toastE" style="left:134px; top:1150px; width:340px; height:76px; border-radius:38px; background:#F5F3EE; color:#151517; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:28px;">Kaydedildi</div>
+</div></div>
+<div class="cap" id="capE">Ve biri, tam o<br>cümleyi arıyordu.</div>
+
+<!-- F · Profil + bildirimler -->
+<div class="phone" id="phoneF"><div class="screen" id="screenF"></div></div>
+<div id="notifs"></div>
+
+<!-- G · Kapanış -->
+<div id="tiles"></div>
+<div class="abs" id="tagG" style="left:0; width:1080px; top:1010px; text-align:center; font-weight:800; font-size:88px; letter-spacing:-3px;">Yaz. Bul. Kalsın.</div>
+<div class="abs" id="subG" style="left:0; width:1080px; top:1150px; text-align:center; font-weight:600; font-size:34px; color:#A3A3A9;">Çok yakında App Store ve Google Play'de</div>
+
+<div id="leak"></div>
+<div id="flash"></div>
+<div id="vig"></div>
+<canvas id="grain" width="540" height="960"></canvas>
+
+<script src="../ortak/profil.js"></script>
+<script>
+// ---------- yardımcılar
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const eo = (x) => 1 - Math.pow(1 - x, 3);
+const eio = (x) => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const ei = (x) => x * x * x;
+const back = (x) => { const c = 1.6; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+const lerp = (a, b, m) => a + (b - a) * m;
+const $ = (id) => document.getElementById(id);
+let rs = 11; const rnd = () => (rs = (rs * 16807) % 2147483647) / 2147483647;
+const show = (el, on) => { el.style.display = on ? '' : 'none'; };
+
+// 90 BPM: vuruş 0,6667 sn. Sahneler vuruşa oturur.
+const B = 60 / 90;
+const T = { A: 0, B: 4 * B, C: 9 * B, D: 16 * B, E: 20 * B, F: 26 * B, G: 30 * B, END: 36 * B };
+
+const PAL = [['#C9B6FF', '#2A1460'], ['#D7F75B', '#24400A'], ['#9AD1FF', '#0A2A4A'], ['#FF9F80', '#4A1406'],
+             ['#FFB8DE', '#5A0F35'], ['#FFE27A', '#4A3600'], ['#8FE3C4', '#07402C'], ['#F5F3EE', '#17171A']];
+const QUOTES = ['Sessizlik de bir cevaptır.', 'Yavaş git ama durma.', 'Herkes biraz yorgun.', 'Damlaya damlaya göl olur.',
+  'Gönül kimi severse güzel odur.', 'Bugün de geçti.', 'Kalbin neredeyse oradasın.', 'Okudukça büyüyorum.',
+  'Her şeyin bir vakti var.', 'Söz uçar, yazı kalır.', 'Unutmak da bir yetenek.', 'Az olsun, öz olsun.'];
+const USERS = ['@mert', '@ece', '@zeynep', '@can', '@selin', '@arda', '@deniz', '@ilke'];
+
+// ---------- 3D alan: gecede süzülen söz kartları
+const world = $('world');
+const FIELD = [];
+for (let i = 0; i < 26; i++) {
+  const [bg, ink] = PAL[i % 7];
+  const el = document.createElement('div');
+  el.className = 'fc';
+  el.style.background = bg; el.style.color = ink;
+  el.innerHTML = `<div class="q">${QUOTES[i % QUOTES.length]}</div><div class="u">${USERS[i % USERS.length]}</div>`;
+  world.appendChild(el);
+  const ang = rnd() * Math.PI * 2, rad = 520 + rnd() * 1500;
+  FIELD.push({ el, x: Math.cos(ang) * rad, y: Math.sin(ang) * rad * 1.3, z: -900 - rnd() * 7200,
+    ry: (rnd() - .5) * 50, rz: (rnd() - .5) * 24, sp: .6 + rnd() * .8 });
+}
+// Hikâyenin kartı: tam ortada, uzakta.
+const hero = document.createElement('div');
+hero.className = 'fc';
+hero.style.background = '#C9B6FF'; hero.style.color = '#2A1460';
+hero.innerHTML = '<div class="q"></div>';
+world.appendChild(hero);
+
+function camera(t) {
+  // B: karanlığa dalış. D: yukarı bakış ve süzülme.
+  let z = 0, rx = 0, ry = 0, y = 0;
+  if (t < T.C + .8) {
+    const p = seg(t, T.A + 1.4, T.C + .8);
+    z = eio(p) * 3600; ry = Math.sin(t * .35) * 6; rx = 4;
+  } else {
+    const p = seg(t, T.D, T.E);
+    z = 1200 + eo(p) * 1600; rx = lerp(26, 8, eo(p)); ry = -4 + p * 8; y = lerp(500, 0, eo(p));
+  }
+  return { z, rx, ry, y };
+}
+
+function renderWorld(t, alpha) {
+  const c = camera(t);
+  world.style.transform = `translateY(${c.y}px) rotateX(${c.rx}deg) rotateY(${c.ry}deg) translateZ(${c.z}px)`;
+  FIELD.forEach((f, i) => {
+    const drift = Math.sin(t * .5 * f.sp + i) * 40;
+    const ez = f.z + c.z;
+    const dist = Math.abs(ez + 900);
+    const blur = clamp(dist / 900, 0, 7);
+    const fog = clamp(1 - (-ez - 1500) / 6500, 0.08, 1) * clamp((ez + 300) / -500 + 1.2, 0, 1);
+    f.el.style.transform = `translate3d(${f.x}px, ${f.y + drift}px, ${f.z}px) rotateY(${f.ry + t * 3 * f.sp}deg) rotateZ(${f.rz}deg)`;
+    f.el.style.filter = `blur(${blur.toFixed(1)}px) brightness(${(.55 + .45 * fog).toFixed(2)})`;
+    f.el.style.opacity = (fog * alpha).toFixed(3);
+  });
+}
+
+// ---------- C: renk noktaları
+const dotsC = $('dotsC');
+PAL.forEach(([bg], i) => {
+  const d = document.createElement('div');
+  d.className = 'abs';
+  d.style.cssText = `left:${40 + i * 66}px; top:820px; width:54px; height:54px; border-radius:50%; background:${bg}; box-shadow: 0 0 0 ${i === 0 ? 5 : 0}px #151517, 0 0 0 ${i === 0 ? 9 : 0}px #F5F3EE;`;
+  dotsC.appendChild(d);
+});
+const LINE = 'Bazı insanlar gider, sözleri kalır.';
+
+// ---------- E: deste
+const deckE = $('deckE');
+const DECK = [
+  { bg: '#8FE3C4', ink: '#07402C', q: 'Az olsun, öz olsun.', u: 'Türk Atasözü', out: T.E + .25 },
+  { bg: '#C9B6FF', ink: '#2A1460', q: LINE, u: '@deniz', out: 99 },
+  { bg: '#FFE27A', ink: '#4A3600', q: 'Bugün de geçti.', u: '@arda', out: 99 },
+];
+DECK.slice().reverse().forEach((c) => {
+  const el = document.createElement('div');
+  el.className = 'abs';
+  el.style.cssText = `left:30px; top:210px; width:548px; height:860px; border-radius:48px; background:${c.bg}; color:${c.ink}; transform-origin: 50% 100%;`;
+  el.innerHTML = `<div class="abs" style="left:44px; top:260px; width:460px; font-weight:800; font-size:66px; line-height:1.02; letter-spacing:-2px;">${c.q}</div>
+    <div class="abs" style="left:44px; top:560px; font-weight:600; font-size:28px;">${c.u}</div>
+    <div class="pill" data-like style="left:44px; top:740px; width:190px; height:76px; font-size:26px; background:${c.ink}; color:${c.bg};">♥ Beğen</div>
+    <div class="pill" data-save style="left:254px; top:740px; width:76px; height:76px; border:3px solid ${c.ink}; font-size:26px;"></div>
+    <div class="abs" data-heart style="left:174px; top:300px; width:200px; height:200px; border-radius:50%; background:${c.ink}; display:flex; align-items:center; justify-content:center; opacity:0;">
+      <svg width="96" height="88" viewBox="0 0 24 22"><path d="M12 21s-9-5.6-9-12.2C3 5 5.6 2.5 8.6 2.5c1.6 0 2.9.8 3.4 2 .5-1.2 1.8-2 3.4-2C18.4 2.5 21 5 21 8.8 21 15.4 12 21 12 21z" fill="${c.bg}"/></svg></div>`;
+  c.el = el; c.heart = el.querySelector('[data-heart]'); c.save = el.querySelector('[data-save]');
+  deckE.appendChild(el);
+});
+
+// ---------- F: bildirimler
+const NOTIFS = [
+  ['#FFB8DE', '#5A0F35', 'E', '<b>ece</b> sözünü kaydetti'],
+  ['#9AD1FF', '#0A2A4A', 'M', '<b>mert</b> sözünü beğendi'],
+  ['#D7F75B', '#24400A', '♥', 'Sözün <b>412 kişiye</b> ulaştı'],
+];
+const notifs = $('notifs');
+NOTIFS.forEach(([bg, ink, a, txt]) => {
+  const el = document.createElement('div');
+  el.className = 'notif';
+  el.innerHTML = `<div class="av" style="background:${bg}; color:${ink}">${a}</div><div class="t">${txt}<span>memento · şimdi</span></div>`;
+  notifs.appendChild(el);
+});
+
+$("screenF").innerHTML = profileScreen();
+// ---------- G: harf kartları
+const tilesEl = $('tiles');
+const TILES = 'memento'.split('').map((ch, i) => {
+  const [bg, ink] = PAL[[0, 3, 1, 4, 2, 6, 5][i]];
+  const el = document.createElement('div');
+  el.className = 'tile';
+  el.style.background = bg; el.style.color = ink;
+  el.textContent = ch;
+  tilesEl.appendChild(el);
+  return { el, i, sx: (rnd() - .5) * 1600, sy: (rnd() - .5) * 2200, sr: (rnd() - .5) * 120 };
+});
+
+// ---------- gren
+const g = $('grain').getContext('2d');
+const gimg = g.createImageData(540, 960);
+function grain(frame) {
+  let s = (frame * 7919 + 13) % 2147483647 || 1;
+  const d = gimg.data;
+  for (let i = 0; i < d.length; i += 4) {
+    s = (s * 16807) % 2147483647;
+    const v = (s & 255);
+    d[i] = d[i + 1] = d[i + 2] = v; d[i + 3] = 255;
+  }
+  g.putImageData(gimg, 0, 0);
+}
+
+function render(t) {
+  grain(Math.round(t * 30));
+
+  // ---- A: Gece 02.00 yazılır
+  const tA = $('typeA');
+  show(tA, t < T.B + .2);
+  if (t < T.B + .2) {
+    const txt = 'Gece 02.00.';
+    const n = Math.round(txt.length * seg(t, .35, 1.45));
+    const caret = (Math.floor(t * 2.4) % 2 === 0) ? '<span style="color:#C9B6FF">|</span>' : '<span style="opacity:0">|</span>';
+    tA.innerHTML = txt.slice(0, n) + caret;
+    const out = seg(t, T.B - .5, T.B + .1);
+    tA.style.opacity = 1 - out;
+    tA.style.transform = `scale(${1 + out * .25})`;
+    tA.style.filter = `blur(${out * 10}px)`;
+  }
+
+  // ---- 3D alan: B ve D boyunca
+  const worldOn = (t >= T.B - .6 && t < T.C + .9) || (t >= T.D + .15 && t < T.E + .1);
+  show($('view'), worldOn);
+  if (worldOn) {
+    const a = t < T.C + 1 ? seg(t, T.B - .6, T.B + .4) * (1 - seg(t, T.C + .5, T.C + .9))
+                          : seg(t, T.D + .15, T.D + .6) * (1 - seg(t, T.E - .25, T.E + .05));
+    renderWorld(t, a);
+    // Kahraman kart: B'de uzakta, C'nin başında kameraya gelir.
+    const c = camera(t);
+    const toward = eio(seg(t, T.C - .5, T.C + .7));
+    const hz = lerp(-5200, -c.z - 250, toward);
+    hero.style.transform = `translate3d(0px, ${lerp(-60, 40, toward)}px, ${hz}px) rotateY(${lerp(22, 0, toward)}deg)`;
+    hero.style.filter = `blur(${clamp(Math.abs(hz + c.z + 900) / 900, 0, 7) * (1 - toward)}px)`;
+    hero.style.opacity = t < T.D ? a : 0;
+    hero.style.boxShadow = `0 0 ${60 + 80 * toward}px rgba(201,182,255,${.25 + .35 * toward})`;
+  }
+
+  const scr = Math.max(seg(t, T.B + .3, T.B + .8) * (1 - seg(t, T.C - .4, T.C)), 0);
+  $("scrim").style.opacity = scr;
+  // ---- B yazısı
+  const cb = $('capB');
+  const bIn = seg(t, T.B + .5, T.B + 1.0), bOut = seg(t, T.C - .45, T.C - .1);
+  show(cb, bIn > 0 && bOut < 1);
+  cb.style.opacity = eo(bIn) * (1 - bOut);
+  cb.style.transform = `translateY(${(1 - eo(bIn)) * 34}px)`;
+  cb.style.filter = `blur(${(1 - eo(bIn)) * 8 + bOut * 8}px)`;
+
+  // ---- C: kart ekranı kaplar, telefona oturur, söz yazılır, Paylaş
+  const ph = $('phoneC'), fly = $('flyC');
+  const cOn = t >= T.C + .45 && t < T.D + .55;
+  show(ph, cOn);
+  const fill = seg(t, T.C + .45, T.C + .7), settle = eio(seg(t, T.C + .7, T.C + 1.35));
+  show(fly, t >= T.C + .45 && t < T.C + 1.35);
+  if (t >= T.C + .45 && t < T.C + 1.35) {
+    // tam ekran lila → telefondaki önizleme kartının yerine
+    const x = lerp(-40, 308, settle), y = lerp(-40, 678, settle);
+    const w = lerp(1160, 465, settle), h = lerp(2000, 493, settle);
+    fly.style.cssText = `left:${x}px; top:${y}px; width:${w}px; height:${h}px; border-radius:${lerp(0, 46, settle)}px; background:#C9B6FF; opacity:${fill < 1 ? fill : 1 - seg(t, T.C + 1.2, T.C + 1.35)}; z-index:5;`;
+  }
+  if (cOn) {
+    const tilt = 1 - eo(seg(t, T.C + .7, T.C + 2.2));
+    const push = seg(t, T.C + .7, T.D);
+    const lift = eio(seg(t, T.D - .3, T.D));
+    const drop = eio(seg(t, T.D, T.D + .55));
+    ph.style.opacity = settle * (1 - drop);
+    ph.style.transform = `translateY(${drop * 900}px) rotateX(${tilt * 14 + drop * 30}deg) rotateY(${tilt * -10}deg) scale(${.88 + push * .04})`;
+    const n = Math.round(LINE.length * seg(t, T.C + 1.3, T.C + 2.9));
+    const caret = (n < LINE.length || Math.floor(t * 2.4) % 2 === 0) ? '<span style="opacity:.5">|</span>' : '';
+    $('typedC').innerHTML = LINE.slice(0, n) + caret;
+    const press = seg(t, T.D - .55, T.D - .4) - seg(t, T.D - .4, T.D - .2);
+    $('shareC').style.transform = `scale(${1 - press * .06})`;
+    $('prevC').style.transform = `translateY(${-lift * 40}px) scale(${1 + lift * .04})`;
+    $('prevC').style.boxShadow = `0 0 ${lift * 90}px rgba(201,182,255,${lift * .7})`;
+    $('prevC').style.opacity = 1 - seg(t, T.D, T.D + .05);
+  }
+
+  // ---- D: kart fırlar, flaş, ışık sızıntısı
+  const fl = $('flash'), lk = $('leak');
+  const shoot = seg(t, T.D, T.D + .5);
+  if (t >= T.D && t < T.D + .6) {
+    show(fly, true);
+    const y = lerp(640, -1800, ei(shoot));
+    fly.style.cssText = `left:308px; top:${y}px; width:465px; height:${493 * (1 + 1.6 * shoot)}px; border-radius:46px; background:#C9B6FF; filter: blur(${shoot * 18}px); opacity:${1 - shoot * .3}; z-index:5; box-shadow: 0 0 120px rgba(201,182,255,.8);`;
+  }
+  fl.style.opacity = (t >= T.D + .05 ? Math.exp(-(t - T.D - .05) * 9) * .38 : 0).toFixed(3);
+  const lkP = seg(t, T.D, T.D + 2.2);
+  lk.style.opacity = (Math.sin(Math.PI * lkP) * .55).toFixed(3);
+  lk.style.background = `radial-gradient(60% 40% at ${lerp(10, 90, lkP)}% ${lerp(15, 35, lkP)}%, rgba(255,140,90,.9), rgba(201,120,255,.35) 45%, transparent 75%)`;
+  // D'nin sonunda gökteki yıldız: kartın kaybolduğu yerde parıltı
+  if (t >= T.D + .5 && t < T.E) {
+    const tw = .75 + .25 * Math.sin(t * 9);
+    fl.style.background = `radial-gradient(circle at 50% 22%, rgba(220,205,255,${.9 * tw}) 0, rgba(201,182,255,${.35 * tw}) 24px, transparent 110px)`;
+    fl.style.opacity = (seg(t, T.D + .5, T.D + .9) * (1 - seg(t, T.E - .3, T.E))).toFixed(3);
+  } else { fl.style.background = '#E6DDFF'; }
+
+  // ---- E: başka bir telefon, aynı söz gelir
+  const pe = $('phoneE');
+  const eOn = t >= T.E - .05 && t < T.F + .1;
+  show(pe, eOn);
+  if (eOn) {
+    const whip = 1 - eo(seg(t, T.E - .05, T.E + .35));
+    pe.style.transform = `translateX(${whip * 1200}px) rotateY(${8 - whip * 20}deg) scale(${.88 + seg(t, T.E, T.F) * .035})`;
+    pe.style.filter = `blur(${whip * 22}px)`;
+    pe.style.opacity = 1 - seg(t, T.F - .1, T.F + .1);
+    DECK.forEach((c, i) => {
+      const go = eo(seg(t, c.out, c.out + .35));
+      const gone = t >= c.out + .35;
+      const front = DECK.slice(0, i).filter((d) => t < d.out + .35).length;
+      const settle = eo(seg(t, DECK[i - 1]?.out ?? 0, (DECK[i - 1]?.out ?? 0) + .35));
+      const pos = i === 0 ? 0 : (front === 0 ? 1 - settle : 1);
+      c.el.style.display = gone ? 'none' : '';
+      c.el.style.transform = `translate(${-go * 900}px, ${pos * 30}px) rotate(${-go * 14}deg) scale(${1 - pos * .05})`;
+    });
+    const hc = DECK[1];
+    const beat1 = seg(t, T.E + 2 * B, T.E + 2 * B + .5), beat2 = seg(t, T.E + 3 * B, T.E + 3 * B + .35);
+    const pulse = Math.sin(Math.PI * beat1) * .06 + Math.sin(Math.PI * beat2) * .03;
+    hc.el.style.transform += ` scale(${1 + pulse})`;
+    hc.heart.style.opacity = (Math.sin(Math.PI * beat1) * .95).toFixed(3);
+    hc.heart.style.transform = `scale(${.5 + .6 * back(clamp(beat1 * 1.6))})`;
+    const saved = t >= T.E + 4 * B;
+    hc.save.style.background = saved ? hc.ink : 'transparent';
+    const toast = seg(t, T.E + 4 * B, T.E + 4 * B + .25) * (1 - seg(t, T.F - .5, T.F - .2));
+    $('toastE').style.opacity = toast;
+    $('toastE').style.transform = `translateY(${(1 - eo(toast)) * 30}px)`;
+  }
+  const ce = $('capE');
+  const eIn = seg(t, T.E + .7, T.E + 1.2), eOut = seg(t, T.F - .35, T.F);
+  show(ce, eIn > 0 && eOut < 1);
+  ce.style.opacity = eo(eIn) * (1 - eOut);
+  ce.style.transform = `translateY(${(1 - eo(eIn)) * 34}px)`;
+  ce.style.filter = `blur(${(1 - eo(eIn)) * 8}px)`;
+
+  // ---- F: @deniz'in profili; bildirimler üstte yığılır, sayılar artar
+  const pf = $('phoneF');
+  const pfOn = t >= T.F - .05 && t < T.G + .6;
+  show(pf, pfOn);
+  if (pfOn) {
+    const inn = eo(seg(t, T.F - .05, T.F + .45)), out = eio(seg(t, T.G, T.G + .5));
+    pf.style.transform = `translateY(${(1 - inn) * 420 + out * 200}px) rotateX(${(1 - inn) * 18}deg) scale(${.88 + seg(t, T.F, T.G) * .03})`;
+    pf.style.opacity = inn * (1 - out);
+    pf.style.filter = `blur(${out * 16}px)`;
+    const steps = [0, 1, 2].map((i) => eo(seg(t, T.F + .2 + i * B, T.F + .2 + i * B + .35)));
+    $('pf-fol').textContent = 248 + Math.round(steps[0] + steps[1]);
+    const k = Math.round(86 + 412 * eo(seg(t, T.F + .2 + 2 * B, T.F + .2 + 2 * B + .9)) + 2 * (steps[0] + steps[1]));
+    $('pf-karma').textContent = k;
+    const lvlUp = k >= 400;
+    $('pf-bar').style.width = `${lvlUp ? 12 + 20 * seg(t, T.G - .4, T.G) : 30 + 70 * clamp((k - 86) / 314)}%`;
+    $('pf-lvl').textContent = lvlUp ? 'Seviye 3 🎉' : 'Seviye 2';
+    $('pf-lvl').style.transform = lvlUp ? `scale(${1 + .25 * Math.sin(Math.PI * seg(t, T.F + 1.75, T.F + 2.1))})` : '';
+  }
+  const fOn = t >= T.F && t < T.G + .7;
+  show(notifs, fOn);
+  if (fOn) {
+    const arr = [...notifs.children];
+    arr.forEach((el, i) => {
+      const p = seg(t, T.F + .2 + i * B, T.F + .2 + i * B + .4);
+      const pushP = arr.slice(i + 1).reduce((acc, _, j) => acc + eo(seg(t, T.F + .2 + (i + 1 + j) * B, T.F + .2 + (i + 1 + j) * B + .35)), 0);
+      const out = eio(seg(t, T.G - .1, T.G + .4));
+      el.style.top = '290px';
+      el.style.zIndex = 10 + i;
+      el.style.opacity = (eo(p) * (1 - out) * (1 - .35 * Math.min(pushP, 2))).toFixed(3);
+      el.style.transform = `translateY(${(1 - back(p)) * -120 + pushP * 24 - out * 160}px) scale(${(.96 + .04 * eo(p)) * (1 - .05 * pushP)})`;
+      el.style.filter = `blur(${(1 - eo(p)) * 10 + out * 12}px)`;
+    });
+  }
+
+  // ---- G: harfler dizilir, memento
+  const gOn = t >= T.G;
+  show(tilesEl, gOn);
+  if (gOn) {
+    const totalW = 7 * 124 + 6 * 14, x0 = (1080 - totalW) / 2;
+    TILES.forEach((tl) => {
+      const p = eo(seg(t, T.G + .1 + tl.i * .07, T.G + .85 + tl.i * .07));
+      const x = lerp(tl.sx + 540, x0 + tl.i * 138, p), y = lerp(tl.sy + 800, 780, p);
+      tl.el.style.left = `${x}px`; tl.el.style.top = `${y}px`;
+      tl.el.style.transform = `rotate(${tl.sr * (1 - p)}deg) scale(${.4 + .6 * p})`;
+      tl.el.style.opacity = clamp(p * 1.6);
+      tl.el.style.filter = `blur(${(1 - p) * 14}px)`;
+    });
+    const zoom = seg(t, T.G + 1, T.END);
+    tilesEl.style.transform = `scale(${1 + zoom * .04})`;
+    tilesEl.style.transformOrigin = '540px 855px';
+  }
+  const tg = $('tagG'), sg = $('subG');
+  const gi = seg(t, T.G + 1.5 * B * 1.5, T.G + 1.5 * B * 1.5 + .45), si = seg(t, T.G + 3 * B, T.G + 3 * B + .45);
+  show(tg, gi > 0); show(sg, si > 0);
+  tg.style.opacity = eo(gi); tg.style.transform = `translateY(${(1 - eo(gi)) * 34}px)`; tg.style.filter = `blur(${(1 - eo(gi)) * 8}px)`;
+  sg.style.opacity = eo(si); sg.style.transform = `translateY(${(1 - eo(si)) * 24}px)`;
+}
+window.render = render;
+window.DUR = T.END;
+render(0);
+</script>
+</body>
+</html>

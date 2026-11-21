@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mento</title>
+<style>
+:root { --bg: #F5F3EE; --ink: #17171A; --muted: #6B6B70; --card: #FFFFFF; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #151517; --ink: #F5F3EE; --muted: #A3A3A9; --card: #1F1F22; } }
+:root[data-theme="dark"] { --bg: #151517; --ink: #F5F3EE; --muted: #A3A3A9; --card: #1F1F22; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--ink); font-family: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", sans-serif; padding: 20px 16px 40px; max-width: 560px; margin: 0 auto; }
+h1 { font-size: 34px; font-weight: 800; letter-spacing: -1px; }
+.lead { color: var(--muted); font-size: 15px; line-height: 1.5; margin-top: 6px; }
+.stage { margin-top: 18px; height: 400px; border-radius: 32px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; transition: background .5s; }
+.btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+button { border: 0; border-radius: 999px; padding: 11px 15px; font: inherit; font-weight: 700; font-size: 14px; background: var(--card); color: var(--ink); cursor: pointer; }
+button.on { background: var(--ink); color: var(--bg); }
+.lvl { display: flex; align-items: center; gap: 10px; margin-top: 14px; font-size: 14px; font-weight: 700; color: var(--muted); }
+input[type=range] { flex: 1; accent-color: var(--ink); }
+.why { margin-top: 22px; background: var(--card); border-radius: 24px; padding: 18px; font-size: 15px; line-height: 1.5; }
+.why b { font-weight: 800; }
+.why li { margin: 6px 0 0 18px; }
+svg { overflow: visible; }
+</style>
+</head>
+<body>
+<h1>Mento</h1>
+<p class="lead">Memento'nun kendisinden doğan bir karakter: canlı, minik bir söz kartı. Her gün <b>senin günün sözünün rengine</b> bürünür. Deftere söz işledikçe arkasında sayfalar birikir, sonunda küçük bir kitaba dönüşür.</p>
+
+<div class="stage" id="stage"><svg id="mento" width="340" height="340" viewBox="-170 -190 340 340"></svg></div>
+<div class="btns" id="btns"></div>
+<div class="btns"><button id="color">Bugünün rengi ↻</button></div>
+<div class="lvl">Defter <input type="range" min="0" max="2" step="1" value="0" id="grow"> <span id="lvl">1. gün</span></div>
+
+<div class="why">
+  <b>Neden Mento?</b>
+  <ul>
+    <li>Uygulamadaki renkli söz kartlarının ta kendisi; başka hiçbir uygulamada yok.</li>
+    <li>Başındaki tırnak işareti (“) saçı gibi: söz olduğu her yerden belli.</li>
+    <li>Rengi her gün kişiye özel günün sözüyle değişir, widget'ta da aynı renkte durur.</li>
+    <li>Deftere işleyince kart gibi dönerek sevinir (günün sözü açılışıyla aynı hareket), uyuyunca kitap gibi kapanır.</li>
+  </ul>
+</div>
+
+<script>
+const NS = 'http://www.w3.org/2000/svg';
+const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent && parent.appendChild(e); return e; };
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const ease = (x) => 1 - Math.pow(1 - x, 3);
+const eio = (x) => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+
+// Uygulamanın paleti: [zemin, mürekkep, sahne]
+const PAL = [
+  ['#C9B6FF', '#2A1460', '#EEE8FF'], ['#D7F75B', '#24400A', '#F3FCD2'], ['#9AD1FF', '#0A2A4A', '#E3F2FF'],
+  ['#FF9F80', '#4A1406', '#FFE7DE'], ['#FFB8DE', '#5A0F35', '#FFE9F4'], ['#FFE27A', '#4A3600', '#FFF6D6'],
+  ['#8FE3C4', '#07402C', '#E0F7EE'],
+];
+let ci = 0;
+
+const svg = document.getElementById('mento');
+const W = 150, H = 176, R = 40; // kart gövdesi
+// zemin gölgesi
+const shadow = el('ellipse', { cx: 0, cy: 120, rx: 70, ry: 10, opacity: .14 }, svg);
+// arkadaki sayfalar (defter büyüdükçe)
+const pages = el('g', {}, svg);
+const pageEls = [3, 2, 1].map((i) => el('rect', { x: -W / 2, y: -H / 2, width: W, height: H, rx: R }, pages));
+const spine = el('rect', { x: -W / 2 - 14, y: -H / 2 + 6, width: 22, height: H - 4, rx: 10, opacity: 0 }, svg);
+
+const root = el('g', {}, svg);
+const legs = [-1, 1].map((s) => el('rect', { x: s * 30 - 9, y: H / 2 - 8, width: 18, height: 30, rx: 9 }, root));
+const feet = [-1, 1].map((s) => el('ellipse', { cx: s * 30 + s * 4, cy: H / 2 + 22, rx: 16, ry: 9 }, root));
+const flip = el('g', {}, root); // kart dönüşü için
+const body = el('rect', { x: -W / 2, y: -H / 2, width: W, height: H, rx: R }, flip);
+// katlanmış köşe
+const corner = el('path', { d: '' }, flip);
+const shine = el('rect', { x: -W / 2 + 18, y: -H / 2 + 22, width: 14, height: 44, rx: 7, fill: '#fff', opacity: .4 }, flip);
+// tırnak işareti saç
+const tuft = el('g', {}, flip);
+const q1 = el('path', { d: 'M-22 -6 c-10 0 -16 -8 -16 -17 c0 -12 9 -21 22 -24 l3 6 c-7 3 -11 7 -11 12 c6 0 11 5 11 11 c0 7 -4 12 -9 12 z' }, tuft);
+const q2 = el('path', { d: 'M8 -6 c-10 0 -16 -8 -16 -17 c0 -12 9 -21 22 -24 l3 6 c-7 3 -11 7 -11 12 c6 0 11 5 11 11 c0 7 -4 12 -9 12 z' }, tuft);
+// yüz
+const face = el('g', {}, flip);
+const eyes = [-1, 1].map((s) => {
+  const g = el('g', {}, face);
+  const ball = el('ellipse', { cx: s * 30, cy: -4, rx: 15, ry: 18 }, g);
+  const h1 = el('circle', { cx: s * 30 + 5, cy: -10, r: 6, fill: '#fff' }, g);
+  const h2 = el('circle', { cx: s * 30 - 5, cy: 3, r: 2.6, fill: '#fff' }, g);
+  const lid = el('path', { d: '', fill: 'none', 'stroke-width': 6, 'stroke-linecap': 'round' }, g);
+  return { s, ball, h1, h2, lid };
+});
+const blush = [-1, 1].map((s) => el('ellipse', { cx: s * 50, cy: 22, rx: 12, ry: 7, fill: '#FF6FA5', opacity: .35 }, face));
+const mouth = el('path', { d: '', fill: 'none', 'stroke-width': 6, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, face);
+const tongue = el('path', { d: '', fill: '#FF6FA5' }, face);
+const arms = [-1, 1].map((s) => el('rect', { x: s * (W / 2) - 8, y: 4, width: 16, height: 36, rx: 8 }, root));
+// efektler
+const fx = el('g', {}, svg);
+const tear = el('path', { d: 'M0 0 C 5 7, 7 12, 0 16 C -7 12, -5 7, 0 0 Z', fill: '#9AD1FF', opacity: 0 }, fx);
+const zzz = ['z', 'z', 'Z'].map((c, i) => { const t = el('text', { 'font-size': 20 + i * 7, 'font-weight': 900, opacity: 0, 'font-family': 'system-ui' }, fx); t.textContent = c; return t; });
+const sparks = Array.from({ length: 10 }, (_, i) => el('path', { d: 'M0 -9 L2.4 -2.4 L9 0 L2.4 2.4 L0 9 L-2.4 2.4 L-9 0 L-2.4 -2.4 Z', opacity: 0 }, fx));
+const hearts = Array.from({ length: 3 }, () => el('path', { d: 'M0 6 C-8 0 -10 -6 -5 -9 C-2 -11 0 -9 0 -7 C0 -9 2 -11 5 -9 C10 -6 8 0 0 6 Z', fill: '#FF6FA5', opacity: 0 }, fx));
+
+let st = 'idle', since = 0, grow = 0;
+const STATES = [['idle', 'Bekliyor'], ['happy', 'Deftere işledin'], ['sleepy', 'Bugün açmadın'], ['sad', 'Seri bozuldu'], ['love', 'Sözün beğenildi']];
+const box = document.getElementById('btns');
+STATES.forEach(([s, label]) => {
+  const b = document.createElement('button'); b.textContent = label; if (s === 'idle') b.classList.add('on');
+  b.onclick = () => { st = s; since = performance.now() / 1000; box.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b)); };
+  box.appendChild(b);
+});
+document.getElementById('color').onclick = () => { ci = (ci + 1) % PAL.length; };
+document.getElementById('grow').oninput = (e) => { grow = +e.target.value; document.getElementById('lvl').textContent = ['1. gün', '7 gün', '30 gün'][grow]; };
+
+let shown = PAL[0].map((h) => h); // renk geçişi için
+const mix = (a, b, m) => { const pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16); const c = [16, 8, 0].map((s) => Math.round(((pa >> s) & 255) + (((pb >> s) & 255) - ((pa >> s) & 255)) * m)); return '#' + c.map((v) => v.toString(16).padStart(2, '0')).join(''); };
+
+function frame() {
+  const t = performance.now() / 1000, T = t - since;
+  shown = shown.map((h, i) => mix(h, PAL[ci][i], .12));
+  const [bg, ink, stage] = shown;
+  document.getElementById('stage').style.background = stage;
+
+  // renkler
+  body.setAttribute('fill', bg);
+  corner.setAttribute('fill', mix(bg, '#ffffff', .45));
+  [q1, q2].forEach((q) => q.setAttribute('fill', ink));
+  legs.forEach((l) => l.setAttribute('fill', ink)); feet.forEach((f) => f.setAttribute('fill', ink)); arms.forEach((a) => a.setAttribute('fill', bg));
+  arms.forEach((a) => { a.setAttribute('stroke', ink); a.setAttribute('stroke-width', 0); });
+  eyes.forEach((e) => { e.ball.setAttribute('fill', ink); e.lid.setAttribute('stroke', ink); });
+  mouth.setAttribute('stroke', ink); shadow.setAttribute('fill', ink);
+  zzz.forEach((z) => z.setAttribute('fill', ink)); sparks.forEach((s, i) => s.setAttribute('fill', i % 2 ? ink : '#FFD25A'));
+  pageEls.forEach((p, i) => { p.setAttribute('fill', PAL[(ci + 3 + i * 2) % PAL.length][0]); });
+  spine.setAttribute('fill', ink);
+
+  // hareket
+  let y = 0, sx = 1, sy = 1, rot = 0, flipY = 0, open = 1, lookX = Math.sin(t * .7) * .45, lookY = 0, armL = 0, armR = 0, fold = 0, droop = 0, mode = st;
+  const bl = t % 3.4; if (bl < .14) open = Math.abs(bl - .07) / .07;
+  if (st === 'idle') {
+    const b = Math.sin(t * 2.4); sy = 1 + b * .022; sx = 1 - b * .018; armL = armR = Math.sin(t * 2.4) * 6;
+  } else if (st === 'happy') {
+    const p = (T % 1.6) / 1.6;
+    const air = p > .12 && p < .72 ? Math.sin(Math.PI * (p - .12) / .6) : 0;
+    y = -air * 80;
+    const land = p < .12 ? Math.sin(Math.PI * p / .12) : (p > .72 && p < .92 ? Math.sin(Math.PI * (p - .72) / .2) : 0);
+    sy = 1 - land * .16 + air * .06; sx = 1 + land * .14 - air * .04;
+    flipY = eio(clamp((p - .16) / .5)) * 360; // kart gibi döner
+    armL = armR = -120 * air - 20; lookY = -.3;
+  } else if (st === 'sleepy') {
+    const b = Math.sin(t * 1.1); fold = .5 + b * .03; open = .05; rot = -4; armL = armR = 12; lookY = .4;
+  } else if (st === 'sad') {
+    droop = 1; sy = .95; sx = 1.04; y = 4; open = .9; lookY = .8; lookX = 0; armL = armR = 24; rot = Math.sin(t * 1.5) * 1.2;
+  } else if (st === 'love') {
+    const b = Math.sin(t * 7); sy = 1 + b * .03; sx = 1 - b * .025; rot = Math.sin(t * 3) * 5; armL = -150; armR = 30; lookY = -.2;
+  }
+
+  // büyüme ölçeği: 1. gün minik, 30 gün tam
+  const k = [.72, .86, 1][grow];
+  const baseY = H / 2 + 30; // ayak hizası
+  root.setAttribute('transform', `translate(0 ${y + baseY * (1 - k)}) scale(${k}) translate(0 ${baseY}) rotate(${rot}) scale(${sx} ${sy - fold * .45}) translate(0 ${-baseY})`);
+  // kart dönüşü: yatay ölçekle taklit (−1..1); arka yüzde yüz gizli
+  const c = Math.cos(flipY * Math.PI / 180);
+  flip.setAttribute('transform', `scale(${Math.abs(c) < .04 ? .04 : c} 1)`);
+  face.setAttribute('opacity', c > 0 ? 1 : 0);
+  tuft.setAttribute('opacity', c > 0 ? 1 : .0);
+  // köşe: normalde kıvrık, üzgünken sarkık
+  const cs = 34;
+  corner.setAttribute('d', droop
+    ? `M${W / 2 - cs} ${-H / 2} L${W / 2} ${-H / 2} L${W / 2} ${-H / 2 + cs} Q${W / 2 - 6} ${-H / 2 + cs + 22} ${W / 2 - cs - 8} ${-H / 2 + cs + 10} Z`
+    : `M${W / 2 - cs} ${-H / 2} L${W / 2} ${-H / 2 + cs} L${W / 2 - cs + 6} ${-H / 2 + cs - 2} Q${W / 2 - cs - 2} ${-H / 2 + cs - 4} ${W / 2 - cs} ${-H / 2 + cs - 10} Z`);
+  // tırnak saçı hafifçe sallanır
+  const sway = st === 'happy' ? Math.sin(t * 14) * 8 : st === 'sad' ? 18 : Math.sin(t * 2.4) * 4;
+  tuft.setAttribute('transform', `translate(6 ${-H / 2 + 4}) rotate(${sway} 0 -6)`);
+  arms[0].setAttribute('transform', `rotate(${armL} ${-W / 2} 10)`);
+  arms[1].setAttribute('transform', `rotate(${-armR} ${W / 2} 10)`);
+
+  // gözler
+  eyes.forEach((e) => {
+    const cx = e.s * 30;
+    const closedHappy = st === 'happy' || st === 'love';
+    if (closedHappy && st === 'happy') {
+      [e.ball, e.h1, e.h2].forEach((n) => n.setAttribute('opacity', 0));
+      e.lid.setAttribute('d', `M${cx - 13} ${0} Q${cx} ${-18} ${cx + 13} ${0}`); e.lid.setAttribute('opacity', 1); return;
+    }
+    if (st === 'love') { // kalp gözler
+      [e.h1, e.h2].forEach((n) => n.setAttribute('opacity', 0)); e.lid.setAttribute('opacity', 0);
+      e.ball.setAttribute('opacity', 0);
+      e.lid.setAttribute('d', `M${cx} 10 C${cx - 18} -2 ${cx - 16} -18 ${cx - 7} -18 C${cx - 3} -18 ${cx} -14 ${cx} -11 C${cx} -14 ${cx + 3} -18 ${cx + 7} -18 C${cx + 16} -18 ${cx + 18} -2 ${cx} 10 Z`);
+      e.lid.setAttribute('opacity', 1); e.lid.setAttribute('fill', '#FF6FA5'); e.lid.setAttribute('stroke-width', 0); return;
+    }
+    e.lid.setAttribute('fill', 'none'); e.lid.setAttribute('stroke-width', 6);
+    if (open < .12) {
+      [e.ball, e.h1, e.h2].forEach((n) => n.setAttribute('opacity', 0));
+      e.lid.setAttribute('d', st === 'sleepy' ? `M${cx - 12} -2 Q${cx} 6 ${cx + 12} -2` : `M${cx - 12} -2 L${cx + 12} -2`);
+      e.lid.setAttribute('opacity', 1); return;
+    }
+    e.lid.setAttribute('opacity', 0); [e.ball, e.h1, e.h2].forEach((n) => n.setAttribute('opacity', 1));
+    e.ball.setAttribute('cx', cx + lookX * 5); e.ball.setAttribute('cy', -4 + lookY * 5); e.ball.setAttribute('ry', 18 * open);
+    e.h1.setAttribute('cx', cx + 5 + lookX * 5); e.h1.setAttribute('cy', -10 * open + lookY * 5);
+    e.h2.setAttribute('cx', cx - 5 + lookX * 5); e.h2.setAttribute('cy', 3 * open + lookY * 5);
+  });
+  blush.forEach((b) => b.setAttribute('opacity', st === 'love' || st === 'happy' ? .6 : st === 'sad' ? .15 : .35));
+  // ağız
+  tongue.setAttribute('d', '');
+  if (st === 'happy' || st === 'love') { mouth.setAttribute('d', 'M-15 24 Q0 44 15 24 Z'); mouth.setAttribute('fill', ink); tongue.setAttribute('d', 'M-7 34 Q0 41 7 34 Q0 30 -7 34 Z'); }
+  else if (st === 'sad') { mouth.setAttribute('d', 'M-12 34 Q0 24 12 34'); mouth.setAttribute('fill', 'none'); }
+  else if (st === 'sleepy') { mouth.setAttribute('d', `M-5 30 Q0 ${34 + Math.sin(t * 1.1) * 2} 5 30`); mouth.setAttribute('fill', 'none'); }
+  else { mouth.setAttribute('d', 'M-11 26 Q0 36 11 26'); mouth.setAttribute('fill', 'none'); }
+
+  // arkadaki sayfalar: 7 günde 2 sayfa, 30 günde kitap
+  pageEls.forEach((p, i) => {
+    const n = 3 - i; // 3,2,1
+    const visible = grow === 0 ? 0 : grow === 1 ? (n <= 2 ? 1 : 0) : 1;
+    const ox = n * 12 * k, oy = -n * 9 * k;
+    p.setAttribute('opacity', visible);
+    p.setAttribute('transform', `translate(${ox} ${oy + y + baseY * (1 - k)}) scale(${k}) translate(0 ${baseY}) rotate(${rot + n * 3}) scale(${sx} ${sy}) translate(0 ${-baseY})`);
+  });
+  spine.setAttribute('opacity', 0);
+  shadow.setAttribute('rx', 75 * k * (1 - Math.min(.5, -y / 170)));
+  shadow.setAttribute('opacity', .14 * (1 - Math.min(.6, -y / 130)));
+
+  // efektler
+  const tp = (t % 2.2) / 2.2;
+  tear.setAttribute('opacity', st === 'sad' ? (tp < .8 ? 1 : 0) : 0);
+  tear.setAttribute('transform', `translate(${-30 * k} ${(10 + tp * 46) * k + baseY * (1 - k)})`);
+  zzz.forEach((z, i) => { const p = (t * .45 + i / 3) % 1; z.setAttribute('opacity', st === 'sleepy' ? Math.sin(Math.PI * p) : 0); z.setAttribute('x', 70 * k + p * 40 + i * 8); z.setAttribute('y', -80 * k - p * 70); });
+  sparks.forEach((s, i) => {
+    const p = (T * .9 + i / 10) % 1, a = (i / 10) * Math.PI * 2, r = (95 + p * 60) * k;
+    s.setAttribute('opacity', st === 'happy' ? Math.sin(Math.PI * p) : 0);
+    s.setAttribute('transform', `translate(${Math.cos(a) * r} ${-10 + Math.sin(a) * r}) scale(${.5 + Math.sin(Math.PI * p) * .7}) rotate(${p * 120})`);
+  });
+  hearts.forEach((h, i) => {
+    const p = (T * .6 + i / 3) % 1;
+    h.setAttribute('opacity', st === 'love' ? Math.sin(Math.PI * p) : 0);
+    h.setAttribute('transform', `translate(${(-50 + i * 50) * k + Math.sin(p * 6 + i) * 10} ${-110 * k - p * 80}) scale(${1.4 + p})`);
+  });
+
+  requestAnimationFrame(frame);
+}
+frame();
+</script>
+</body>
+</html>

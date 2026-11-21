@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Defo</title>
+<style>
+:root { --bg: #F5F3EE; --ink: #17171A; --muted: #6B6B70; --card: #FFFFFF; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #151517; --ink: #F5F3EE; --muted: #A3A3A9; --card: #1F1F22; } }
+:root[data-theme="dark"] { --bg: #151517; --ink: #F5F3EE; --muted: #A3A3A9; --card: #1F1F22; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--ink); font-family: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", sans-serif; padding: 20px 16px 48px; max-width: 560px; margin: 0 auto; }
+h1 { font-size: 36px; font-weight: 800; letter-spacing: -1.2px; }
+.lead { color: var(--muted); font-size: 15px; line-height: 1.5; margin-top: 6px; }
+.stage { margin-top: 18px; height: 420px; border-radius: 32px; display: flex; align-items: center; justify-content: center; overflow: hidden; transition: background .5s; position: relative; }
+.btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+button { border: 0; border-radius: 999px; padding: 11px 15px; font: inherit; font-weight: 700; font-size: 14px; background: var(--card); color: var(--ink); cursor: pointer; }
+button.on { background: var(--ink); color: var(--bg); }
+.lvl { display: flex; align-items: center; gap: 10px; margin-top: 14px; font-size: 14px; font-weight: 700; color: var(--muted); }
+input[type=range] { flex: 1; accent-color: var(--ink); }
+.why { margin-top: 20px; background: var(--card); border-radius: 24px; padding: 18px; font-size: 15px; line-height: 1.5; }
+.why li { margin: 6px 0 0 18px; }
+svg { overflow: visible; }
+</style>
+</head>
+<body>
+<h1>Defo</h1>
+<p class="lead">Senin defterin, ayakları olan hâli. Lastiğine sıkıştırılmış bir kalemi, dikişli kapağı, sallanan bir ayracı var. Her gün kapağı senin günün sözünün rengine bürünür; deftere söz işledikçe kalınlaşır, kenarından renkli yapışkan notlar taşar.</p>
+
+<div class="stage" id="stage"><svg id="defo" width="360" height="360" viewBox="-180 -190 360 360"></svg></div>
+<div class="btns" id="btns"></div>
+<div class="btns"><button id="color">Bugünün rengi ↻</button></div>
+<div class="lvl">Defter <input type="range" min="0" max="2" step="1" value="0" id="grow"> <span id="lvl">1. gün</span></div>
+
+<div class="why">
+  <b>Uygulamada nerede?</b>
+  <ul>
+    <li>Keşfet'in tepesinde: bugün deftere yazmadıysan uyuklar, yazınca uyanır.</li>
+    <li>Deftere işlediğin an: kapağını açıp sayfalarını pırpır ettirerek sevinir.</li>
+    <li>Defter sayfasında: kaç gün yazdıysan o kadar kalın, kenarında o günlerin renkleri.</li>
+    <li>Widget'ın köşesinde minik hâli; sözün beğenilince kalp gözlü bildirim.</li>
+  </ul>
+</div>
+
+<script>
+const NS = 'http://www.w3.org/2000/svg';
+const el = (tag, a, p) => { const e = document.createElementNS(NS, tag); for (const k in a) e.setAttribute(k, a[k]); p && p.appendChild(e); return e; };
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const eio = (x) => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const mix = (a, b, m) => { const pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16); return '#' + [16, 8, 0].map((s) => Math.round(((pa >> s) & 255) + (((pb >> s) & 255) - ((pa >> s) & 255)) * m).toString(16).padStart(2, '0')).join(''); };
+const PAL = [['#FFB8DE', '#5A0F35', '#FFE9F4'], ['#C9B6FF', '#2A1460', '#EEE8FF'], ['#9AD1FF', '#0A2A4A', '#E3F2FF'],
+  ['#FF9F80', '#4A1406', '#FFE7DE'], ['#D7F75B', '#24400A', '#F3FCD2'], ['#FFE27A', '#4A3600', '#FFF6D6'], ['#8FE3C4', '#07402C', '#E0F7EE']];
+const INK = '#1E1B2E', PAPER = '#FFFBF2', PAPER2 = '#EFE6D3';
+let ci = 0, st = 'idle', since = 0, grow = 0, shown = PAL[0].slice();
+
+// Defter ölçüleri: kapak (-72..72, -96..84)
+const X0 = -72, X1 = 72, Y0 = -96, Y1 = 84, RX = 26;
+const svg = document.getElementById('defo');
+const shadow = el('ellipse', { cx: 0, cy: 124, rx: 80, ry: 11, fill: INK, opacity: .12 }, svg);
+const root = el('g', {}, svg);
+
+// ayaklar
+const legs = [-1, 1].map((s) => el('rect', { x: s * 30 - 9, y: Y1 - 6, width: 18, height: 34, rx: 9, fill: INK }, root));
+const feet = [-1, 1].map((s) => el('ellipse', { cx: s * 30 + s * 4, cy: Y1 + 30, rx: 18, ry: 10, fill: INK }, root));
+// sayfa bloğu (kalınlık) + yapışkan notlar
+const tabsG = el('g', {}, root);
+const tabs = Array.from({ length: 6 }, (_, i) => el('rect', { width: 22, height: 16, rx: 4 }, tabsG));
+const block = el('rect', { y: Y0 + 6, height: Y1 - Y0 - 8, rx: 16, fill: PAPER }, root);
+const blockLines = el('g', {}, root);
+const bl = Array.from({ length: 9 }, () => el('rect', { height: 2.5, rx: 1.2, fill: PAPER2 }, blockLines));
+// kol (arkadaki)
+const armBack = el('rect', { width: 18, height: 40, rx: 9 }, root);
+// açılınca görünen iç sayfa
+const inner = el('g', {}, root);
+el('rect', { x: X0 + 16, y: Y0 + 4, width: 136, height: Y1 - Y0 - 8, rx: 18, fill: PAPER }, inner);
+[0, 1, 2, 3, 4, 5].forEach((i) => el('rect', { x: X0 + 40, y: Y0 + 36 + i * 22, width: 86 - (i % 3) * 16, height: 5, rx: 2.5, fill: INK, opacity: .18 }, inner));
+const flutter = Array.from({ length: 3 }, () => el('path', { d: '', fill: PAPER, stroke: PAPER2, 'stroke-width': 2 }, root));
+// kapak
+const cover = el('g', {}, root);
+const coverRect = el('rect', { x: X0, y: Y0, width: X1 - X0, height: Y1 - Y0, rx: RX }, cover);
+const coverIn = el('rect', { x: X0, y: Y0, width: X1 - X0, height: Y1 - Y0, rx: RX, opacity: 0 }, cover);
+const spine = el('path', { d: `M${X0 + RX} ${Y0} H${X0 + 26} V${Y1} H${X0 + RX} A${RX} ${RX} 0 0 1 ${X0} ${Y1 - RX} V${Y0 + RX} A${RX} ${RX} 0 0 1 ${X0 + RX} ${Y0} Z` }, cover);
+const stitch = el('rect', { x: X0 + 34, y: Y0 + 10, width: X1 - X0 - 44, height: Y1 - Y0 - 20, rx: 18, fill: 'none', 'stroke-width': 3, 'stroke-dasharray': '7 7', 'stroke-linecap': 'round', opacity: .3 }, cover);
+const shine = el('rect', { x: X0 + 36, y: Y0 + 18, width: 10, height: 40, rx: 5, fill: '#fff', opacity: .4 }, cover);
+// kalem (lastiğin arkasında)
+const pencil = el('g', {}, cover);
+el('rect', { x: 40, y: -134, width: 13, height: 116, rx: 3, fill: '#FFD25A' }, pencil);
+el('rect', { x: 40, y: -134, width: 4, height: 116, fill: '#F2B53A' }, pencil);
+el('path', { d: 'M40 -134 L46.5 -154 L53 -134 Z', fill: '#F6C89B' }, pencil);
+el('path', { d: 'M44 -146 L46.5 -154 L49 -146 Z', fill: INK }, pencil);
+const elastic = el('rect', { x: 37, y: Y0 - 1, width: 19, height: Y1 - Y0 + 2, rx: 6 }, cover);
+// yüz
+const face = el('g', {}, cover);
+const brows = [-1, 1].map((s) => el('path', { d: '', fill: 'none', stroke: INK, 'stroke-width': 4.5, 'stroke-linecap': 'round' }, face));
+const eyes = [-1, 1].map((s) => {
+  const ball = el('ellipse', { rx: 14, ry: 18, fill: INK }, face);
+  const h1 = el('circle', { r: 5.5, fill: '#fff' }, face);
+  const h2 = el('circle', { r: 2.4, fill: '#fff' }, face);
+  const lid = el('path', { d: '', fill: 'none', stroke: INK, 'stroke-width': 5.5, 'stroke-linecap': 'round' }, face);
+  return { s, ball, h1, h2, lid };
+});
+const blush = [-1, 1].map((s) => el('ellipse', { cx: -6 + s * 40, cy: 14, rx: 11, ry: 7, fill: '#FF6FA5', opacity: .4 }, face));
+const mouth = el('path', { d: '', fill: 'none', stroke: INK, 'stroke-width': 5, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, face);
+const tongue = el('path', { d: '', fill: '#FF6FA5' }, face);
+// ön kol
+const armFront = el('rect', { width: 18, height: 40, rx: 9 }, root);
+// ayraç kuyruk
+const ribbon = el('path', { d: '', fill: 'none', stroke: '#E5484D', 'stroke-width': 9, 'stroke-linecap': 'round' }, root);
+const ribbonEnd = el('path', { d: '', fill: '#E5484D' }, root);
+// efektler
+const fx = el('g', {}, svg);
+const tear = el('path', { d: 'M0 0 C 5 7, 7 12, 0 16 C -7 12, -5 7, 0 0 Z', fill: '#9AD1FF', opacity: 0 }, fx);
+const zzz = ['z', 'z', 'Z'].map((c, i) => { const t = el('text', { 'font-size': 22 + i * 7, 'font-weight': 900, fill: INK, opacity: 0, 'font-family': 'system-ui' }, fx); t.textContent = c; return t; });
+const sparks = Array.from({ length: 10 }, (_, i) => el('path', { d: 'M0 -9 L2.4 -2.4 L9 0 L2.4 2.4 L0 9 L-2.4 2.4 L-9 0 L-2.4 -2.4 Z', fill: ['#FFD25A', '#FF8FB8', '#9AD1FF', '#D7F75B'][i % 4], opacity: 0 }, fx));
+const hearts = Array.from({ length: 3 }, () => el('path', { d: 'M0 6 C-8 0 -10 -6 -5 -9 C-2 -11 0 -9 0 -7 C0 -9 2 -11 5 -9 C10 -6 8 0 0 6 Z', fill: '#FF6FA5', opacity: 0 }, fx));
+
+const STATES = [['idle', 'Bekliyor'], ['happy', 'Deftere işledin'], ['sleepy', 'Bugün açmadın'], ['sad', 'Seri bozuldu'], ['love', 'Sözün beğenildi']];
+const box = document.getElementById('btns');
+STATES.forEach(([s, label]) => {
+  const b = document.createElement('button'); b.textContent = label; if (s === 'idle') b.classList.add('on');
+  b.onclick = () => { st = s; since = performance.now() / 1000; box.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b)); };
+  box.appendChild(b);
+});
+document.getElementById('color').onclick = () => { ci = (ci + 1) % PAL.length; };
+document.getElementById('grow').oninput = (e) => { grow = +e.target.value; document.getElementById('lvl').textContent = ['1. gün', '7 gün', '30 gün'][grow]; };
+
+function frame() {
+  const t = performance.now() / 1000, T = t - since;
+  shown = shown.map((h, i) => mix(h, PAL[ci][i], .12));
+  const [bg, ink, stage] = shown;
+  document.getElementById('stage').style.background = stage;
+  coverRect.setAttribute('fill', bg); coverIn.setAttribute('fill', mix(bg, '#ffffff', .5));
+  spine.setAttribute('fill', mix(bg, INK, .18)); stitch.setAttribute('stroke', ink); elastic.setAttribute('fill', ink);
+  [armBack, armFront].forEach((a) => a.setAttribute('fill', mix(bg, INK, .1)));
+
+  // durum → hareket
+  let y = 0, sx = 1, sy = 1, rot = 0, openC = 0, flut = 0, open = 1, lx = Math.sin(t * .7) * .55, ly = 0, sway = Math.sin(t * 2.2) * 12, armA = Math.sin(t * 2.3) * 6, browY = 0, browTilt = 0, droop = 0;
+  const blk = t % 3.5; if (blk < .14) open = Math.abs(blk - .07) / .07;
+  // ara sıra sayfaları merakla aralar
+  const peek = st === 'idle' ? Math.max(0, Math.sin(Math.PI * clamp(((t % 7) - 5) / 1.2))) * .18 : 0;
+  if (st === 'idle') { const b = Math.sin(t * 2.3); sy = 1 + b * .02; sx = 1 - b * .015; openC = peek; }
+  if (st === 'happy') {
+    const p = (T % 1.6) / 1.6, air = p > .12 && p < .7 ? Math.sin(Math.PI * (p - .12) / .58) : 0;
+    y = -air * 72; const land = p < .12 ? Math.sin(Math.PI * p / .12) : p > .7 && p < .9 ? Math.sin(Math.PI * (p - .7) / .2) : 0;
+    sy = 1 - land * .15 + air * .05; sx = 1 + land * .12 - air * .03;
+    openC = Math.sin(Math.PI * clamp((p - .1) / .72)); flut = t * 12; sway = Math.sin(t * 16) * 26; armA = -110 * air - 20; ly = -.3; browY = -4;
+  }
+  if (st === 'sleepy') { const b = Math.sin(t * 1.0); rot = -84; y = 52; sy = 1 + b * .02; open = 0; sway = 0; armA = 0; }
+  if (st === 'sad') { droop = 1; sy = .95; sx = 1.03; y = 4; ly = .8; lx = 0; open = .9; armA = 20; browTilt = 1; rot = Math.sin(t * 1.4) * 1.2; sway = 4; }
+  if (st === 'love') { const b = Math.sin(t * 7); sy = 1 + b * .03; sx = 1 - b * .02; rot = Math.sin(t * 3) * 5; armA = -150; ly = -.2; browY = -3; }
+
+  root.setAttribute('transform', `translate(0 ${y}) translate(0 ${Y1 + 36}) rotate(${rot}) scale(${sx} ${sy}) translate(0 ${-(Y1 + 36)})`);
+
+  // kalınlık ve yapışkan notlar: defter büyüdükçe
+  const th = [12, 22, 32][grow];
+  block.setAttribute('x', X1 - 16); block.setAttribute('width', th + 16);
+  bl.forEach((r, i) => { r.setAttribute('x', X1 + 2); r.setAttribute('width', Math.max(0, th - 6)); r.setAttribute('y', Y0 + 20 + i * 17); r.setAttribute('opacity', grow ? 1 : .6); });
+  const nTabs = [0, 3, 6][grow];
+  tabs.forEach((r, i) => {
+    const c = PAL[(ci + 1 + i) % PAL.length][0];
+    r.setAttribute('fill', c);
+    r.setAttribute('x', X1 + th - 8 + (i % 2) * 4); r.setAttribute('y', Y0 + 18 + i * 26);
+    r.setAttribute('opacity', i < nTabs ? 1 : 0);
+  });
+  // kollar
+  armBack.setAttribute('x', X0 - 6); armBack.setAttribute('y', -6);
+  armBack.setAttribute('transform', `rotate(${(armA) * .9 + 14} ${X0 + 3} 0)`);
+  armFront.setAttribute('x', X1 + th - 14); armFront.setAttribute('y', -6);
+  armFront.setAttribute('transform', `rotate(${-(st === 'love' ? 30 : armA) - 14} ${X1 + th - 5} 0)`);
+
+  // kapak: sırttan (sol) menteşeli açılır
+  const k = Math.cos(openC * Math.PI * .9);
+  cover.setAttribute('transform', `translate(${X0} 0) scale(${Math.abs(k) < .04 ? .04 : k} 1) translate(${-X0} 0)`);
+  const front = k > 0;
+  face.setAttribute('opacity', front ? 1 : 0); stitch.setAttribute('opacity', front ? .3 : 0);
+  pencil.setAttribute('opacity', front ? 1 : 0); elastic.setAttribute('opacity', front ? 1 : 0); shine.setAttribute('opacity', front ? .4 : 0);
+  coverIn.setAttribute('opacity', front ? 0 : 1);
+  inner.setAttribute('opacity', openC > .05 ? 1 : 0);
+  flutter.forEach((f, i) => {
+    if (openC < .3) { f.setAttribute('d', ''); return; }
+    const a = Math.sin(flut + i * 1.4), w = 130 * (.35 + .65 * Math.abs(a));
+    f.setAttribute('d', `M${X0 + 18} ${Y0 + 8 + i * 6} L${X0 + 18 + w} ${Y0 + 4 + i * 6} L${X0 + 18 + w} ${Y1 - 6 - i * 6} L${X0 + 18} ${Y1 - 10 - i * 6} Z`);
+    f.setAttribute('opacity', openC);
+  });
+  // kalem sallanır
+  pencil.setAttribute('transform', `rotate(${st === 'happy' ? Math.sin(t * 18) * 8 : st === 'sad' ? 12 : Math.sin(t * 2.3) * 2} 46 -20)`);
+
+  // yüz
+  const fy = -20, fx0 = -6;
+  eyes.forEach((e) => {
+    const cx = fx0 + e.s * 26;
+    if (st === 'happy') {
+      [e.ball, e.h1, e.h2].forEach((n) => n.setAttribute('opacity', 0)); e.lid.setAttribute('opacity', 1);
+      e.lid.setAttribute('fill', 'none'); e.lid.setAttribute('stroke-width', 5.5);
+      e.lid.setAttribute('d', `M${cx - 13} ${fy + 4} Q${cx} ${fy - 16} ${cx + 13} ${fy + 4}`); return;
+    }
+    if (st === 'love') {
+      [e.ball, e.h1, e.h2].forEach((n) => n.setAttribute('opacity', 0)); e.lid.setAttribute('opacity', 1);
+      const s2 = 1 + .12 * Math.sin(t * 8);
+      e.lid.setAttribute('fill', '#FF4F8B'); e.lid.setAttribute('stroke-width', 0);
+      e.lid.setAttribute('d', `M${cx} ${fy + 14 * s2} C${cx - 20 * s2} ${fy} ${cx - 16 * s2} ${fy - 16 * s2} ${cx - 7 * s2} ${fy - 16 * s2} C${cx - 3} ${fy - 16 * s2} ${cx} ${fy - 12} ${cx} ${fy - 9} C${cx} ${fy - 12} ${cx + 3} ${fy - 16 * s2} ${cx + 7 * s2} ${fy - 16 * s2} C${cx + 16 * s2} ${fy - 16 * s2} ${cx + 20 * s2} ${fy} ${cx} ${fy + 14 * s2} Z`);
+      return;
+    }
+    e.lid.setAttribute('fill', 'none'); e.lid.setAttribute('stroke-width', 5.5);
+    if (open < .12) {
+      [e.ball, e.h1, e.h2].forEach((n) => n.setAttribute('opacity', 0)); e.lid.setAttribute('opacity', 1);
+      e.lid.setAttribute('d', st === 'sleepy' ? `M${cx - 12} ${fy} Q${cx} ${fy + 8} ${cx + 12} ${fy}` : `M${cx - 12} ${fy} L${cx + 12} ${fy}`); return;
+    }
+    e.lid.setAttribute('opacity', 0); [e.ball, e.h1, e.h2].forEach((n) => n.setAttribute('opacity', 1));
+    e.ball.setAttribute('cx', cx + lx * 5); e.ball.setAttribute('cy', fy + ly * 5); e.ball.setAttribute('ry', 18 * open);
+    e.h1.setAttribute('cx', cx + 5 + lx * 5); e.h1.setAttribute('cy', fy - 7 * open + ly * 5);
+    e.h2.setAttribute('cx', cx - 5 + lx * 5); e.h2.setAttribute('cy', fy + 7 * open + ly * 5);
+  });
+  brows.forEach((b, i) => {
+    const s = i ? 1 : -1, cx = fx0 + s * 26, by = fy - 30 + browY;
+    const tilt = browTilt * 7 * s;
+    b.setAttribute('opacity', st === 'sleepy' ? 0 : 1);
+    b.setAttribute('d', `M${cx - 10} ${by - tilt * .0 + (s < 0 ? -tilt : tilt) * 0} Q${cx} ${by - 6 + (browTilt ? 4 : 0)} ${cx + 10} ${by + (browTilt ? (s < 0 ? -7 : 7) : 0)}`);
+  });
+  blush.forEach((b) => b.setAttribute('opacity', st === 'happy' || st === 'love' ? .65 : st === 'sad' ? .15 : .4));
+  tongue.setAttribute('d', '');
+  if (st === 'happy' || st === 'love') { mouth.setAttribute('d', `M${fx0 - 15} 14 Q${fx0} 36 ${fx0 + 15} 14 Z`); mouth.setAttribute('fill', INK); tongue.setAttribute('d', `M${fx0 - 7} 25 Q${fx0} 32 ${fx0 + 7} 25 Q${fx0} 21 ${fx0 - 7} 25 Z`); }
+  else if (st === 'sad') { mouth.setAttribute('d', `M${fx0 - 12} 26 Q${fx0} 16 ${fx0 + 12} 26`); mouth.setAttribute('fill', 'none'); }
+  else if (st === 'sleepy') { mouth.setAttribute('d', `M${fx0 - 5} 18 Q${fx0} ${22 + Math.sin(t) * 2} ${fx0 + 5} 18`); mouth.setAttribute('fill', 'none'); }
+  else { mouth.setAttribute('d', `M${fx0 - 11} 14 Q${fx0} 25 ${fx0 + 11} 14`); mouth.setAttribute('fill', 'none'); }
+
+  // ayraç kuyruk
+  const rx0 = -30;
+  ribbon.setAttribute('d', `M${rx0} ${Y1 - 4} Q ${rx0 + sway * .5} ${Y1 + 24}, ${rx0 + sway - 6} ${Y1 + 46}`);
+  ribbonEnd.setAttribute('d', `M${rx0 + sway - 14} ${Y1 + 44} L${rx0 + sway + 2} ${Y1 + 44} L${rx0 + sway - 6} ${Y1 + 56} Z`);
+  ribbon.setAttribute('opacity', st === 'sleepy' ? 0 : 1); ribbonEnd.setAttribute('opacity', st === 'sleepy' ? 0 : 1);
+
+  shadow.setAttribute('rx', (st === 'sleepy' ? 110 : 80) * (1 - Math.min(.5, -y / 170)));
+  shadow.setAttribute('opacity', .12 * (1 - Math.min(.6, -y / 130)));
+  // efektler
+  const tp = (t % 2.2) / 2.2;
+  tear.setAttribute('opacity', st === 'sad' ? (tp < .8 ? 1 : 0) : 0);
+  tear.setAttribute('transform', `translate(-36 ${-6 + tp * 46})`);
+  zzz.forEach((z, i) => { const p = (t * .45 + i / 3) % 1; z.setAttribute('opacity', st === 'sleepy' ? Math.sin(Math.PI * p) : 0); z.setAttribute('x', 40 + p * 40 + i * 8); z.setAttribute('y', -30 - p * 80); });
+  sparks.forEach((s, i) => { const p = (T * .9 + i / 10) % 1, a = (i / 10) * Math.PI * 2, r = 110 + p * 60; s.setAttribute('opacity', st === 'happy' ? Math.sin(Math.PI * p) : 0); s.setAttribute('transform', `translate(${Math.cos(a) * r} ${-10 + Math.sin(a) * r}) scale(${.5 + Math.sin(Math.PI * p) * .7}) rotate(${p * 120})`); });
+  hearts.forEach((h, i) => { const p = (T * .6 + i / 3) % 1; h.setAttribute('opacity', st === 'love' ? Math.sin(Math.PI * p) : 0); h.setAttribute('transform', `translate(${-60 + i * 60 + Math.sin(p * 6 + i) * 10} ${-130 - p * 70}) scale(${1.4 + p})`); });
+
+  requestAnimationFrame(frame);
+}
+frame();
+</script>
+</body>
+</html>

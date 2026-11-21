@@ -47,3 +47,8 @@ app.*.map.json
 # Gradle raporları ve yerel araç ayarları
 /android/build/
 .claude/
+
+# Reklam kareleri ve büyük video çıktıları depoya girmez
+marketing/**/frames/
+*.mp4
+test/firestore_rules/node_modules/

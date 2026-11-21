@@ -62,3 +62,31 @@ workflows:
       app_store_connect:
         auth: integration
         submit_to_testflight: true
+
+  # Google Play için imzalı paket (AAB).
+  # Kurulum: Teams → Code signing identities → Android keystores →
+  # memento-upload.jks dosyasını yükle, referans adı: memento_upload
+  android-release:
+    name: Android → AAB
+    instance_type: linux_x2
+    max_build_duration: 45
+    environment:
+      flutter: stable
+      java: 21
+      android_signing:
+        - memento_upload
+    scripts:
+      - name: Paketler
+        script: flutter pub get
+      - name: İmza ayarı
+        script: |
+          cat > android/key.properties <<PROPS
+          storePassword=$CM_KEYSTORE_PASSWORD
+          keyPassword=$CM_KEY_PASSWORD
+          keyAlias=$CM_KEY_ALIAS
+          storeFile=$CM_KEYSTORE_PATH
+          PROPS
+      - name: Derle
+        script: flutter build appbundle --release --build-number=$((BUILD_NUMBER + 1))
+    artifacts:
+      - build/app/outputs/bundle/release/*.aab

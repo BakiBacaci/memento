@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Defo</title>
+<style>
+:root { --bg: #F5F3EE; --ink: #17171A; --muted: #6B6B70; --card: #FFFFFF; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #151517; --ink: #F5F3EE; --muted: #A3A3A9; --card: #1F1F22; } }
+:root[data-theme="dark"] { --bg: #151517; --ink: #F5F3EE; --muted: #A3A3A9; --card: #1F1F22; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--ink); font-family: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", sans-serif; padding: 20px 16px 48px; max-width: 760px; margin: 0 auto; }
+h1 { font-size: 34px; font-weight: 800; letter-spacing: -1.1px; }
+h2 { font-size: 24px; font-weight: 800; letter-spacing: -.6px; margin-top: 34px; }
+.lead { color: var(--muted); font-size: 15px; line-height: 1.5; margin-top: 6px; }
+.stage { margin-top: 16px; height: 330px; border-radius: 30px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #FFE9F4; }
+.btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+button { border: 0; border-radius: 999px; padding: 10px 14px; font: inherit; font-weight: 700; font-size: 14px; background: var(--card); color: var(--ink); cursor: pointer; }
+button.on { background: var(--ink); color: var(--bg); }
+svg { overflow: visible; }
+
+/* yerleşim örnekleri: mini telefonlar */
+.phones { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 14px; }
+.ph { background: #151517; color: #F5F3EE; border-radius: 34px; padding: 14px; height: 440px; position: relative; overflow: hidden; border: 6px solid #050506; }
+.cap { margin-top: 8px; font-size: 14px; line-height: 1.45; color: var(--muted); }
+.cap b { color: var(--ink); }
+.row { display: flex; align-items: center; gap: 8px; }
+.wm { font-weight: 800; font-size: 20px; letter-spacing: -.6px; }
+.pill { border-radius: 999px; padding: 6px 10px; font-weight: 800; font-size: 12px; }
+.qcard { border-radius: 22px; padding: 16px; font-weight: 800; letter-spacing: -.5px; line-height: 1.02; }
+.btn { border-radius: 999px; padding: 11px; text-align: center; font-weight: 800; font-size: 13px; }
+.cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 10px; }
+.cal span { aspect-ratio: 1; border-radius: 6px; background: #2A2A2E; }
+</style>
+</head>
+<body>
+<h1>Defo, sade hâli</h1>
+<p class="lead">Yüz artık sadece iki göz ve küçük bir ağız: kaş, yanak, dikiş yok. Kimliği iki şeyden geliyor: lastiğe sıkışmış kalem ve günün rengindeki kapak.</p>
+<div class="stage"><svg id="main" width="300" height="300" viewBox="-150 -160 300 300"></svg></div>
+<div class="btns" id="btns"></div>
+
+<h2>Uygulamada nerede duracak?</h2>
+<p class="lead">Defo bir süs değil, defterin hâlini gösteren bir gösterge. Dört yerde var; her yerde ne hissettiği senin o günkü durumuna bağlı.</p>
+<div class="phones">
+
+  <div>
+    <div class="ph">
+      <div class="row"><span class="wm">memento</span><span style="flex:1"></span>
+        <svg id="p1" width="40" height="40" viewBox="-150 -160 300 300"></svg>
+        <span style="font-weight:800; font-size:13px;">Defter</span></div>
+      <div class="qcard" style="background:#9AD1FF; color:#0A2A4A; font-size:30px; height:300px; margin-top:12px; display:flex; flex-direction:column; justify-content:center;">Sessizlik de bir cevaptır.<span style="font-size:12px; font-weight:600; margin-top:10px;">@mert</span></div>
+    </div>
+    <div class="cap"><b>1. Keşfet'in tepesi.</b> Bugün defterine yazmadıysan minik Defo uyuklar. Yazınca uyanır ve yanında seri sayın çıkar. Dokununca defterin açılır.</div>
+  </div>
+
+  <div>
+    <div class="ph" style="background:#C9B6FF; color:#2A1460;">
+      <div style="font-weight:800; font-size:14px;">Bugün senin için</div>
+      <div style="font-weight:800; font-size:30px; letter-spacing:-1px; line-height:1.02; margin-top:70px;">Yedi kere düş, sekiz kere kalk.</div>
+      <div style="font-weight:600; font-size:12px; margin-top:8px;">Japon Atasözü</div>
+      <svg id="p2" width="120" height="120" viewBox="-150 -160 300 300" style="position:absolute; right:10px; bottom:70px;"></svg>
+      <div class="btn" style="position:absolute; left:14px; right:14px; bottom:16px; background:#2A1460; color:#C9B6FF;">Deftere işle</div>
+    </div>
+    <div class="cap"><b>2. Günün sözü.</b> Sözü açınca Defo köşede bekler. "Deftere işle"ye basınca kapağını açıp sevinir: kutlama ekranının yerini o alır.</div>
+  </div>
+
+  <div>
+    <div class="ph">
+      <div style="font-weight:800; font-size:18px;">Defterin</div>
+      <div style="display:flex; justify-content:center; margin-top:4px;"><svg id="p3" width="150" height="150" viewBox="-150 -160 300 300"></svg></div>
+      <div style="text-align:center; font-weight:800; font-size:20px;">🔥 12 gün <span style="color:#A3A3A9; font-size:13px; font-weight:700;">· 34 sayfa</span></div>
+      <div class="cal">
+        <span style="background:#C9B6FF"></span><span style="background:#FF9F80"></span><span style="background:#9AD1FF"></span><span></span><span style="background:#D7F75B"></span><span style="background:#FFB8DE"></span><span style="background:#8FE3C4"></span>
+        <span style="background:#FFE27A"></span><span style="background:#C9B6FF"></span><span style="background:#FF9F80"></span><span style="background:#9AD1FF"></span><span style="background:#D7F75B"></span><span style="background:#FFB8DE"></span><span style="outline:2px solid #F5F3EE"></span>
+      </div>
+    </div>
+    <div class="cap"><b>3. Defter sayfası.</b> Takvimin üstünde büyük Defo. Kaç gün yazdıysan o kadar kalın, kenarındaki yapışkan notlar son günlerin renkleri.</div>
+  </div>
+
+  <div>
+    <div class="ph">
+      <div style="font-weight:800; font-size:18px;">Kaydedilenler</div>
+      <div style="display:flex; justify-content:center; margin-top:70px;"><svg id="p4" width="130" height="130" viewBox="-150 -160 300 300"></svg></div>
+      <div style="text-align:center; font-weight:800; font-size:17px; margin-top:6px;">Henüz kaydettiğin söz yok.</div>
+      <div style="text-align:center; color:#A3A3A9; font-size:13px; margin-top:6px;">Sana dokunan bir sözü kaydet, burada dursun.</div>
+    </div>
+    <div class="cap"><b>4. Boş ekranlar.</b> Kaydedilenler, bildirimler, takipçiler boşken düz bir simge yerine Defo durur. Seri bozulduğunda uygulamayı açınca bir kez üzgün Defo ve "Bugünden yeniden başla" çıkar.</div>
+  </div>
+</div>
+
+<script>
+const NS = 'http://www.w3.org/2000/svg';
+const el = (tag, a, p) => { const e = document.createElementNS(NS, tag); for (const k in a) e.setAttribute(k, a[k]); p && p.appendChild(e); return e; };
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const mix = (a, b, m) => { const pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16); return '#' + [16, 8, 0].map((s) => Math.round(((pa >> s) & 255) + (((pb >> s) & 255) - ((pa >> s) & 255)) * m).toString(16).padStart(2, '0')).join(''); };
+const INK = '#1E1B2E', PAPER = '#FFFBF2', PAPER2 = '#EFE6D3';
+const TABS = ['#C9B6FF', '#9AD1FF', '#D7F75B', '#FF9F80', '#8FE3C4', '#FFE27A'];
+
+// Sade Defo: kapak + sırt + lastik + kalem + iki göz + ağız. opts: { color: [kapak, mürekkep], grow: 0..2 }
+function Defo(svg, opts) {
+  const X0 = -70, X1 = 70, Y0 = -92, Y1 = 84, RX = 26;
+  const shadow = el('ellipse', { cx: 0, cy: 122, rx: 76, ry: 10, fill: INK, opacity: .12 }, svg);
+  const root = el('g', {}, svg);
+  [-1, 1].forEach((s) => { el('rect', { x: s * 28 - 9, y: Y1 - 6, width: 18, height: 32, rx: 9, fill: INK }, root); el('ellipse', { cx: s * 32, cy: Y1 + 28, rx: 17, ry: 9, fill: INK }, root); });
+  const tabs = TABS.map((c, i) => el('rect', { width: 20, height: 15, rx: 4, fill: c }, root));
+  const block = el('rect', { y: Y0 + 6, height: Y1 - Y0 - 8, rx: 16, fill: PAPER }, root);
+  const inner = el('g', {}, root);
+  el('rect', { x: X0 + 14, y: Y0 + 4, width: 132, height: Y1 - Y0 - 8, rx: 18, fill: PAPER }, inner);
+  [0, 1, 2, 3, 4].forEach((i) => el('rect', { x: X0 + 36, y: Y0 + 40 + i * 24, width: 84 - (i % 2) * 22, height: 5, rx: 2.5, fill: INK, opacity: .15 }, inner));
+  const flutter = [0, 1].map(() => el('path', { d: '', fill: PAPER, stroke: PAPER2, 'stroke-width': 2 }, root));
+  const cover = el('g', {}, root);
+  const coverRect = el('rect', { x: X0, y: Y0, width: X1 - X0, height: Y1 - Y0, rx: RX }, cover);
+  const coverIn = el('rect', { x: X0, y: Y0, width: X1 - X0, height: Y1 - Y0, rx: RX, opacity: 0 }, cover);
+  const spine = el('path', { d: `M${X0 + RX} ${Y0} H${X0 + 24} V${Y1} H${X0 + RX} A${RX} ${RX} 0 0 1 ${X0} ${Y1 - RX} V${Y0 + RX} A${RX} ${RX} 0 0 1 ${X0 + RX} ${Y0} Z` }, cover);
+  const pencil = el('g', {}, cover);
+  el('rect', { x: 38, y: -128, width: 12, height: 110, rx: 3, fill: '#FFD25A' }, pencil);
+  el('path', { d: 'M38 -128 L44 -146 L50 -128 Z', fill: '#F6C89B' }, pencil);
+  el('path', { d: 'M42 -140 L44 -146 L46 -140 Z', fill: INK }, pencil);
+  const elastic = el('rect', { x: 35, y: Y0 - 1, width: 18, height: Y1 - Y0 + 2, rx: 6 }, cover);
+  const face = el('g', {}, cover);
+  const eyeG = [-1, 1].map((s) => ({ s, ball: el('ellipse', { rx: 10, ry: 13, fill: INK }, face), hl: el('circle', { r: 3.6, fill: '#fff' }, face), line: el('path', { d: '', fill: 'none', stroke: INK, 'stroke-width': 5, 'stroke-linecap': 'round' }, face) }));
+  const mouth = el('path', { d: '', fill: 'none', stroke: INK, 'stroke-width': 4.5, 'stroke-linecap': 'round' }, face);
+  const zzz = ['z', 'Z'].map((c, i) => { const t = el('text', { 'font-size': 26 + i * 8, 'font-weight': 900, fill: INK, opacity: 0, 'font-family': 'system-ui' }, svg); t.textContent = c; return t; });
+  const sparks = Array.from({ length: 8 }, (_, i) => el('path', { d: 'M0 -9 L2.4 -2.4 L9 0 L2.4 2.4 L0 9 L-2.4 2.4 L-9 0 L-2.4 -2.4 Z', fill: i % 2 ? '#FFD25A' : '#FF8FB8', opacity: 0 }, svg));
+  const tear = el('path', { d: 'M0 0 C 5 7, 7 12, 0 16 C -7 12, -5 7, 0 0 Z', fill: '#9AD1FF', opacity: 0 }, svg);
+
+  return (t, T, st) => {
+    const [bg, ink] = opts.color; const grow = opts.grow ?? 0;
+    coverRect.setAttribute('fill', bg); coverIn.setAttribute('fill', mix(bg, '#fff', .5));
+    spine.setAttribute('fill', mix(bg, INK, .18)); elastic.setAttribute('fill', ink);
+    let y = 0, sx = 1, sy = 1, rot = 0, openC = 0, open = 1, lx = Math.sin(t * .7 + opts.ph) * .5, ly = 0;
+    const b0 = (t + opts.ph) % 3.6; if (b0 < .14) open = Math.abs(b0 - .07) / .07;
+    if (st === 'idle') { const b = Math.sin(t * 2.3 + opts.ph); sy = 1 + b * .02; sx = 1 - b * .015; }
+    if (st === 'happy') {
+      const p = (T % 1.6) / 1.6, air = p > .12 && p < .7 ? Math.sin(Math.PI * (p - .12) / .58) : 0;
+      y = -air * 66; const land = p < .12 ? Math.sin(Math.PI * p / .12) : p > .7 && p < .9 ? Math.sin(Math.PI * (p - .7) / .2) : 0;
+      sy = 1 - land * .14; sx = 1 + land * .1; openC = Math.sin(Math.PI * clamp((p - .1) / .72));
+    }
+    if (st === 'sleepy') { rot = -84; y = 50; sy = 1 + Math.sin(t * 1.1) * .02; open = 0; }
+    if (st === 'sad') { sy = .95; sx = 1.03; y = 4; ly = .9; lx = 0; }
+    root.setAttribute('transform', `translate(0 ${y}) translate(0 ${Y1 + 34}) rotate(${rot}) scale(${sx} ${sy}) translate(0 ${-(Y1 + 34)})`);
+    const th = [12, 20, 30][grow];
+    block.setAttribute('x', X1 - 16); block.setAttribute('width', th + 16);
+    tabs.forEach((r, i) => { r.setAttribute('x', X1 + th - 8 + (i % 2) * 4); r.setAttribute('y', Y0 + 16 + i * 26); r.setAttribute('opacity', i < [0, 3, 6][grow] ? 1 : 0); });
+    const k = Math.cos(openC * Math.PI * .9);
+    cover.setAttribute('transform', `translate(${X0} 0) scale(${Math.abs(k) < .04 ? .04 : k} 1) translate(${-X0} 0)`);
+    const front = k > 0;
+    [face, pencil, elastic].forEach((n) => n.setAttribute('opacity', front ? 1 : 0));
+    coverIn.setAttribute('opacity', front ? 0 : 1); inner.setAttribute('opacity', openC > .05 ? 1 : 0);
+    flutter.forEach((f, i) => {
+      if (openC < .3) { f.setAttribute('d', ''); return; }
+      const w = 126 * (.35 + .65 * Math.abs(Math.sin(t * 12 + i * 1.5)));
+      f.setAttribute('d', `M${X0 + 16} ${Y0 + 8 + i * 6} L${X0 + 16 + w} ${Y0 + 4 + i * 6} L${X0 + 16 + w} ${Y1 - 6 - i * 6} L${X0 + 16} ${Y1 - 10 - i * 6} Z`);
+    });
+    // yüz: iki göz + ağız
+    const fy = -14, fx0 = -4;
+    eyeG.forEach((e) => {
+      const cx = fx0 + e.s * 22;
+      const shut = st === 'happy' || open < .12;
+      e.ball.setAttribute('opacity', shut ? 0 : 1); e.hl.setAttribute('opacity', shut ? 0 : 1); e.line.setAttribute('opacity', shut ? 1 : 0);
+      if (st === 'happy') e.line.setAttribute('d', `M${cx - 10} ${fy + 3} Q${cx} ${fy - 11} ${cx + 10} ${fy + 3}`);
+      else e.line.setAttribute('d', `M${cx - 9} ${fy} Q${cx} ${fy + 6} ${cx + 9} ${fy}`);
+      e.ball.setAttribute('cx', cx + lx * 3); e.ball.setAttribute('cy', fy + ly * 4); e.ball.setAttribute('ry', 13 * open);
+      e.hl.setAttribute('cx', cx + 3.5 + lx * 3); e.hl.setAttribute('cy', fy - 4 * open + ly * 4);
+    });
+    mouth.setAttribute('d', st === 'happy' ? `M${fx0 - 10} 12 Q${fx0} 24 ${fx0 + 10} 12` : st === 'sad' ? `M${fx0 - 8} 20 Q${fx0} 13 ${fx0 + 8} 20` : st === 'sleepy' ? `M${fx0 - 4} 15 Q${fx0} 18 ${fx0 + 4} 15` : `M${fx0 - 7} 13 Q${fx0} 19 ${fx0 + 7} 13`);
+    shadow.setAttribute('rx', (st === 'sleepy' ? 104 : 76) * (1 - Math.min(.5, -y / 160)));
+    zzz.forEach((z, i) => { const p = (t * .45 + i / 2) % 1; z.setAttribute('opacity', st === 'sleepy' ? Math.sin(Math.PI * p) : 0); z.setAttribute('x', 40 + p * 34 + i * 10); z.setAttribute('y', -20 - p * 80); });
+    sparks.forEach((s, i) => { const p = (T * .9 + i / 8) % 1, a = i / 8 * Math.PI * 2, r = 105 + p * 50; s.setAttribute('opacity', st === 'happy' ? Math.sin(Math.PI * p) : 0); s.setAttribute('transform', `translate(${Math.cos(a) * r} ${-10 + Math.sin(a) * r}) scale(${.5 + Math.sin(Math.PI * p) * .7})`); });
+    const tp = (t % 2.2) / 2.2;
+    tear.setAttribute('opacity', st === 'sad' ? (tp < .8 ? 1 : 0) : 0);
+    tear.setAttribute('transform', `translate(-30 ${-2 + tp * 44})`);
+  };
+}
+
+const PINK = ['#FFB8DE', '#5A0F35'], LILA = ['#C9B6FF', '#2A1460'], SKY = ['#9AD1FF', '#0A2A4A'], MINT = ['#8FE3C4', '#07402C'];
+const all = [
+  { f: Defo(document.getElementById('main'), { color: PINK, ph: 0 }), st: 'idle', since: 0 },
+  { f: Defo(document.getElementById('p1'), { color: SKY, ph: 1 }), st: 'sleepy', since: 0 },
+  { f: Defo(document.getElementById('p2'), { color: LILA, ph: 2 }), st: 'happy', since: 0 },
+  { f: Defo(document.getElementById('p3'), { color: MINT, ph: 3, grow: 2 }), st: 'idle', since: 0 },
+  { f: Defo(document.getElementById('p4'), { color: PINK, ph: 4 }), st: 'sleepy', since: 0 },
+];
+const box = document.getElementById('btns');
+[['idle', 'Bekliyor'], ['happy', 'Deftere işledin'], ['sleepy', 'Bugün açmadın'], ['sad', 'Seri bozuldu']].forEach(([s, label]) => {
+  const b = document.createElement('button'); b.textContent = label; if (s === 'idle') b.classList.add('on');
+  b.onclick = () => { all[0].st = s; all[0].since = performance.now() / 1000; box.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b)); };
+  box.appendChild(b);
+});
+(function loop() { const t = performance.now() / 1000; all.forEach((m) => m.f(t, t - m.since, m.st)); requestAnimationFrame(loop); })();
+</script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<style>
+@font-face { font-family: B; src: url(Bricolage-Regular.ttf); font-weight: 400; }
+@font-face { font-family: B; src: url(Bricolage-SemiBold.ttf); font-weight: 600; }
+@font-face { font-family: B; src: url(Bricolage-ExtraBold.ttf); font-weight: 800; }
+:root { --bg: #151517; --paper: #F5F3EE; --muted: #A3A3A9; --line: #34343A; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--bg); }
+body { font-family: B, sans-serif; color: var(--paper); position: relative; }
+.abs { position: absolute; }
+.scene { position: absolute; inset: 0; display: none; }
+.cap { left: 80px; top: 270px; width: 860px; font-weight: 800; font-size: 74px; line-height: 1.02; letter-spacing: -2.4px; }
+.cap .l { display: block; }
+.card { border-radius: 64px; overflow: hidden; }
+.qt { font-weight: 800; line-height: 1.0; letter-spacing: -0.035em; }
+.au { font-weight: 600; }
+.pill { position: absolute; height: 96px; border-radius: 48px; display: flex; align-items: center; justify-content: center; gap: 12px; font-weight: 600; font-size: 34px; border: 4px solid currentColor; }
+.round { position: absolute; width: 96px; height: 96px; border-radius: 48px; border: 4px solid currentColor; display: flex; align-items: center; justify-content: center; }
+.badge { position: absolute; width: 210px; height: 210px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 6px solid; }
+svg { display: block; }
+.tile { position: absolute; left: 80px; width: 860px; height: 250px; border-radius: 48px; padding: 30px 40px; }
+.dot { position: absolute; width: 92px; height: 92px; border-radius: 50%; }
+</style>
+</head>
+<body>
+
+<!-- 1 · Kanca -->
+<div class="scene" id="s1">
+  <div class="abs cap" id="c1"><span class="l">Story'ne koyacak</span><span class="l">söz mü arıyorsun?</span></div>
+  <div class="abs card" id="k1" style="left:90px; top:520px; width:900px; height:980px; background:#8FE3C4; color:#07402C;">
+    <div class="abs qt" style="left:64px; top:230px; width:780px; font-size:100px;">Sorgulanmamış bir hayat, yaşanmaya değmez.</div>
+    <div class="abs au" style="left:64px; top:690px; font-size:42px;">Sokrates</div>
+    <div class="pill" style="left:64px; top:820px; width:290px; background:#07402C; color:#8FE3C4; border-color:#07402C;">♥&nbsp;Beğen</div>
+    <div class="round" style="left:378px; top:820px;"><svg width="34" height="40" viewBox="0 0 17 20"><path d="M2 1h13v18l-6.5-5L2 19z" fill="none" stroke="#07402C" stroke-width="2.4" stroke-linejoin="round"/></svg></div>
+    <div class="pill" style="left:498px; top:820px; width:338px;">Paylaş</div>
+    <div class="badge" id="b1" style="left:345px; top:300px; background:#07402C; border-color:#07402C;"><svg width="100" height="92" viewBox="0 0 24 22"><path d="M12 21s-9-5.6-9-12.2C3 5 5.6 2.5 8.6 2.5c1.6 0 2.9.8 3.4 2 .5-1.2 1.8-2 3.4-2C18.4 2.5 21 5 21 8.8 21 15.4 12 21 12 21z" fill="#8FE3C4"/></svg></div>
+  </div>
+</div>
+
+<!-- 2 · Açılış -->
+<div class="scene" id="s2">
+  <div class="abs" id="wm" style="left:0; width:1080px; top:640px; text-align:center; font-weight:800; font-size:220px; letter-spacing:-9px;">memento</div>
+  <div class="abs" style="left:0; width:1080px; top:960px; display:flex; justify-content:center; gap:28px; font-weight:800; font-size:84px; letter-spacing:-2.5px;">
+    <span id="w1" style="color:#C9B6FF">Kaydır.</span><span id="w2" style="color:#FFB8DE">Beğen.</span><span id="w3" style="color:#D7F75B">Paylaş.</span>
+  </div>
+</div>
+
+<!-- 3 · Deste -->
+<div class="scene" id="s3">
+  <div class="abs cap" id="c3"><span class="l" id="c3a">Her gün beş söz.</span><span class="l" id="c3b" style="color:#FFB86B">Serini bozma.</span></div>
+  <div class="abs" style="left:90px; top:500px; display:flex; align-items:center; gap:22px;">
+    <span style="font-weight:800; font-size:56px; letter-spacing:-2px;">memento</span>
+    <svg width="54" height="54" viewBox="0 0 54 54"><circle cx="27" cy="27" r="22" fill="none" stroke="#34343A" stroke-width="8"/><circle id="ring" cx="27" cy="27" r="22" fill="none" stroke="#F5F3EE" stroke-width="8" stroke-linecap="round" transform="rotate(-90 27 27)" stroke-dasharray="138.2" stroke-dashoffset="138.2"/></svg>
+    <span id="goal" style="font-weight:800; font-size:44px;">2/5</span>
+  </div>
+  <div id="deck"></div>
+  <div class="abs" id="burst" style="left:440px; top:860px;"><svg width="200" height="184" viewBox="0 0 24 22"><path d="M12 21s-9-5.6-9-12.2C3 5 5.6 2.5 8.6 2.5c1.6 0 2.9.8 3.4 2 .5-1.2 1.8-2 3.4-2C18.4 2.5 21 5 21 8.8 21 15.4 12 21 12 21z" fill="#E5484D"/></svg></div>
+</div>
+
+<!-- 4 · Söz yaz -->
+<div class="scene" id="s4">
+  <div class="abs cap"><span class="l">Kendi sözünü yaz.</span><span class="l" id="c4b">Rengini seç.</span></div>
+  <div class="abs card" id="prev" style="left:90px; top:520px; width:900px; height:520px; border-radius:56px;">
+    <div class="abs qt" id="typed" style="left:56px; bottom:130px; width:790px; font-size:92px;"></div>
+    <div class="abs au" id="pau" style="left:56px; bottom:60px; font-size:38px;">@deniz</div>
+  </div>
+  <div id="dots"></div>
+  <div class="abs" style="left:90px; top:1250px; width:900px; height:120px; border-radius:60px; background:#F5F3EE; color:#151517; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:44px;">Paylaş</div>
+</div>
+
+<!-- 5 · Akış -->
+<div class="scene" id="s5">
+  <div class="abs cap"><span class="l">En çok beğenilen</span><span class="l">sözler zirvede.</span></div>
+  <div id="tiles"></div>
+</div>
+
+<!-- 6 · Kapanış -->
+<div class="scene" id="s6" style="background:#C9B6FF; color:#2A1460;">
+  <div class="abs" id="ow" style="left:0; width:1080px; top:600px; text-align:center; font-weight:800; font-size:230px; letter-spacing:-10px;">memento</div>
+  <div class="abs" id="os" style="left:0; width:1080px; top:900px; text-align:center; font-weight:800; font-size:96px; letter-spacing:-3px;">Sözün kalsın.</div>
+  <div class="abs" id="oa" style="left:140px; width:800px; top:1130px; text-align:center; font-weight:600; font-size:44px; line-height:1.25;">Çok yakında App Store ve<br>Google Play'de</div>
+</div>
+
+<script>
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const eo = (x) => 1 - Math.pow(1 - x, 3);
+const ei = (x) => x * x * x;
+const back = (x) => { const c = 1.70158; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+const $ = (id) => document.getElementById(id);
+
+const SCENES = [['s1', 0, 3.5], ['s2', 3.5, 7], ['s3', 7, 12], ['s4', 12, 15.5], ['s5', 15.5, 19], ['s6', 19, 22]];
+// Sahne geçişi: eski içerik söner, sonra yenisi gelir (çift pozlama yok).
+function sceneAlpha(t, a, b, i) {
+  const fin = i === 0 ? 1 : eo(seg(t, a, a + 0.22));
+  const fout = i === SCENES.length - 1 ? 1 : 1 - seg(t, b - 0.16, b);
+  return fin * fout;
+}
+
+const HEART = '<svg width="100" height="92" viewBox="0 0 24 22"><path d="M12 21s-9-5.6-9-12.2C3 5 5.6 2.5 8.6 2.5c1.6 0 2.9.8 3.4 2 .5-1.2 1.8-2 3.4-2C18.4 2.5 21 5 21 8.8 21 15.4 12 21 12 21z" fill="FILL"/></svg>';
+const XMARK = '<svg width="92" height="92" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19" stroke="FILL" stroke-width="3.2" stroke-linecap="round"/></svg>';
+
+// Deste kartları (gerçek hazır sözler)
+const DECK = [
+  { bg: '#C9B6FF', ink: '#2A1460', q: 'Bilmek yetmez, uygulamalısın.', a: 'Goethe', dir: 1, t0: 7.6 },
+  { bg: '#FF9F80', ink: '#4A1406', q: 'Damlaya damlaya göl olur.', a: 'Türk Atasözü', dir: -1, t0: 9.0 },
+  { bg: '#D7F75B', ink: '#24400A', q: 'Mutluluk, kendi kendine yetenlerindir.', a: 'Aristoteles', dir: 1, t0: 10.2 },
+  { bg: '#9AD1FF', ink: '#0A2A4A', q: 'Gönül kimi severse güzel odur.', a: 'Türk Atasözü', dir: 0, t0: 99 },
+];
+const deck = $('deck');
+DECK.forEach((c, i) => {
+  const el = document.createElement('div');
+  el.className = 'abs card';
+  el.style.cssText = `left:110px; top:640px; width:860px; height:860px; background:${c.bg}; color:${c.ink};`;
+  el.innerHTML = `<div class="abs qt" style="left:60px; top:240px; width:740px; font-size:88px;">${c.q}</div>
+    <div class="abs au" style="left:60px; top:620px; font-size:38px;">${c.a}</div>
+    <div class="pill" style="left:60px; top:720px; width:260px; height:88px; font-size:32px; background:${c.ink}; color:${c.bg}; border-color:${c.ink};">♥&nbsp;Beğen</div>
+    <div class="pill" style="left:540px; top:720px; width:260px; height:88px; font-size:32px;">Paylaş</div>
+    <div class="badge" style="left:325px; top:250px;"></div>`;
+  c.el = el; c.badge = el.querySelector('.badge');
+  deck.appendChild(el);
+});
+DECK.slice().reverse().forEach((c) => deck.appendChild(c.el)); // ilk kart en üstte
+
+// Renk seçici
+const PAL = [['#C9B6FF', '#2A1460'], ['#D7F75B', '#24400A'], ['#9AD1FF', '#0A2A4A'], ['#FF9F80', '#4A1406'],
+             ['#FFB8DE', '#5A0F35'], ['#FFE27A', '#4A3600'], ['#8FE3C4', '#07402C'], ['#F5F3EE', '#17171A']];
+const dots = $('dots');
+PAL.forEach(([bg], i) => {
+  const ring = document.createElement('div');
+  ring.className = 'dot';
+  ring.style.cssText = `left:${90 + i * 115}px; top:1090px; border:3px solid #34343A;`;
+  ring.innerHTML = `<div style="position:absolute; inset:0; border-radius:50%; background:${bg};"></div>`;
+  dots.appendChild(ring);
+});
+const PICKS = [[12.0, 0], [13.6, 3], [14.1, 4], [14.6, 1]];
+const TYPED = 'Yavaş git ama durma.';
+
+// Akış kutuları (uydurma kullanıcılar)
+const TILES = [
+  { bg: '#9AD1FF', ink: '#0A2A4A', u: '@ece', q: 'Okudukça büyüyorum.', likes: 318 },
+  { bg: '#FF9F80', ink: '#4A1406', u: '@mert', q: 'Sessizlik de bir cevaptır.', likes: 247 },
+  { bg: '#D7F75B', ink: '#24400A', u: '@deniz', q: 'Yavaş git ama durma.', likes: 98, rise: true },
+];
+const tilesEl = $('tiles');
+TILES.forEach((c) => {
+  const el = document.createElement('div');
+  el.className = 'tile';
+  el.style.cssText += `background:${c.bg}; color:${c.ink};`;
+  el.innerHTML = `<div class="abs" style="left:40px; top:28px; font-weight:800; font-size:64px;" data-r></div>
+    <div class="abs au" style="left:110px; top:44px; font-size:32px;">${c.u}</div>
+    <div class="abs qt" style="left:40px; top:110px; width:780px; font-size:62px;">${c.q}</div>
+    <div class="abs au" style="right:40px; top:44px; font-size:32px;" data-l></div>`;
+  c.el = el; c.r = el.querySelector('[data-r]'); c.l = el.querySelector('[data-l]');
+  tilesEl.appendChild(el);
+});
+
+function render(t) {
+  SCENES.forEach(([id, a, b], i) => {
+    const el = $(id);
+    const on = t >= a && t < b;
+    el.style.display = on ? 'block' : 'none';
+    if (on) el.style.opacity = sceneAlpha(t, a, b, i);
+  });
+
+  // 1 · Kanca: kart yerine oturur, sağa sürüklenir, uçar.
+  if (t < 3.5) {
+    const k = $('k1');
+    const enter = back(seg(t, 0, 0.6));
+    const drag = eo(seg(t, 2.3, 2.9));
+    const fly = ei(seg(t, 2.9, 3.35));
+    const x = drag * 160 + fly * 1100;
+    const y = (1 - enter) * 500 - fly * 80;
+    k.style.transform = `translate(${x}px, ${y}px) rotate(${(drag * 8 + fly * 10)}deg)`;
+    k.style.opacity = clamp(seg(t, 0, 0.25));
+    const b = $('b1');
+    b.style.opacity = drag;
+    b.style.transform = `scale(${0.55 + 0.45 * back(drag)})`;
+    $('c1').style.opacity = eo(seg(t, 0.15, 0.45));
+    $('c1').style.transform = `translateY(${(1 - eo(seg(t, 0.15, 0.45))) * 30}px)`;
+  }
+
+  // 2 · Açılış
+  if (t >= 3.5 && t < 7) {
+    const p = back(seg(t, 3.6, 4.1));
+    $('wm').style.transform = `scale(${0.7 + 0.3 * p})`;
+    $('wm').style.opacity = seg(t, 3.6, 3.85);
+    [['w1', 4.5], ['w2', 5.0], ['w3', 5.5]].forEach(([id, s]) => {
+      const q = seg(t, s, s + 0.3);
+      $(id).style.opacity = q;
+      $(id).style.transform = `translateY(${(1 - eo(q)) * 40}px)`;
+      $(id).style.display = 'inline-block';
+    });
+  }
+
+  // 3 · Deste
+  if (t >= 7 && t < 12) {
+    let done = 2;
+    DECK.forEach((c, i) => {
+      const drag = eo(seg(t, c.t0, c.t0 + 0.35));
+      const fly = ei(seg(t, c.t0 + 0.35, c.t0 + 0.65));
+      if (c.dir && t >= c.t0 + 0.5) done++;
+      const gone = c.dir && t >= c.t0 + 0.65;
+      // Arkadaki kartlar öndeki gittikçe öne gelir.
+      const ahead = DECK.slice(0, i).filter((d) => !(d.dir && t >= d.t0 + 0.65)).length;
+      const pos = Math.min(ahead, 2);
+      const x = c.dir * (drag * 150 + fly * 1100);
+      const sc = 1 - pos * 0.05;
+      const y = pos * 44;
+      c.el.style.display = gone || ahead > 2 ? 'none' : 'block';
+      c.el.style.transform = `translate(${x}px, ${y}px) rotate(${c.dir * (drag * 7 + fly * 9)}deg) scale(${sc})`;
+      c.el.style.transformOrigin = '50% 100%';
+      c.el.style.transition = 'none';
+      const d = c.dir ? drag : 0;
+      c.badge.style.opacity = d;
+      c.badge.style.transform = `scale(${0.55 + 0.45 * back(d)})`;
+      if (c.dir > 0) { c.badge.style.background = c.ink; c.badge.style.borderColor = c.ink; c.badge.innerHTML = HEART.replace('FILL', c.bg); }
+      else { c.badge.style.background = c.bg; c.badge.style.borderColor = c.ink; c.badge.innerHTML = XMARK.replace('FILL', c.ink); }
+    });
+    done = Math.min(done, 5);
+    const full = done >= 5;
+    const ringP = done / 5;
+    $('ring').setAttribute('stroke-dashoffset', 138.2 * (1 - ringP));
+    $('ring').setAttribute('stroke', full ? '#FF7A2F' : '#F5F3EE');
+    $('goal').textContent = full ? '🔥 7' : `${done}/5`;
+    // Kalp patlaması: sağa kaydırılan her kartın ardından.
+    let bOp = 0, bY = 0, bS = 1;
+    DECK.filter((c) => c.dir > 0).forEach((c) => {
+      const u = seg(t, c.t0 + 0.55, c.t0 + 1.25);
+      if (u > 0 && u < 1) {
+        const pop = back(clamp(u / 0.35));
+        const rise = ei(clamp((u - 0.35) / 0.65));
+        bOp = 1 - rise; bY = -120 * rise; bS = 0.4 + 0.6 * pop;
+      }
+    });
+    $('burst').style.opacity = bOp;
+    $('burst').style.transform = `translateY(${bY}px) scale(${bS})`;
+    const a = seg(t, 7.05, 7.35), b = seg(t, 8.4, 8.7);
+    $('c3a').style.opacity = a; $('c3a').style.transform = `translateY(${(1 - eo(a)) * 30}px)`;
+    $('c3b').style.opacity = b; $('c3b').style.transform = `translateY(${(1 - eo(b)) * 30}px)`;
+  }
+
+  // 4 · Söz yaz
+  if (t >= 12 && t < 15.5) {
+    const n = Math.round(TYPED.length * seg(t, 12.25, 13.4));
+    const caret = (Math.floor(t * 4) % 2 === 0 || n < TYPED.length) ? '<span style="opacity:.55">|</span>' : '';
+    $('typed').innerHTML = TYPED.slice(0, n) + caret;
+    let cur = 0, prev = 0, at = 12;
+    PICKS.forEach(([s, i]) => { if (t >= s) { prev = cur; cur = i; at = s; } });
+    const mix = eo(seg(t, at, at + 0.25));
+    const lerp = (h1, h2, m) => {
+      const a = parseInt(h1.slice(1), 16), b = parseInt(h2.slice(1), 16);
+      const ch = (v, s) => (v >> s) & 255;
+      const c = [16, 8, 0].map((s) => Math.round(ch(a, s) + (ch(b, s) - ch(a, s)) * m));
+      return `rgb(${c.join(',')})`;
+    };
+    const bg = lerp(PAL[prev][0], PAL[cur][0], mix), ink = lerp(PAL[prev][1], PAL[cur][1], mix);
+    $('prev').style.background = bg; $('typed').style.color = ink; $('pau').style.color = ink;
+    [...dots.children].forEach((d, i) => {
+      const on = i === cur;
+      d.style.border = on ? '6px solid #F5F3EE' : '3px solid #34343A';
+      d.firstChild.style.inset = on ? '9px' : '0';
+      d.style.transform = `scale(${on ? 1 + 0.12 * (1 - mix) : 1})`;
+    });
+    $('c4b').style.opacity = seg(t, 13.3, 13.6);
+  }
+
+  // 5 · Akış: üçüncü söz beğeni alıp zirveye çıkar.
+  if (t >= 15.5 && t < 19) {
+    const grow = eo(seg(t, 16.4, 17.4));
+    const order = grow < 0.55 ? [0, 1, 2] : [2, 0, 1];
+    const swap = eo(seg(t, 17.0, 17.45));
+    TILES.forEach((c, i) => {
+      const enter = eo(seg(t, 15.55 + i * 0.12, 15.95 + i * 0.12));
+      const fromY = 590 + i * 290;
+      const toY = 590 + order.indexOf(i) * 290;
+      const y = fromY + (toY - fromY) * swap;
+      c.el.style.top = `${y}px`;
+      c.el.style.opacity = enter;
+      c.el.style.transform = `translateX(${(1 - enter) * 80}px) scale(${c.rise ? 1 + 0.03 * Math.sin(Math.PI * swap) : 1})`;
+      c.el.style.zIndex = c.rise ? 3 : 1;
+      const likes = c.rise ? Math.round(98 + (412 - 98) * grow) : c.likes;
+      c.l.textContent = `♥ ${likes}`;
+      c.r.textContent = String((swap > 0.5 ? order.indexOf(i) : i) + 1);
+    });
+  }
+
+  // 6 · Kapanış
+  if (t >= 19) {
+    const p = back(seg(t, 19.05, 19.5));
+    $('ow').style.transform = `scale(${0.75 + 0.25 * p})`;
+    $('ow').style.opacity = seg(t, 19.05, 19.25);
+    const s = seg(t, 19.6, 19.9), a = seg(t, 20.2, 20.5);
+    $('os').style.opacity = s; $('os').style.transform = `translateY(${(1 - eo(s)) * 30}px)`;
+    $('oa').style.opacity = a; $('oa').style.transform = `translateY(${(1 - eo(a)) * 30}px)`;
+  }
+}
+window.render = render;
+render(0);
+</script>
+</body>
+</html>

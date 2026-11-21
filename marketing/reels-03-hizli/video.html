@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<style>
+@font-face { font-family: B; src: url(../../assets/fonts/Bricolage-Regular.ttf); font-weight: 400; }
+@font-face { font-family: B; src: url(../../assets/fonts/Bricolage-SemiBold.ttf); font-weight: 600; }
+@font-face { font-family: B; src: url(../../assets/fonts/Bricolage-ExtraBold.ttf); font-weight: 800; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; }
+body { font-family: B, sans-serif; color: #F5F3EE; position: relative; background: #D7F75B; }
+.abs { position: absolute; }
+#stage { position: absolute; inset: 0; transform-origin: 540px 900px; }
+.bgl { position: absolute; inset: 0; }
+.cap { position: absolute; left: 80px; width: 920px; top: 280px; white-space: nowrap; font-weight: 800; font-size: 86px; line-height: .98; letter-spacing: -4px; }
+.phone { position: absolute; width: 640px; height: 1300px; left: 220px; top: 440px; border-radius: 96px; background: #050506; padding: 16px;
+         box-shadow: 0 60px 120px rgba(0,0,0,.35), inset 0 0 0 2px #2a2a30; transform-origin: 50% 0; }
+.screen { position: absolute; inset: 16px; border-radius: 82px; background: #151517; overflow: hidden; }
+.notch { position: absolute; left: 50%; top: 22px; width: 190px; height: 52px; margin-left: -95px; background: #050506; border-radius: 26px; }
+.pill { position: absolute; display: flex; align-items: center; justify-content: center; border-radius: 999px; font-weight: 700; }
+.notif { position: absolute; left: 120px; width: 840px; height: 132px; border-radius: 40px; background: #151517; color: #F5F3EE;
+         box-shadow: 0 24px 48px rgba(0,0,0,.3); display: flex; align-items: center; gap: 22px; padding: 0 30px; }
+.notif .av { width: 76px; height: 76px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 36px; flex: none; }
+.notif .t { font-size: 32px; line-height: 1.15; }
+.notif .t b { font-weight: 800; }
+.notif .t span { color: #A3A3A9; font-size: 24px; display: block; }
+.heart { position: absolute; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="bgl" id="bg"></div>
+  <div class="bgl" id="wipe"></div>
+
+  <!-- 1 · kanca: kelimeler vuruşa çarpar -->
+  <div class="abs" id="hook" style="left:0; top:620px; width:1080px; text-align:center; font-weight:800; font-size:230px; line-height:.92; letter-spacing:-10px; color:#24400A;"></div>
+
+  <div class="cap" id="cap"></div>
+
+  <!-- 2 · söz yaz -->
+  <div class="phone" id="pC"><div class="screen">
+    <div class="notch"></div>
+    <div class="abs" style="left:48px; top:120px; font-weight:800; font-size:56px; letter-spacing:-2px;">Söz yaz</div>
+    <div class="abs" id="cardC" style="left:40px; top:220px; width:528px; height:560px; border-radius:46px;">
+      <div class="abs" id="typedC" style="left:40px; bottom:96px; width:450px; font-weight:800; font-size:64px; line-height:1.02; letter-spacing:-2px;"></div>
+      <div class="abs" id="authC" style="left:40px; bottom:40px; font-weight:600; font-size:26px;">@deniz</div>
+    </div>
+    <div id="dotsC"></div>
+    <div class="pill" id="shareC" style="left:40px; top:1120px; width:528px; height:110px; background:#F5F3EE; color:#151517; font-size:40px;">Paylaş</div>
+  </div></div>
+
+  <!-- 4 · keşfet destesi -->
+  <div class="phone" id="pE"><div class="screen">
+    <div class="notch"></div>
+    <div class="abs" style="left:48px; top:118px; font-weight:800; font-size:44px; letter-spacing:-1.5px;">memento</div>
+    <div class="abs" style="left:290px; top:126px; display:flex; align-items:center; gap:10px; font-weight:800; font-size:30px;">
+      <svg width="34" height="34" viewBox="0 0 34 34"><circle cx="17" cy="17" r="13" fill="none" stroke="#34343A" stroke-width="5"/><circle id="ringE" cx="17" cy="17" r="13" fill="none" stroke="#F5F3EE" stroke-width="5" stroke-linecap="round" transform="rotate(-90 17 17)" stroke-dasharray="81.7" stroke-dashoffset="49"/></svg><span id="goalE">2/5</span></div>
+    <div class="abs" id="deckE"></div>
+  </div></div>
+  <div id="hearts"></div>
+
+  <!-- 5 · profil -->
+  <div class="phone" id="pF"><div class="screen" id="screenF"></div></div>
+  <div id="notifs"></div>
+
+  <!-- 6 · seri -->
+  <div class="abs" id="streak" style="left:0; width:1080px; top:640px; text-align:center;">
+    <div id="fire" style="font-size:300px; line-height:1;">🔥</div>
+    <div id="days" style="font-weight:800; font-size:260px; line-height:.9; letter-spacing:-10px; color:#4A1406;">7</div>
+    <div style="font-weight:800; font-size:64px; letter-spacing:-2px; color:#4A1406;">günlük seri</div>
+  </div>
+
+  <!-- 7 · kapanış -->
+  <div class="abs" id="endWm" style="left:0; width:1080px; top:720px; text-align:center; white-space:nowrap; font-weight:800; font-size:210px; letter-spacing:-9px; color:#151517;"></div>
+  <div class="abs" id="endTag" style="left:0; width:1080px; top:1010px; text-align:center; font-weight:800; font-size:92px; letter-spacing:-3px; color:#151517;">Yaz. Bul. Kalsın.</div>
+  <div class="abs" id="endSub" style="left:0; width:1080px; top:1150px; text-align:center; font-weight:600; font-size:36px; color:#24400A;">Çok yakında App Store ve Google Play'de</div>
+</div>
+
+<script src="../ortak/profil.js"></script>
+<script>
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const eo = (x) => 1 - Math.pow(1 - x, 3);
+const ei = (x) => x * x * x;
+const back = (x) => { const c = 2.2; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+const lerp = (a, b, m) => a + (b - a) * m;
+const $ = (id) => document.getElementById(id);
+const show = (el, on) => { el.style.display = on ? '' : 'none'; };
+
+// 128 BPM. Her şey vuruşa kilitli.
+const B = 60 / 128;
+const S = { hook: 0, comp: 4, share: 10, deck: 12, prof: 20, streak: 28, end: 32, stop: 36 };
+const tb = (b) => b * B;
+window.DUR = tb(S.stop);
+
+const PAL = [['#C9B6FF', '#2A1460'], ['#D7F75B', '#24400A'], ['#9AD1FF', '#0A2A4A'], ['#FF9F80', '#4A1406'],
+             ['#FFB8DE', '#5A0F35'], ['#FFE27A', '#4A3600'], ['#8FE3C4', '#07402C'], ['#F5F3EE', '#17171A']];
+
+// renk noktaları
+const dotsC = $('dotsC');
+const DOTS = PAL.map(([bg], i) => {
+  const d = document.createElement('div');
+  d.className = 'abs';
+  d.style.cssText = `left:${40 + i * 66}px; top:820px; width:54px; height:54px; border-radius:50%; background:${bg};`;
+  dotsC.appendChild(d); return d;
+});
+const LINE = 'Pazartesi bir ruh hâlidir.';
+// her vuruşta renk değişir: lila → gök → pembe → mercan
+const PICKS = [[S.comp, 0], [S.comp + 3, 2], [S.comp + 4, 4], [S.comp + 5, 3]];
+
+// deste
+const deckE = $('deckE');
+const DECK = [
+  { c: 6, q: 'Az olsun, öz olsun.', u: 'Türk Atasözü', out: S.deck + 1 },
+  { c: 5, q: 'Bugün de geçti.', u: '@arda', out: S.deck + 2 },
+  { c: 2, q: 'Sessizlik de bir cevaptır.', u: '@mert', out: S.deck + 3 },
+  { c: 3, q: LINE, u: '@deniz', out: 999, hero: true },
+  { c: 0, q: 'Okudukça büyüyorum.', u: '@ece', out: 999 },
+];
+DECK.slice().reverse().forEach((d) => {
+  const [bg, ink] = PAL[d.c];
+  const el = document.createElement('div');
+  el.className = 'abs';
+  el.style.cssText = `left:30px; top:210px; width:548px; height:860px; border-radius:48px; background:${bg}; color:${ink}; transform-origin:50% 100%;`;
+  el.innerHTML = `<div class="abs" style="left:44px; top:250px; width:460px; font-weight:800; font-size:68px; line-height:1.02; letter-spacing:-2px;">${d.q}</div>
+    <div class="abs" style="left:44px; top:600px; font-weight:600; font-size:28px;">${d.u}</div>
+    <div class="pill" style="left:44px; top:740px; width:200px; height:78px; font-size:28px; background:${ink}; color:${bg};" data-like>♥ Beğen</div>
+    <div class="abs" data-x style="left:174px; top:290px; width:200px; height:200px; border-radius:50%; border:6px solid ${ink}; display:flex; align-items:center; justify-content:center; opacity:0; font-size:110px; font-weight:400; color:${ink};">×</div>`;
+  d.el = el; d.x = el.querySelector('[data-x]'); d.like = el.querySelector('[data-like]');
+  deckE.appendChild(el);
+});
+
+// uçuşan kalpler
+const HEARTS = Array.from({ length: 14 }, (_, i) => {
+  const el = document.createElement('div');
+  el.className = 'heart';
+  const col = ['#E5484D', '#FFB8DE', '#F5F3EE', '#FF9F80'][i % 4];
+  el.innerHTML = `<svg width="90" height="82" viewBox="0 0 24 22"><path d="M12 21s-9-5.6-9-12.2C3 5 5.6 2.5 8.6 2.5c1.6 0 2.9.8 3.4 2 .5-1.2 1.8-2 3.4-2C18.4 2.5 21 5 21 8.8 21 15.4 12 21 12 21z" fill="${col}"/></svg>`;
+  $('hearts').appendChild(el);
+  const a = (i / 14) * Math.PI * 2 + (i % 3) * .3;
+  return { el, a, r: 380 + (i % 5) * 70, s: .5 + (i % 4) * .22, rot: (i % 2 ? 1 : -1) * (20 + i * 3) };
+});
+
+// profil
+$('screenF').innerHTML = profileScreen();
+const NOTIFS = [
+  ['#FFB8DE', '#5A0F35', 'E', '<b>ece</b> sözünü beğendi'],
+  ['#9AD1FF', '#0A2A4A', 'M', '<b>mert</b> seni takip etti'],
+  ['#FFE27A', '#4A3600', 'A', '<b>arda</b> sözünü kaydetti'],
+  ['#8FE3C4', '#07402C', 'Z', '<b>zeynep</b> sözünü beğendi'],
+  ['#FF9F80', '#4A1406', 'C', '<b>can</b> seni takip etti'],
+  ['#D7F75B', '#24400A', '♥', 'Sözün <b>1.000 kişiye</b> ulaştı'],
+];
+const notifs = $('notifs');
+NOTIFS.forEach(([bg, ink, a, txt]) => {
+  const el = document.createElement('div');
+  el.className = 'notif';
+  el.innerHTML = `<div class="av" style="background:${bg}; color:${ink}">${a}</div><div class="t">${txt}<span>memento · şimdi</span></div>`;
+  notifs.appendChild(el);
+});
+
+// sahne zemin renkleri
+const BGS = [[S.hook, '#D7F75B'], [S.comp, '#C9B6FF'], [S.deck, '#FF9F80'], [S.prof, '#9AD1FF'], [S.streak, '#FFE27A'], [S.end, '#D7F75B']];
+const CAPS = [
+  [S.comp + .5, S.share + 1.6, 'Rengini seç.', '#2A1460'],
+  [S.deck + .3, S.deck + 4, 'Biri kaydırıyor…', '#4A1406'],
+  [S.deck + 4, S.prof, '…ve bayılıyor.', '#4A1406'],
+  [S.prof + .3, S.streak, 'Telefonun susmuyor.', '#0A2A4A'],
+  [S.streak + .2, S.end, 'Bırakamıyorsun.', '#4A3600'],
+];
+
+function render(t) {
+  const beat = t / B;
+  // her vuruşta hafif zoom vuruşu
+  const kick = Math.exp(-(beat % 1) * 6);
+  const punch = beat < S.end ? 1 + .012 * kick : 1;
+  $('stage').style.transform = `scale(${punch})`;
+
+  // zemin + dairesel renk geçişi (her sahne başında)
+  let cur = BGS[0], prev = BGS[0];
+  BGS.forEach((b) => { if (beat >= b[0]) { prev = cur; cur = b; } });
+  const wp = eo(seg(beat, cur[0], cur[0] + .9));
+  $('bg').style.background = prev[1];
+  const w = $('wipe');
+  w.style.background = cur[1];
+  w.style.clipPath = `circle(${wp * 1500}px at 540px 1100px)`;
+  // söz yaz sahnesinde zemin seçilen renge eşlik eder
+  let pick = 0;
+  PICKS.forEach(([b, i]) => { if (beat >= b) pick = i; });
+  if (beat >= S.comp + 3 && beat < S.deck) { $('bg').style.background = PAL[pick][0]; w.style.background = PAL[pick][0]; }
+
+  // 1 · kanca
+  const hk = $('hook');
+  show(hk, beat < S.comp + .3);
+  const words = ['Bir', 'söz', 'yaz.'];
+  const n = Math.min(3, Math.floor(beat) + 1);
+  hk.innerHTML = words.slice(0, n).map((wd, i) => {
+    const p = seg(beat, i, i + .35);
+    return `<div style="display:block; transform: scale(${1.6 - .6 * back(p)}); opacity:${clamp(p * 3)};">${wd}</div>`;
+  }).join('');
+  const hOut = eo(seg(beat, S.comp - 1, S.comp));
+  hk.style.transform = `translateY(${-hOut * 520}px) scale(${1 - hOut * .45})`;
+
+  // yazılar
+  const cap = $('cap');
+  let shown = null;
+  CAPS.forEach((c) => { if (beat >= c[0] && beat < c[1]) shown = c; });
+  show(cap, !!shown);
+  if (shown) {
+    const p = seg(beat, shown[0], shown[0] + .4);
+    cap.textContent = shown[2]; cap.style.color = shown[3];
+    cap.style.transform = `translateY(${(1 - back(p)) * 60}px) rotate(${(1 - p) * -3}deg)`;
+    cap.style.opacity = clamp(p * 2);
+  }
+
+  // 2-3 · söz yaz + paylaş
+  const pc = $('pC');
+  const cOn = beat >= S.comp - 1 && beat < S.deck + .2;
+  show(pc, cOn);
+  if (cOn) {
+    const inn = back(seg(beat, S.comp - 1, S.comp));
+    const fly = ei(seg(beat, S.share + 1, S.deck));
+    pc.style.transform = `translateY(${(1 - inn) * 900 + fly * 1600}px) rotate(${(1 - inn) * 8 - fly * 12}deg) scale(.82)`;
+    const k = Math.round(LINE.length * seg(beat, S.comp + .2, S.comp + 2.6));
+    $('typedC').innerHTML = LINE.slice(0, k) + (k < LINE.length ? '<span style="opacity:.5">|</span>' : '');
+    const [bg, ink] = PAL[pick];
+    $('cardC').style.background = bg; $('typedC').style.color = ink; $('authC').style.color = ink;
+    const pop = PICKS.reduce((a, [b]) => a + Math.max(0, 1 - Math.abs(beat - b) * 4), 0);
+    $('cardC').style.transform = `scale(${1 + .04 * Math.min(pop, 1)})`;
+    DOTS.forEach((d, i) => {
+      const on = i === pick;
+      d.style.boxShadow = on ? '0 0 0 5px #151517, 0 0 0 9px #F5F3EE' : 'none';
+      d.style.transform = `scale(${on ? 1.1 : 1})`;
+    });
+    const press = Math.max(0, 1 - Math.abs(beat - S.share) * 3);
+    $('shareC').style.transform = `scale(${1 - press * .08})`;
+    $('shareC').style.background = press > .3 ? '#D7F75B' : '#F5F3EE';
+  }
+
+  // 4 · deste: her vuruşta bir kart sola, sonra senin kartın; kalp patlaması
+  const pe = $('pE');
+  const eOn = beat >= S.deck - .3 && beat < S.prof + .3;
+  show(pe, eOn);
+  if (eOn) {
+    const inn = back(seg(beat, S.deck - .3, S.deck + .5));
+    const out = ei(seg(beat, S.prof - .5, S.prof + .3));
+    pe.style.transform = `translateY(${(1 - inn) * 1200}px) translateX(${-out * 1300}px) rotate(${(1 - inn) * -6 - out * 10}deg) scale(.82)`;
+    DECK.forEach((d, i) => {
+      const go = eo(seg(beat, d.out - .05, d.out + .35));
+      const gone = beat >= d.out + .35;
+      const ahead = DECK.slice(0, i).filter((x) => beat < x.out + .35).length;
+      d.el.style.display = gone || ahead > 2 ? 'none' : '';
+      const pos = Math.min(ahead, 2);
+      d.el.style.transform = `translate(${-go * 900}px, ${pos * 28}px) rotate(${-go * 16}deg) scale(${1 - pos * .05})`;
+      d.x.style.opacity = d.out < 99 ? Math.sin(Math.PI * clamp(go * 1.6)) : 0;
+    });
+    const hero = DECK[3];
+    const love = seg(beat, S.deck + 4, S.deck + 4.5);
+    hero.el.style.transform += ` scale(${1 + .06 * Math.sin(Math.PI * love)})`;
+    hero.like.textContent = beat >= S.deck + 4 ? '♥ Beğendin' : '♥ Beğen';
+    hero.like.style.width = beat >= S.deck + 4 ? '250px' : '200px';
+    // hedef halkası
+    const done = Math.min(5, 2 + DECK.filter((d) => d.out < 99 && beat >= d.out + .2).length + (beat >= S.deck + 4 ? 1 : 0));
+    $('ringE').setAttribute('stroke-dashoffset', 81.7 * (1 - done / 5));
+    $('ringE').setAttribute('stroke', done >= 5 ? '#FF7A2F' : '#F5F3EE');
+    $('goalE').textContent = done >= 5 ? '🔥' : `${done}/5`;
+  }
+  // kalpler
+  const hp = seg(beat, S.deck + 4, S.deck + 6);
+  show($('hearts'), hp > 0 && hp < 1);
+  HEARTS.forEach((h, i) => {
+    const p = eo(clamp(hp * 1.3 - i * .015));
+    const x = 540 + Math.cos(h.a) * h.r * p - 45, y = 1050 + Math.sin(h.a) * h.r * p * 1.1 - 40 - hp * 260;
+    h.el.style.transform = `translate(${x}px, ${y}px) rotate(${h.rot * p}deg) scale(${h.s * (0.3 + p)})`;
+    h.el.style.opacity = 1 - seg(hp, .55, 1);
+  });
+
+  // 5 · profil + bildirim yağmuru
+  const pf = $('pF');
+  const fOn = beat >= S.prof - .4 && beat < S.streak + .3;
+  show(pf, fOn);
+  if (fOn) {
+    const inn = back(seg(beat, S.prof - .4, S.prof + .5));
+    const out = ei(seg(beat, S.streak - .4, S.streak + .3));
+    pf.style.transform = `translateX(${(1 - inn) * 1300}px) translateY(${out * 1500}px) rotate(${(1 - inn) * 8}deg) scale(.82)`;
+    const got = NOTIFS.map((_, i) => eo(seg(beat, S.prof + 1 + i * .75, S.prof + 1.3 + i * .75)));
+    const sum = got.reduce((a, b) => a + b, 0);
+    const fol = Math.round(248 + sum / 6 * (1204 - 248));
+    $('pf-fol').textContent = fol.toLocaleString('tr-TR');
+    const k = Math.round(86 + sum / 6 * 914);
+    $('pf-karma').textContent = k.toLocaleString('tr-TR');
+    const up = k >= 400;
+    $('pf-lvl').textContent = k >= 1000 ? 'Seviye 4 🎉' : up ? 'Seviye 3 🎉' : 'Seviye 2';
+    $('pf-bar').style.width = `${k >= 1000 ? 100 : up ? 20 + 80 * (k - 400) / 600 : 30 + 70 * (k - 86) / 314}%`;
+  }
+  const nOn = beat >= S.prof + 1 && beat < S.streak + .2;
+  show(notifs, nOn);
+  if (nOn) {
+    const arr = [...notifs.children];
+    arr.forEach((el, i) => {
+      const p = seg(beat, S.prof + 1 + i * .75, S.prof + 1.3 + i * .75);
+      const above = arr.slice(i + 1).reduce((a, _, j) => a + eo(seg(beat, S.prof + 1 + (i + 1 + j) * .75, S.prof + 1.3 + (i + 1 + j) * .75)), 0);
+      const out = ei(seg(beat, S.streak - .4, S.streak + .2));
+      el.style.top = `${470 + above * 26}px`;
+      el.style.zIndex = 20 + i;
+      el.style.opacity = clamp(p * 3) * (above > 2.5 ? 0 : 1);
+      el.style.transform = `translateY(${(1 - back(p)) * -160 - out * 700}px) scale(${1 - above * .04}) rotate(${(i % 2 ? 1 : -1) * 1.2}deg)`;
+    });
+  }
+
+  // 6 · seri sayacı
+  const st = $('streak');
+  const sOn = beat >= S.streak - .2 && beat < S.end + .4;
+  show(st, sOn);
+  if (sOn) {
+    const inn = back(seg(beat, S.streak - .2, S.streak + .4));
+    const out = ei(seg(beat, S.end - .3, S.end + .3));
+    st.style.transform = `scale(${(.3 + .7 * inn) * (1 - out * .6)}) translateY(${out * -400}px)`;
+    st.style.opacity = 1 - out;
+    const d = Math.round(lerp(7, 30, eo(seg(beat, S.streak + .6, S.streak + 3.2))));
+    $('days').textContent = d;
+    $('fire').style.transform = `scale(${1 + .08 * Math.sin(beat * Math.PI * 2)}) rotate(${Math.sin(beat * Math.PI) * 6}deg)`;
+  }
+
+  // 7 · kapanış
+  const wm = $('endWm');
+  const eOn2 = beat >= S.end;
+  show(wm, eOn2); show($('endTag'), eOn2); show($('endSub'), eOn2);
+  if (eOn2) {
+    const letters = 'memento'.split('');
+    wm.innerHTML = letters.map((c, i) => {
+      const p = seg(beat, S.end + i * .14, S.end + i * .14 + .3);
+      return `<span style="display:inline-block; transform: translateY(${(1 - back(p)) * 120}px) scale(${.4 + .6 * back(p)}); opacity:${clamp(p * 3)}">${c}</span>`;
+    }).join('');
+    const tg = seg(beat, S.end + 1.5, S.end + 1.9), sb = seg(beat, S.end + 2.3, S.end + 2.7);
+    $('endTag').style.opacity = clamp(tg * 2); $('endTag').style.transform = `scale(${1.3 - .3 * back(tg)})`;
+    $('endSub').style.opacity = sb;
+  }
+}
+window.render = render;
+render(0);
+</script>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8">
+<style>
+@font-face { font-family: B; src: url(../../assets/fonts/Bricolage-SemiBold.ttf); font-weight: 600; }
+@font-face { font-family: B; src: url(../../assets/fonts/Bricolage-ExtraBold.ttf); font-weight: 800; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1600px; height: 1000px; overflow: hidden; font-family: B, sans-serif; background: #F5F3EE; color: #17171A; }
+.v { position: absolute; inset: 0; display: none; padding: 56px 64px; }
+h1 { font-weight: 800; font-size: 54px; letter-spacing: -2px; }
+.sub { font-weight: 600; font-size: 22px; color: #6B6B70; margin-top: 6px; }
+.grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 36px; }
+.m { border-radius: 36px; padding: 26px 26px 24px; height: 700px; display: flex; flex-direction: column; }
+.m .art { flex: 1; display: flex; align-items: center; justify-content: center; }
+.m .name { font-weight: 800; font-size: 38px; letter-spacing: -1px; }
+.m .idea { font-weight: 600; font-size: 18px; line-height: 1.35; margin-top: 8px; }
+.m .grow { margin-top: 14px; display: flex; gap: 10px; align-items: flex-end; }
+.tag { display: inline-block; font-weight: 800; font-size: 15px; padding: 6px 12px; border-radius: 999px; margin-top: 12px; }
+
+/* widgetlar */
+.phones { display: flex; gap: 40px; margin-top: 30px; }
+.ph { width: 420px; height: 830px; border-radius: 64px; background: #050506; padding: 12px; position: relative; flex: none; }
+.scr { position: absolute; inset: 12px; border-radius: 54px; overflow: hidden; }
+.wall1 { background: linear-gradient(160deg, #2b3a55 0%, #6b4e71 55%, #c98b6b 100%); }
+.wall2 { background: linear-gradient(170deg, #1c2333 0%, #3c3354 60%, #6d4c5e 100%); }
+.wg { position: absolute; border-radius: 30px; padding: 20px; overflow: hidden; }
+.wg .lab { font-weight: 800; font-size: 13px; opacity: .8; }
+.wg .q { font-weight: 800; letter-spacing: -.6px; line-height: 1.02; }
+.wg .a { font-weight: 600; font-size: 13px; margin-top: 8px; }
+.icon { position: absolute; width: 74px; height: 74px; border-radius: 20px; background: rgba(255,255,255,.18); }
+.note { width: 560px; font-weight: 600; font-size: 20px; line-height: 1.45; color: #3a3a40; }
+.note b { font-weight: 800; color: #17171A; }
+</style></head><body>
+
+<!-- 1 · MASKOTLAR -->
+<div class="v" id="v1">
+  <h1>Maskot adayları</h1>
+  <div class="sub">Hepsi uygulamanın renkleri ve kalın, düz çizgisiyle. Defter ilerledikçe maskot da büyüyor.</div>
+  <div class="grid">
+
+    <div class="m" style="background:#C9B6FF; color:#2A1460;">
+      <div class="art">
+        <svg width="240" height="280" viewBox="0 0 240 280">
+          <ellipse cx="120" cy="262" rx="70" ry="10" fill="#2A1460" opacity=".15"/>
+          <path d="M120 18 C120 18 40 120 40 170 a80 80 0 0 0 160 0 C200 120 120 18 120 18Z" fill="#2A1460"/>
+          <ellipse cx="88" cy="150" rx="14" ry="22" fill="#C9B6FF" opacity=".35" transform="rotate(-20 88 150)"/>
+          <circle cx="96" cy="178" r="11" fill="#F5F3EE"/><circle cx="144" cy="178" r="11" fill="#F5F3EE"/>
+          <circle cx="99" cy="180" r="5" fill="#2A1460"/><circle cx="147" cy="180" r="5" fill="#2A1460"/>
+          <path d="M106 206 q14 12 28 0" stroke="#F5F3EE" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <circle cx="80" cy="200" r="8" fill="#FFB8DE" opacity=".8"/><circle cx="160" cy="200" r="8" fill="#FFB8DE" opacity=".8"/>
+        </svg>
+      </div>
+      <div class="name">Damla</div>
+      <div class="idea">Bir mürekkep damlası. "Damlaya damlaya göl olur": her gün defterine bir söz işledikçe damla büyür, sonunda göle dönüşür. Yazmanın ve sabrın simgesi.</div>
+      <div class="grow">
+        <svg width="26" height="34" viewBox="0 0 24 30"><path d="M12 2C12 2 3 13 3 19a9 9 0 0 0 18 0C21 13 12 2 12 2Z" fill="#2A1460"/></svg>
+        <svg width="40" height="48" viewBox="0 0 24 30"><path d="M12 2C12 2 3 13 3 19a9 9 0 0 0 18 0C21 13 12 2 12 2Z" fill="#2A1460"/></svg>
+        <svg width="96" height="40" viewBox="0 0 96 40"><ellipse cx="48" cy="24" rx="46" ry="15" fill="#2A1460"/><ellipse cx="34" cy="20" rx="12" ry="4" fill="#C9B6FF" opacity=".4"/></svg>
+      </div>
+      <span class="tag" style="background:#2A1460; color:#C9B6FF;">damla → su birikintisi → göl</span>
+    </div>
+
+    <div class="m" style="background:#151517; color:#F5F3EE;">
+      <div class="art">
+        <svg width="250" height="280" viewBox="0 0 250 280">
+          <circle cx="125" cy="170" r="92" fill="#FFE27A" opacity=".12"/>
+          <circle cx="125" cy="170" r="58" fill="#FFE27A" opacity=".18"/>
+          <ellipse cx="80" cy="110" rx="44" ry="26" fill="#9AD1FF" opacity=".55" transform="rotate(-25 80 110)"/>
+          <ellipse cx="170" cy="110" rx="44" ry="26" fill="#9AD1FF" opacity=".55" transform="rotate(25 170 110)"/>
+          <ellipse cx="125" cy="150" rx="40" ry="46" fill="#3a2d6b"/>
+          <ellipse cx="125" cy="205" rx="34" ry="30" fill="#FFE27A"/>
+          <circle cx="110" cy="146" r="9" fill="#F5F3EE"/><circle cx="140" cy="146" r="9" fill="#F5F3EE"/>
+          <circle cx="112" cy="148" r="4" fill="#151517"/><circle cx="142" cy="148" r="4" fill="#151517"/>
+          <path d="M115 166 q10 8 20 0" stroke="#F5F3EE" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <path d="M110 106 q-10 -30 -24 -34 M140 106 q10 -30 24 -34" stroke="#3a2d6b" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <circle cx="86" cy="72" r="6" fill="#FFE27A"/><circle cx="164" cy="72" r="6" fill="#FFE27A"/>
+        </svg>
+      </div>
+      <div class="name">Işıl</div>
+      <div class="idea">Bir ateşböceği. Gece okunan sözlerin arkadaşı. Seri uzadıkça kuyruğu daha parlak yanar; kaçırırsan ışığı söner ama ölmez, ertesi gün yeniden yanar.</div>
+      <div class="grow">
+        <span style="width:16px;height:16px;border-radius:50%;background:#FFE27A;opacity:.35;"></span>
+        <span style="width:24px;height:24px;border-radius:50%;background:#FFE27A;opacity:.65;box-shadow:0 0 14px #FFE27A;"></span>
+        <span style="width:34px;height:34px;border-radius:50%;background:#FFE27A;box-shadow:0 0 30px #FFE27A;"></span>
+      </div>
+      <span class="tag" style="background:#FFE27A; color:#151517;">sönük → parlak → yıldız gibi</span>
+    </div>
+
+    <div class="m" style="background:#FF9F80; color:#4A1406;">
+      <div class="art">
+        <svg width="250" height="280" viewBox="0 0 250 280">
+          <ellipse cx="125" cy="262" rx="70" ry="9" fill="#4A1406" opacity=".15"/>
+          <path d="M45 120 L125 70 L205 120 L170 230 L80 230 Z" fill="#F5F3EE"/>
+          <path d="M45 120 L125 150 L205 120" fill="none" stroke="#4A1406" stroke-width="5" stroke-linejoin="round"/>
+          <path d="M125 70 L125 150" stroke="#4A1406" stroke-width="4" opacity=".4"/>
+          <path d="M45 120 L125 70 L205 120 L170 230 L80 230 Z" fill="none" stroke="#4A1406" stroke-width="6" stroke-linejoin="round"/>
+          <circle cx="102" cy="180" r="9" fill="#4A1406"/><circle cx="148" cy="180" r="9" fill="#4A1406"/>
+          <path d="M112 202 q13 10 26 0" stroke="#4A1406" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <path d="M60 236 l-8 22 M190 236 l8 22" stroke="#4A1406" stroke-width="6" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="name">Pusula</div>
+      <div class="idea">Katlanmış bir mektup kâğıdı; içinde söz taşır. "Söz uçar, yazı kalır": günün sözünü o getirir, defterini o taşır. Sayfa ekledikçe kalınlaşan bir mektuba dönüşür.</div>
+      <div class="grow">
+        <span style="width:30px;height:22px;background:#F5F3EE;border:3px solid #4A1406;border-radius:4px;"></span>
+        <span style="width:30px;height:30px;background:#F5F3EE;border:3px solid #4A1406;border-radius:4px;box-shadow:4px 4px 0 #F5F3EE, 4px 4px 0 3px #4A1406;"></span>
+        <span style="width:30px;height:38px;background:#F5F3EE;border:3px solid #4A1406;border-radius:4px;box-shadow:4px 4px 0 #F5F3EE,4px 4px 0 3px #4A1406,8px 8px 0 #F5F3EE,8px 8px 0 11px #4A1406;"></span>
+      </div>
+      <span class="tag" style="background:#4A1406; color:#FF9F80;">mektup → zarf → kalın defter</span>
+    </div>
+
+    <div class="m" style="background:#D7F75B; color:#24400A;">
+      <div class="art">
+        <svg width="250" height="280" viewBox="0 0 250 280">
+          <ellipse cx="125" cy="262" rx="60" ry="9" fill="#24400A" opacity=".15"/>
+          <path d="M85 40 H165 V240 L125 205 L85 240 Z" fill="#24400A"/>
+          <circle cx="108" cy="120" r="10" fill="#D7F75B"/><circle cx="142" cy="120" r="10" fill="#D7F75B"/>
+          <circle cx="110" cy="122" r="4.5" fill="#24400A"/><circle cx="144" cy="122" r="4.5" fill="#24400A"/>
+          <path d="M112 146 q13 10 26 0" stroke="#D7F75B" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <path d="M85 160 q-26 6 -34 -16 M165 160 q26 6 34 -16" stroke="#24400A" stroke-width="9" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="name">Ayraç</div>
+      <div class="idea">Bir kitap ayracı. Kaydettiğin sözlerin ve defterinin bekçisi; "kaldığın yeri o tutar". Seri uzadıkça üzerine renkli şeritler eklenir.</div>
+      <div class="grow">
+        <span style="width:16px;height:40px;background:#24400A;"></span>
+        <span style="width:16px;height:40px;background:linear-gradient(#24400A 50%,#FF9F80 50%);"></span>
+        <span style="width:16px;height:40px;background:linear-gradient(#24400A 33%,#FF9F80 33% 66%,#9AD1FF 66%);"></span>
+      </div>
+      <span class="tag" style="background:#24400A; color:#D7F75B;">tek renk → çok renkli şerit</span>
+    </div>
+  </div>
+</div>
+
+<!-- 2 · WIDGETLAR -->
+<div class="v" id="v2">
+  <h1>Widget'lar</h1>
+  <div class="sub">Sözün kendi renginde, uygulamanın yazı tipiyle. Kişiye özel günün sözünü ve defter serisini gösterir.</div>
+  <div class="phones">
+
+    <!-- Android ana ekran -->
+    <div class="ph"><div class="scr wall1">
+      <div style="position:absolute; left:28px; top:22px; color:#fff; font-weight:600; font-size:15px;">09:41</div>
+      <!-- büyük (4x2) -->
+      <div class="wg" style="left:20px; top:70px; width:356px; height:200px; background:#C9B6FF; color:#2A1460;">
+        <div style="display:flex; justify-content:space-between;"><span class="lab">Bugün senin için</span><span class="lab">memento</span></div>
+        <div class="q" style="font-size:30px; margin-top:16px;">Yedi kere düş, sekiz kere kalk.</div>
+        <div class="a">Japon Atasözü</div>
+      </div>
+      <!-- küçük (2x2) -->
+      <div class="wg" style="left:20px; top:290px; width:168px; height:168px; background:#D7F75B; color:#24400A; padding:16px;">
+        <div class="lab">memento</div>
+        <div class="q" style="font-size:20px; margin-top:10px;">Damlaya damlaya göl olur.</div>
+      </div>
+      <!-- defter (2x2) -->
+      <div class="wg" style="left:208px; top:290px; width:168px; height:168px; background:#151517; color:#F5F3EE; padding:16px;">
+        <div class="lab" style="color:#FFE27A;">Defterin</div>
+        <div style="font-weight:800; font-size:46px; margin-top:6px; letter-spacing:-2px;">🔥 12</div>
+        <div style="font-weight:600; font-size:13px; color:#A3A3A9;">gün üst üste</div>
+        <div style="display:flex; gap:4px; margin-top:12px;">
+          <span style="flex:1;height:14px;border-radius:4px;background:#C9B6FF"></span><span style="flex:1;height:14px;border-radius:4px;background:#FF9F80"></span><span style="flex:1;height:14px;border-radius:4px;background:#9AD1FF"></span><span style="flex:1;height:14px;border-radius:4px;background:#D7F75B"></span><span style="flex:1;height:14px;border-radius:4px;background:#FFB8DE"></span><span style="flex:1;height:14px;border-radius:4px;background:#8FE3C4"></span><span style="flex:1;height:14px;border-radius:4px;border:2px solid #34343A"></span>
+        </div>
+      </div>
+      <div class="icon" style="left:28px; top:640px;"></div><div class="icon" style="left:122px; top:640px;"></div><div class="icon" style="left:216px; top:640px;"></div><div class="icon" style="left:310px; top:640px;"></div>
+      <div style="position:absolute; left:0; right:0; bottom:20px; text-align:center; color:#fff; font-weight:800; font-size:16px;">Android ana ekran</div>
+    </div></div>
+
+    <!-- iPhone kilit ekranı -->
+    <div class="ph"><div class="scr wall2">
+      <div style="position:absolute; left:0; right:0; top:60px; text-align:center; color:rgba(255,255,255,.85); font-weight:600; font-size:19px;">Cumartesi 21 Kasım</div>
+      <!-- satır içi -->
+      <div style="position:absolute; left:0; right:0; top:88px; text-align:center; color:rgba(255,255,255,.85); font-weight:600; font-size:16px;">✎ Yedi kere düş, sekiz kere kalk.</div>
+      <div style="position:absolute; left:0; right:0; top:110px; text-align:center; color:rgba(255,255,255,.95); font-weight:800; font-size:110px; letter-spacing:-4px;">09:41</div>
+      <!-- dikdörtgen -->
+      <div style="position:absolute; left:44px; top:260px; width:200px; height:84px; border-radius:20px; background:rgba(255,255,255,.16); backdrop-filter: blur(10px); padding:12px 14px; color:#fff;">
+        <div style="font-weight:800; font-size:11px; opacity:.75;">BUGÜN SENİN İÇİN</div>
+        <div style="font-weight:800; font-size:15px; line-height:1.1; margin-top:4px;">Karanlığa küfredeceğine bir mum yak.</div>
+      </div>
+      <!-- yuvarlak: seri -->
+      <div style="position:absolute; left:262px; top:260px; width:84px; height:84px; border-radius:50%; background:rgba(255,255,255,.16); color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+        <svg width="66" height="66" viewBox="0 0 66 66" style="position:absolute;"><circle cx="33" cy="33" r="29" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="5"/><circle cx="33" cy="33" r="29" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-dasharray="182" stroke-dashoffset="50" transform="rotate(-90 33 33)"/></svg>
+        <div style="font-weight:800; font-size:22px;">12</div><div style="font-weight:600; font-size:10px; opacity:.8;">gün</div>
+      </div>
+      <div style="position:absolute; left:0; right:0; bottom:20px; text-align:center; color:#fff; font-weight:800; font-size:16px;">iPhone kilit ekranı</div>
+    </div></div>
+
+    <div class="note">
+      <p><b>Android ana ekran:</b> büyük widget (4×2) günün sözünü sözün rengiyle, küçük (2×2) kısa bir sözü, defter widget'ı serini ve son 7 günün sözlerini renk şeridi olarak gösteriyor. Renk her gün sözle değişiyor.</p><br>
+      <p><b>iPhone kilit ekranı:</b> Apple burada renk kullanmaya izin vermiyor, sadece buzlu beyaz. Saatin üstünde tek satır söz, altında dikdörtgen kartta sözün tamamı ve yuvarlak seri halkası.</p><br>
+      <p><b>Android kilit ekranı:</b> Android telefonlarda kilit ekranı widget'ı yok; orada günün sözü bildirim olarak çıkıyor.</p><br>
+      <p><b>Maskot:</b> seçersen widget'ların köşesinde küçük hâliyle durur, defter widget'ında seriye göre büyür.</p>
+    </div>
+  </div>
+</div>
+
+<script>window.show = (n) => document.querySelectorAll('.v').forEach((e, i) => e.style.display = i + 1 === n ? 'block' : 'none'); show(1);</script>
+</body></html>
