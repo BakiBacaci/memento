@@ -7,7 +7,8 @@
 ## Kısa özet
 
 - iOS uygulaması **Codemagic'te derleniyor** ve **App Store Connect / TestFlight'a otomatik yükleniyor.** Son başarılı derleme **2611211409**.
-- App Store sayfası büyük ölçüde dolu. **Henüz incelemeye gönderilmedi.** Eksikler aşağıda, "Kalan işler" bölümünde.
+- **21 Kasım 2026, 18:12: sürüm 1.0 (derleme 2611211409) App Store incelemesine gönderildi.** Durum: *Waiting for Review*. Onaylanınca otomatik yayınlanacak.
+- **TestFlight beta incelemesine de gönderildi** (dış grup *Testciler*, Baki'nin iki hesabı). Apple onaylayınca davet e-postası gidecek.
 - Apple Developer hesabı Esad'ın (Team ID `2PLFDNRQMR`). Uygulama orada **"Memento: Günün Sözü"** adıyla kayıtlı (Apple ID `6837676805`).
 
 ## Hesaplar ve nerede ne var
@@ -47,16 +48,12 @@
   - İç grup **Ekip** (hesap sahibi).
   - Dış grup **Testciler**: Baki'nin iki hesabı ekli. Gruba **henüz derleme eklenmedi**; Apple'ın beta incelemesi telefon ve demo hesap istiyor.
 
-## Kalan işler (sırayla)
+## Kalan işler
 
-1. **Telefon numarası:** Hem sürüm sayfası → App Review Information → Contact Information, hem TestFlight → Test Information → Beta App Review Information. Ad ve e-posta girilmeye hazır; Apple telefonsuz kaydetmiyor.
-2. **Demo hesap:** Uygulamada bir test hesabı aç (e-posta + şifre). İçinde birkaç söz olsun. Bilgileri iki yere yaz:
-   - Sürüm sayfası → Sign-In Information ("Sign-in required" işaretli)
-   - TestFlight → Test Information → Sign-In Information
-3. **Baki'nin test etmesi:** TestFlight → Testciler → Builds → **+** → 2611211409 → test bilgilerini doldur → beta incelemesine gönder. Onaylanınca (genelde 1 gün içinde) iki Baki hesabına davet e-postası gider.
-4. **App Store incelemesi:** Sürüm sayfası → **Add for Review** → gönder. Otomatik yayın seçili; onaydan sonra kendiliğinden yayına çıkar.
-5. **Mağazaya çıkınca:** `lib/widgets/share_card.dart` → `QuoteShareSheet.storeLink` alanına App Store bağlantısını yaz.
-6. İsteğe bağlı: Akış ve Zirve ekranlarındaki test içeriklerini ("deneme", "aaaa" vb.) Firestore'dan temizle. İnceleme sırasında kötü görünür.
+1. **Apple'ın cevabını bekle** (genelde 24–48 saat). Ret gelirse e-postada sebep yazar; App Store Connect → App Review'da yanıtla ya da düzeltip yeni derleme gönder.
+2. **Mağazaya çıkınca:** `lib/widgets/share_card.dart` → `QuoteShareSheet.storeLink` alanına App Store bağlantısını yaz (sonraki güncellemeyle çıkar).
+3. Akış ve Zirve ekranlarındaki test içeriklerini ("deneme", "aaaa" vb.) Firestore'dan temizle; mağazadaki kullanıcılar da görecek.
+4. Baki'nin bilgisayarındaki yeni özellikler ve yeni ikon henüz GitHub'da değil. Aşağıdaki "Güncelleme nasıl yayınlanır" adımlarıyla 1.0.1 olarak çıkarılacak.
 
 ## Dikkat edilecekler
 
@@ -70,3 +67,19 @@
 1. Kod değişikliğini `main` dalına gönder.
 2. Codemagic → memento → **Start new build** → dal `main`, iş akışı **iOS → TestFlight**.
 3. 8–10 dakikada TestFlight'a yüklenir. Build numarası tarih ve saatten otomatik üretilir.
+
+## Güncelleme nasıl yayınlanır (yeni özellik, yeni ikon)
+
+1. **Kodu `main` dalına gönder.** Yeni özellikler ve ikon GitHub'a gelmeden hiçbir şey derlenemez.
+2. **İkon değiştiyse:**
+   - iOS ikonları `ios/Runner/Assets.xcassets/AppIcon.appiconset/` içinde. Hepsi yeni ikonla yeniden üretilmeli (ör. `flutter_launcher_icons` paketiyle).
+   - 1024×1024 App Store ikonu **şeffaflık (alfa kanalı) içermemeli**, yoksa Apple yüklemeyi reddeder.
+   - `store/app-store-1024.png` de güncellenmeli.
+   - Widget kendi ikonunu kullanmaz, ana uygulamanınkini kullanır.
+3. **Sürüm numarasını artır:** `pubspec.yaml` → `version: 1.0.1+1`. Nokta öncesi kısım App Store'daki sürüm adı; `+` sonrasını Codemagic zaten tarih ve saatten üretiyor.
+4. **Derle:** Codemagic → memento → Start new build → `main` → iOS → TestFlight. Yaklaşık 10 dakika sonra TestFlight'a düşer. İç gruptaki (Ekip) testçiler hemen görür; dış gruba (Testciler) eklemek için grupta Builds → + ile ekleyip beta incelemesine gönder.
+5. **App Store'da yeni sürüm:** 1.0 onaylandıktan sonra App Store Connect → uygulama → sol üstte **+ (Add Version)** → `1.0.1`.
+   - "What's New" metnini yaz, yeni derlemeyi seç.
+   - Ekran görüntüleri değiştiyse yenilerini yükle.
+   - **Add for Review**.
+6. Not: 1.0 hâlâ incelemedeyken acil bir değişiklik gerekirse, sürüm sayfasında incelemeden geri çekip (*Remove from Review* / *Cancel Submission*) yeni derlemeyi seçip tekrar gönderebilirsin.
