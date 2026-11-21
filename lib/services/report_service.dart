@@ -34,6 +34,7 @@ class ReportService {
       'owner_id': ownerId,
       'reporter_id': me,
       'reason': reasonKey,
+      'status': 'open', // yönetim panelinde açık şikâyetler listelenir
       'created_at': FieldValue.serverTimestamp(),
     });
   }

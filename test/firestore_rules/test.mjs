@@ -124,6 +124,32 @@ await t('yanlış gün anahtarı reddedilir', assertFails(setDoc(doc(A, 'users/a
 await t('çok uzun not reddedilir', assertFails(setDoc(doc(A, 'users/alice/journal/2026-11-20'), { quote: jq, note: 'x'.repeat(300) })));
 await t('fazladan alan reddedilir', assertFails(setDoc(doc(A, 'users/alice/journal/2026-11-20'), { quote: jq, note: '', puan: 99 })));
 
+// --- Yönetim paneli
+await env.withSecurityRulesDisabled(async (c) => {
+  const db = c.firestore();
+  await setDoc(doc(db, 'admins/mod'), { note: 'yönetici' });
+  await setDoc(doc(db, 'users/mod'), user('mod'));
+  await setDoc(doc(db, 'users/eve'), user('eve'));
+  await setDoc(doc(db, 'quotes/kotu'), { text: 'Kötü söz', author: 'eve', privacy: 'Yalnızca Ben', user_id: 'eve', owner_username: 'eve', likes: 0 });
+});
+const MOD = env.authenticatedContext('mod').firestore();
+const rep = { quote_id: 'kotu', owner_id: 'eve', reporter_id: 'alice', reason: 'report_hate', status: 'open', created_at: serverTimestamp() };
+await t('alice şikâyet eder', assertSucceeds(setDoc(doc(A, 'reports/r1'), rep)));
+await t('şikâyet "kaldırıldı" durumuyla açılamaz', assertFails(setDoc(doc(A, 'reports/r2'), { ...rep, status: 'removed' })));
+await t('alice şikâyetleri okuyamaz', assertFails(getDoc(doc(A, 'reports/r1'))));
+await t('yönetici şikâyeti okur', assertSucceeds(getDoc(doc(MOD, 'reports/r1'))));
+await t('yönetici gizli sözü okur', assertSucceeds(getDoc(doc(MOD, 'quotes/kotu'))));
+await t('alice başkasının sözünü silemez', assertFails(deleteDoc(doc(A, 'quotes/kotu'))));
+await t('yönetici sözü kaldırır', assertSucceeds(deleteDoc(doc(MOD, 'quotes/kotu'))));
+await t('yönetici şikâyeti kapatır', assertSucceeds(updateDoc(doc(MOD, 'reports/r1'), { status: 'removed', handled_at: serverTimestamp(), handled_by: 'mod' })));
+await t('alice kendini yönetici yapamaz', assertFails(setDoc(doc(A, 'admins/alice'), { x: 1 })));
+await t('alice başkasını yasaklayamaz', assertFails(updateDoc(doc(A, 'users/eve'), { banned: true })));
+await t('eve kendi yasağını kaldıramaz', assertFails(updateDoc(doc(E, 'users/eve'), { banned: false })));
+await t('yönetici eve\'i yasaklar', assertSucceeds(updateDoc(doc(MOD, 'users/eve'), { banned: true, banned_at: serverTimestamp() })));
+const eq = { text: 'Yeni söz', author: 'eve', privacy: 'Herkese Açık', lang: 'tr', user_id: 'eve', owner_username: 'eve', owner_photo_url: null, likes: 0, created_at: serverTimestamp() };
+const mkE = () => { const b = writeBatch(E); b.set(doc(E, 'quotes/eve1'), eq); b.update(doc(E, 'users/eve'), { quote_count: increment(1), quote_src: 'eve1' }); return b.commit(); };
+await t('yasaklı eve söz paylaşamaz', assertFails(mkE()));
+
 console.log(`\n${pass} geçti, ${fail} kaldı`);
 await env.cleanup();
 process.exit(fail ? 1 : 0);

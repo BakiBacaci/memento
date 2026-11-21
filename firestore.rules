@@ -15,6 +15,16 @@ service cloud.firestore {
     function isSignedIn() { return request.auth != null; }
     function uid()        { return request.auth.uid; }
 
+    // Yönetici: admins/{uid} belgesi olan hesap. Bu belge yalnızca Firebase
+    // konsolundan / yönetici araçlarından eklenir, uygulamadan yazılamaz.
+    function isAdmin() {
+      return isSignedIn() && exists(/databases/$(database)/documents/admins/$(uid()));
+    }
+    // Yönetici tarafından yasaklanan hesap söz paylaşamaz.
+    function isBanned() {
+      return get(/databases/$(database)/documents/users/$(uid())).data.get('banned', false) == true;
+    }
+
     function changed() {
       return request.resource.data.diff(resource.data).affectedKeys();
     }
@@ -34,6 +44,14 @@ service cloud.firestore {
 
     function str(v, min, max) {
       return v is string && v.size() >= min && v.size() <= max;
+    }
+
+    // ---------------------------------------------------------------
+    // YÖNETİCİLER — yalnızca kişi kendi kaydını görebilir (panel girişi için)
+    // ---------------------------------------------------------------
+    match /admins/{adminId} {
+      allow read: if isSignedIn() && adminId == uid();
+      allow write: if false;
     }
 
     // ---------------------------------------------------------------
@@ -163,6 +181,11 @@ service cloud.firestore {
           && delta('following_count') == -1
           && removed(/databases/$(database)/documents/users/$(userId)/following/$(uid())))
         ||
+        // 7) Yönetici: hesabı yasaklar / yasağı kaldırır.
+        (isAdmin()
+          && onlyFields(['banned', 'banned_at'])
+          && request.resource.data.banned is bool)
+        ||
         // 6) Takip edilen sayacı.
         (userId == uid()
           && onlyFields(['following_count','following_src'])
@@ -276,6 +299,7 @@ service cloud.firestore {
       // Liste sorgularında bu kural dönen HER döküman için çalışır;
       // sorgunun kendisi de filtreli olmalı.
       allow read: if q().privacy == 'Herkese Açık'
+                  || isAdmin()
                   || (isSignedIn() && q().user_id == uid())
                   || (isSignedIn()
                       && q().privacy == 'Takipçilerim'
@@ -300,7 +324,8 @@ service cloud.firestore {
                     && validQuote(request.resource.data)
                     // Yazar adı taklit edilemez: profildeki kullanıcı adı olmalı.
                     && request.resource.data.owner_username ==
-                       get(/databases/$(database)/documents/users/$(uid())).data.username;
+                       get(/databases/$(database)/documents/users/$(uid())).data.username
+                    && !isBanned();
 
       allow update: if isSignedIn() && (
         // Sahibi düzenler — beğeni sayısına dokunamaz.
@@ -319,7 +344,8 @@ service cloud.firestore {
                 && removed(/databases/$(database)/documents/quotes/$(quoteId)/likes/$(uid())))))
       );
 
-      allow delete: if isSignedIn() && q().user_id == uid();
+      // Sahibi ya da yönetici (şikâyet üzerine) silebilir.
+      allow delete: if isSignedIn() && (q().user_id == uid() || isAdmin());
 
       // Kim neyi beğendi. Kimlik = beğenenin uid'si → çift beğeni imkânsız.
       // Beğeni kaydı ile sayaç ayrı ayrı oynanamaz: kayıt da sayacın
@@ -347,11 +373,16 @@ service cloud.firestore {
     match /reports/{reportId} {
       allow create: if isSignedIn()
                     && request.resource.data.keys().hasOnly(
-                         ['quote_id','owner_id','reporter_id','reason','created_at'])
+                         ['quote_id','owner_id','reporter_id','reason','status','created_at'])
+                    && request.resource.data.get('status', 'open') == 'open'
                     && request.resource.data.reporter_id == uid()
                     && request.resource.data.reason in
                        ['report_spam','report_hate','report_violence','report_sexual','report_other'];
-      allow read, update, delete: if false;
+      // Yönetim paneli: yöneticiler okur, kapatır, siler.
+      allow read, delete: if isAdmin();
+      allow update: if isAdmin()
+                    && onlyFields(['status', 'handled_at', 'handled_by'])
+                    && request.resource.data.status in ['open', 'removed', 'dismissed', 'banned'];
     }
   }
 }
